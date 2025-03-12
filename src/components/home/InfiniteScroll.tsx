@@ -3,6 +3,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { useInView } from "motion/react";
+import RecruitPost from "@/components/common/RecruitPost";
 
 // 임시 타입
 interface Post {
@@ -39,6 +40,7 @@ export default function InfiniteScroll() {
 
   return (
     <div className="mt-6 flex flex-col gap-6">
+      <RecruitPost />
       {data?.pages.map((page) =>
         page.map((post: Post) => {
           return (
