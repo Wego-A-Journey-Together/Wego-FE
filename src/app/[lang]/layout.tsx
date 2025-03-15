@@ -3,7 +3,7 @@ import ThemeToggler from '@/components/ThemeToggler/DarkModeToggler';
 import TanstackProviders from '@/query/TanstackProvider';
 import ReduxProvider from '@/redux/ReduxProvider';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, Orienta } from 'next/font/google';
 import { cookies } from 'next/headers';
 
 import '../globals.css';
@@ -16,6 +16,14 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
     variable: '--font-geist-mono',
     subsets: ['latin'],
+});
+
+// Figma 명시된 글꼴
+const orienta = Orienta({
+    subsets: ['latin'],
+    variable: '--font-orienta',
+    weight: '400',
+    display: 'swap',
 });
 
 //todo: 프로젝트 개요 잡히면 수정
@@ -38,7 +46,7 @@ export default async function RootLayout({
         //html 태그에 붙이는게 좀더 컨벤션 이라고 합니다.
         <html lang="en" className={`${isDarkMode ? 'dark' : ''}`}>
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased bg-custom-light`}
+                className={`${geistSans.variable} ${geistMono.variable} ${orienta.variable} antialiased bg-custom-light`}
             >
                 <ReduxProvider>
                     <TanstackProviders>

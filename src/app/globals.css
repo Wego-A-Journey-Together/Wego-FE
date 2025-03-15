@@ -7,6 +7,7 @@
 @theme {
     --font-sans: var(--font-geist-sans);
     --font-mono: var(--font-geist-mono);
+    --font-orienta: var(--font-orienta);
 }
 
 :root {
@@ -148,5 +149,9 @@
 
     .text-sky-blue {
         color: var(--color-sky-blue);
+    }
+
+    .font-orienta {
+        font-family: var(--font-orienta, Orienta), sans-serif;
     }
 }
