@@ -7,9 +7,14 @@
 @theme {
     --font-sans: var(--font-geist-sans);
     --font-mono: var(--font-geist-mono);
+    --font-orienta: var(--font-orienta);
 }
 
 :root {
+    /*피그마 시안 컬러 적용*/
+    --background-light: #ffffff;
+    --sky-blue: #0AC7E4;
+    /*--------------*/
     --background: oklch(1 0 0);
     --foreground: oklch(0.141 0.005 285.823);
     --card: oklch(1 0 0);
@@ -46,6 +51,8 @@
 }
 
 .dark {
+    --background-light: #333333; /* 다크 모드에서의 밝은 배경색 */
+    --sky-blue: #0AC7E4; /* 동일 */
     --background: oklch(0.141 0.005 285.823);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.141 0.005 285.823);
@@ -81,6 +88,8 @@
 }
 
 @theme inline {
+    --color-background-light: var(--background-light);/*배경색*/
+    --color-sky-blue: var(--sky-blue); /*하늘색*/
     --color-background: var(--background);
     --color-foreground: var(--foreground);
     --color-card: var(--card);
@@ -126,5 +135,23 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+}
+
+@layer utilities {
+    .bg-custom-light {
+        background-color: var(--color-background-light);
+    }
+
+    .bg-sky-blue {
+        background-color: var(--color-sky-blue);
+    }
+
+    .text-sky-blue {
+        color: var(--color-sky-blue);
+    }
+
+    .font-orienta {
+        font-family: var(--font-orienta, Orienta), sans-serif;
     }
 }
