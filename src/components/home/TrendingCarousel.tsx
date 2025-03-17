@@ -1,19 +1,30 @@
-import {CardContent} from '@/components/ui/card';
-import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,} from '@/components/ui/carousel';
-import Image from "next/image";
-import {cn} from "@/lib";
+import { CardContent } from '@/components/ui/card';
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from '@/components/ui/carousel';
+import { cn } from '@/lib';
+import Image from 'next/image';
 
 interface TrendingCarouselProps {
     className?: string;
 }
 
-export function TrendingCarousel({className}: TrendingCarouselProps) {
+export function TrendingCarousel({ className }: TrendingCarouselProps) {
     return (
-        <div className={cn('w-full relative overflow-hidden px-5', className)}>
+        <div className={cn('w-full relative overflow-hidden', className)}>
             <Carousel className="w-full">
                 <section className={`flex justify-between`}>
                     <div className={`flex gap-2 mb-5 align-center`}>
-                        <Image src={'/icon/trending.png'} alt={'Hot'} width={26} height={26}/>
+                        <Image
+                            src={'/icon/trending.png'}
+                            alt={'Hot'}
+                            width={26}
+                            height={26}
+                        />
                         <h2 className={`flex font-semibold text-xl`}>
                             이번 주 Hot한 동행
                         </h2>
@@ -32,13 +43,12 @@ export function TrendingCarousel({className}: TrendingCarouselProps) {
                 </section>
 
                 <CarouselContent>
-                    {Array.from({length: 5}).map((_, index) => (
+                    {Array.from({ length: 5 }).map((_, index) => (
                         <CarouselItem
                             key={index}
                             className="md:basis-1/2 lg:basis-1/3"
                         >
-                            <CardContent
-                                className="relative overflow-hidden w-[400px] h-[248px] flex items-center justify-center rounded-xl p-0">
+                            <CardContent className="relative overflow-hidden w-[400px] h-[248px] flex items-center justify-center rounded-xl p-0">
                                 <div className="w-full h-full relative">
                                     <Image
                                         src="/image/jejuGirl.png"
@@ -48,8 +58,7 @@ export function TrendingCarousel({className}: TrendingCarouselProps) {
                                         priority
                                     />
                                     {/* 이미지와 더 자연스럽게 어울리는 그라데이션 오버레이 */}
-                                    <div
-                                        className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"/>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                                 </div>
 
                                 {/* 텍스트 정보 - 더 나은 위치 지정을 위해 그라데이션 div 외부로 이동 */}
@@ -63,16 +72,27 @@ export function TrendingCarousel({className}: TrendingCarouselProps) {
                                             height={32}
                                             className="rounded-full"
                                         />
-                                        <span className="text-sm font-semibold">김동키씨</span>
-                                        <span className="text-sm">20대 · 여자</span>
+                                        <span className="text-sm font-semibold">
+                                            김동키씨
+                                        </span>
+                                        <span className="text-sm">
+                                            20대 · 여자
+                                        </span>
                                     </div>
                                     <div className="flex justify-between px-4">
                                         {/* 제목 */}
-                                        <p className="text-base font-semibold">제주도 동행 구합니다</p>
+                                        <p className="text-base font-semibold">
+                                            제주도 동행 구합니다
+                                        </p>
 
                                         {/* 날짜 */}
                                         <div className="flex items-center gap-1 text-sm">
-                                            <Image src={'/icon/calender.png'} alt={'📅'} width={15} height={14}/>
+                                            <Image
+                                                src={'/icon/calender.png'}
+                                                alt={'📅'}
+                                                width={15}
+                                                height={14}
+                                            />
                                             <span>25.03.10 - 25.03.12</span>
                                         </div>
                                     </div>
