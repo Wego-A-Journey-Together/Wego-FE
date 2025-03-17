@@ -55,7 +55,7 @@ export default function InfiniteScroll() {
             )}
             {isFetchingNextPage && <h2 className="text-center">로딩 중</h2>}
 
-            <div ref={ref}></div>
+            <div className="h-1" ref={ref}></div>
         </div>
     );
 }
