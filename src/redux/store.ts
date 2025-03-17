@@ -1,6 +1,7 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
+
 export const store = configureStore({
-  reducer: {},
+    reducer: {},
 });
 
 // RootState 및 AppDispatch 타입 정의
