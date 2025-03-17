@@ -1,76 +1,127 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
-
-// 필요한 데이터 예상 객체입니다.
-const userData = {
-  userId: "유저아이디",
-  userIcon:
-    "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
-  userStatusMessage: "상태메세지",
-  userRating: 4.6, // 유저 평점 평균값
-};
-const groupData = {
-  isGroupOpen: true,
-  title: "제주 여행하실 분 모집합니다.",
-  image:
-    "https://econmingle.com/wp-content/uploads/2024/12/Tourists-on-Jeju-Island-plummet-6-1024x682.jpg",
-  content: "본문입니다.",
-  location: "제주도",
-  recruitStart: "25.03.14.",
-  recruitEnd: "25.03.16.",
-  numberOfPeople: 0, // 현재 참여 인원수
-  maximumMemer: 20, // 모집 정원
-};
+import { Button } from '@/components/ui/button';
+import { Heart } from 'lucide-react';
 
 export default function RecruitPost() {
-  return (
-    <div className="w-full rounded-lg bg-white">
-      <div className="p-4">
-        <div className="mb-4 flex items-center justify-between">
-          <section className="flex items-center gap-3">
-            {/* 사용자 아이콘 */}
-            <div className="relative h-12 w-12 overflow-hidden rounded-full bg-gray-200">
-              <img
-                src={userData.userIcon}
-                alt="user icon"
-                className="h-full w-full object-cover"
-              />
-            </div>
-            {/* 상태메세지 */}
-            <div>
-              <h2 className="text-base font-medium">{userData.userId}</h2>
-              <h2 className="border-gray-200 text-xs">
-                {userData.userStatusMessage}
-              </h2>
-            </div>
-          </section>
-          {/* 모집 마감 여부 */}
-          <div>
-            <h3 className="text-sm text-gray-500">
-              {groupData.isGroupOpen ? "모집 중" : "모집 마감"}
-            </h3>
-          </div>
-        </div>
+    const isRecruitOpen = true;
+    const hashtags = [
+        { text: '#제주도' },
+        { text: '#무계획' },
+        { text: '#먹방여행' },
+    ];
 
-        <section>
-          {/* 그룹 모집 타이틀 */}
-          <h1 className="mb-1 text-lg font-bold">{groupData.title}</h1>
+    return (
+        <article className="flex flex-col w-[580px] gap-2.5 px-[34px] py-[30px] bg-[#f5f6f7] rounded-xl">
+            {/* 헤더 섹션 */}
+            <header className="flex flex-col w-full">
+                <div className="flex items-center gap-2 w-full mb-2">
+                    <span
+                        className={`${isRecruitOpen ? 'bg-[#fa9b56]' : 'bg-[#999999]'} text-white rounded-[20px] px-3 py-1 text-xs font-semibold`}
+                    >
+                        {isRecruitOpen ? '동행 구함' : '모집 마감'}
+                    </span>
+                    <h1 className="flex-1 font-bold text-black text-xl truncate">
+                        {
+                            '3/22 ~ 3/26 혼여예정이에요. 서귀동 동행하실 분 구해요'
+                        }
+                    </h1>
+                </div>
 
-          {/* Description */}
-          <p className="mb-3 text-sm text-gray-700">{groupData.content}</p>
+                {/* 모집 정보 */}
+                <div className="flex items-center gap-2.5 mb-3.5">
+                    <span className="text-sm text-[#333333]">
+                        {'25.03.24 - 25.03.24 (0일)'}
+                    </span>
+                    <div className="h-1.5 w-px bg-gray-300" />
+                    <span className="text-sm text-[#333333]">
+                        {'나이 무관'}
+                    </span>
+                    <div className="h-1.5 w-px bg-gray-300" />
+                    <span className="text-sm text-[#333333]">{'여자'}</span>
+                    <div className="h-1.5 w-px bg-gray-300" />
+                    <span>
+                        <span className="text-sm text-[#999999]">{'0명'} </span>
+                        <span className="text-sm text-[#333333]">
+                            / {'1명'}
+                        </span>
+                    </span>
+                </div>
 
-          {/* 여행 세부사항 */}
-          <div className="flex items-center text-xs text-gray-700">
-            <p className="mr-2">
-              {`${groupData.recruitStart} - ${groupData.recruitEnd}`}
-            </p>
-            <p className="mr-auto">{groupData.location}</p>
-            <Button>찜하기</Button>
-            <Button>동행하기</Button>
-          </div>
-        </section>
-      </div>
-    </div>
-  );
+                {/* 해시태그 리스트 */}
+                <ul className="flex items-center gap-2 mb-[22px]">
+                    {hashtags.map((hashtag, index) => (
+                        <li
+                            key={index}
+                            className="relative px-1.5 py-1 rounded"
+                        >
+                            <div className="font-medium text-bg-sky-blue text-[15px] tracking-[0.47px] leading-[19.1px] whitespace-nowrap z-10">
+                                {hashtag.text}
+                            </div>
+                            <div className="absolute w-full h-[27px] top-0 left-0 bg-sky-blue rounded opacity-[0.08]" />
+                        </li>
+                    ))}
+                </ul>
+
+                {/* 본문 미리보기 */}
+                <p className="w-full h-[62px] font-normal text-[#333333] text-base leading-[20.8px] overflow-hidden mb-3.5">
+                    {
+                        '처음 혼자 여행하는데 계속 혼자 돌아다니면 심심할 것 같아서 같이 재미있게 여행다니실 분 구합니다. 아직 여행계획은 없는 상태이지만 성산쪽으로 구경하고 싶어요. 운전 가능합니다. 제가 먹는걸 좋아해서 먹는 걸 좋아하는 분이랑'
+                    }
+                </p>
+            </header>
+
+            <hr className="w-full h-px border-0 bg-gray-200 mb-3.5" />
+
+            {/* 유저 프로필 */}
+            <section className="flex items-center justify-between w-full">
+                {/* 아이콘 */}
+                <div className="flex items-center gap-3">
+                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
+                        <img
+                            src={
+                                'https://helpx.adobe.com/content/dam/help/en/photoshop/using/quick-actions/remove-background-before-qa1.png'
+                            }
+                            alt="유저 프로필 이미지"
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+
+                    {/* 유저 정보 */}
+                    <div className="flex flex-col w-[187px] items-start gap-1.5">
+                        <div className="w-full font-semibold text-black text-[15px]">
+                            {'사용자아이디'}
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#e5e8ea] rounded-[24.53px]">
+                            <span className="text-[#666666] text-xs">
+                                {'간단 상태 메세지'}
+                            </span>
+                            <div className="h-1.5 w-px bg-gray-300" />
+                            <span className="text-[#666666] text-xs">
+                                {'20대'}
+                            </span>
+                            <div className="h-1.5 w-px bg-gray-300" />
+                            <span className="text-[#666666] text-xs">
+                                {'여자'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 상호작용 버튼 */}
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="outline"
+                        className="flex items-center gap-1.5 px-[30px] py-2 bg-white rounded-lg"
+                    >
+                        <Heart />
+                        <span className="font-semibold">찜하기</span>
+                    </Button>
+                    <Button className="flex items-center gap-2.5 px-[30px] py-2 bg-sky-blue rounded-lg">
+                        <span className="font-semibold text-white text-sm leading-[21px]">
+                            동행하기
+                        </span>
+                    </Button>
+                </div>
+            </section>
+        </article>
+    );
 }
