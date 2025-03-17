@@ -53,7 +53,12 @@ export default function InfiniteScroll() {
                     </div>
                 )),
             )}
-            {isFetchingNextPage && <h2 className="text-center">로딩 중</h2>}
+            {isFetchingNextPage && (
+                <div className="col-span-2 flex justify-center items-center py-4">
+                    {/* 로딩 중 ui */}
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-black"></div>
+                </div>
+            )}
 
             <div className="h-1" ref={ref}></div>
         </div>
