@@ -12,6 +12,7 @@ import { Select, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import Image from 'next/image';
 import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
@@ -22,10 +23,11 @@ export default function FilterSelector() {
         <div className="flex w-full gap-2">
             {/* 여행지 설정 */}
             <div className="inline-flex gap-9 px-7 py-4 rounded-lg border border-solid border-[#e9e9e9]">
-                <img
+                <Image
                     src="/icon/home/pinIcon.svg"
                     alt="위치 아이콘"
-                    className="w-[17px]"
+                    width={17}
+                    height={17}
                 />
                 <Input
                     className="border-0 p-0 h-auto text-[#999999] tracking-[-0.02px] placeholder:text-[#999999] focus-visible:ring-0 shadow-none"
@@ -43,10 +45,11 @@ export default function FilterSelector() {
                             !date && 'text-[#999999]',
                         )}
                     >
-                        <img
+                        <Image
                             src="/icon/home/calenderIcon.svg"
                             alt="달력 아이콘"
-                            className="w-[17px]"
+                            width={17}
+                            height={17}
                         />
                         {date?.from ? (
                             date.to ? (
@@ -93,10 +96,11 @@ export default function FilterSelector() {
             <Select>
                 <SelectTrigger className="gap-9 pl-7 pr-[18px] py-4  h-auto">
                     <div className="flex gap-5">
-                        <img
+                        <Image
                             src="/icon/home/openedBookIcon.svg"
                             alt="책 아이콘"
-                            className="w-[17px]"
+                            width={17}
+                            height={17}
                         />
                         <SelectValue
                             placeholder="동행 테마"
@@ -110,10 +114,11 @@ export default function FilterSelector() {
             <Select>
                 <SelectTrigger className="gap-6 pl-7 pr-[18px] py-4 h-auto">
                     <div className="flex gap-5">
-                        <img
+                        <Image
                             src="/icon/home/groupIcon.svg"
                             alt="그룹 아이콘"
-                            className="w-[17px]"
+                            width={17}
+                            height={17}
                         />
                         <SelectValue
                             placeholder="동행 인원"
@@ -127,10 +132,11 @@ export default function FilterSelector() {
             <Select>
                 <SelectTrigger className="gap-6 pl-7 pr-[18px] py-4 h-auto">
                     <div className="flex gap-5">
-                        <img
+                        <Image
                             src="/icon/home/smileIcon.svg"
                             alt="스마일 아이콘"
-                            className="w-[17px]"
+                            width={17}
+                            height={17}
                         />
                         <SelectValue
                             placeholder="선호 정보"

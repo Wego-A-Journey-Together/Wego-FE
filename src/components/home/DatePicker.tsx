@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import Image from 'next/image';
 import * as React from 'react';
 
 export default function DatePicker() {
@@ -24,10 +25,11 @@ export default function DatePicker() {
                         !date && 'text-muted-foreground',
                     )}
                 >
-                    <img
+                    <Image
                         src="/icon/home/calenderIcon.svg"
                         alt="달력 아이콘"
-                        className="w-[17px] mr-7"
+                        width={17}
+                        height={17}
                     />
 
                     {date ? (
