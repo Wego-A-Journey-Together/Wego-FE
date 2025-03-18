@@ -1,29 +1,29 @@
-import { AddGroupButtonModal } from '@/components/home/AddGroupButtonModal';
-import DateSelect from '@/components/home/DateSelect';
+import FilterSelector from '@/components/home/FilterSelector';
 import InfiniteScroll from '@/components/home/InfiniteScroll';
-import RegionSelect from '@/components/home/RegionSelect';
-import SortDateSelect from '@/components/home/SortDateSelect';
 import { TrendingCarousel } from '@/components/home/TrendingCarousel';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function Home() {
     return (
         <div className="max-h-auto min-h-screen ">
             {/* 인기 모임 캐러셀 영역 */}
             <TrendingCarousel className="mt-8" />
+
+            {/* 필터링 영역 */}
+            <h1 className="mt-[75px] mb-[26px] font-semibold text-2xl">
+                나와 함께 할 동행 찾기
+            </h1>
+            <FilterSelector />
+            <section className="flex items-center text-sm mt-[30px] text-[#808080]">
+                <h2>
+                    검색된 동행 <span className="font-bold">{'90'}</span>개
+                </h2>
+                <Checkbox id="showRecruiting" className="ml-auto mr-1.5" />
+                <label htmlFor="showRecruiting">동행구함만 보기</label>
+            </section>
+
+            {/* 동행 모집글 리스트 */}
             <section className="m-auto max-h-auto min-h-screen">
-                <div className="h-auto w-full bg-gray-300">
-                    <div className="flex h-20 w-full items-center justify-center bg-blue-400">
-                        <h1>지금 모임에 참여하세요!</h1>
-                    </div>
-                    <div className="relative flex h-20 w-full items-center bg-green-200">
-                        <AddGroupButtonModal />
-                    </div>
-                </div>
-                <div className="flex h-14 items-center gap-2">
-                    <RegionSelect />
-                    <DateSelect />
-                    <SortDateSelect />
-                </div>
                 <InfiniteScroll />
             </section>
         </div>
