@@ -1,6 +1,12 @@
-import {CardContent} from '@/components/ui/card';
-import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,} from '@/components/ui/carousel';
-import {cn} from '@/lib';
+import { CardContent } from '@/components/ui/card';
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from '@/components/ui/carousel';
+import { cn } from '@/lib';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -10,14 +16,15 @@ interface TrendingCarouselProps {
     className?: string;
 }
 
-export function TrendingCarousel({className}: TrendingCarouselProps) {
+export function TrendingCarousel({ className }: TrendingCarouselProps) {
     return (
         <div className={cn('w-full relative overflow-hidden', className)}>
-            <Carousel className="w-full " opts={{
-                align: "start",
-            }}
+            <Carousel
+                className="w-full "
+                opts={{
+                    align: 'start',
+                }}
             >
-
                 <section className={`flex justify-between`}>
                     <div className={`flex gap-2 mb-5 align-center`}>
                         <Image
@@ -49,8 +56,7 @@ export function TrendingCarousel({className}: TrendingCarouselProps) {
                             key={index}
                             className="basis-auto min-w-[400px] "
                         >
-                            <CardContent
-                                className="relative overflow-hidden w-[400px] h-[248px] flex items-center justify-center rounded-xl p-0 cursor-pointer">
+                            <CardContent className="relative overflow-hidden w-[400px] h-[248px] flex items-center justify-center rounded-xl p-0 cursor-pointer">
                                 <Link
                                     href={`/buddy/${trend.id}`}
                                     className="w-full h-full relative "
@@ -63,15 +69,13 @@ export function TrendingCarousel({className}: TrendingCarouselProps) {
                                         priority
                                     />
                                     {/* 이미지와 더 자연스럽게 어울리는 그라데이션 오버레이 */}
-                                    <div
-                                        className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"/>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                                 </Link>
 
                                 {/* 텍스트 정보 - 더 나은 위치 지정을 위해 그라데이션 div 외부로 이동 */}
                                 <div className="absolute bottom-0 left-0 w-full p-4 text-white">
                                     {/* 프로필 정보 */}
                                     <div className="flex items-center w-full">
-
                                         <Link
                                             href={`/profile/${trend.userId}`}
                                             className="flex items-center gap-2 mb-2 w-auto transition-colors hover:text-sky-blue"
@@ -84,16 +88,15 @@ export function TrendingCarousel({className}: TrendingCarouselProps) {
                                                 className="rounded-full"
                                             />
                                             <span className="text-sm font-semibold">
-                                            {trend.userName}
-                                        </span>
+                                                {trend.userName}
+                                            </span>
                                             <span className="text-sm">
-                                            {trend.age} · {trend.gender}
-                                        </span>
+                                                {trend.age} · {trend.gender}
+                                            </span>
                                         </Link>
                                         <div className="flex-grow"></div>
-
                                     </div>
-                                    <div className="flex justify-between px-4">
+                                    <div className="flex justify-between">
                                         {/* 제목 */}
                                         <p className="text-base font-semibold">
                                             {trend.title}

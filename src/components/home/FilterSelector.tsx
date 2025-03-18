@@ -20,9 +20,9 @@ export default function FilterSelector() {
     const [date, setDate] = useState<DateRange | undefined>(undefined);
 
     return (
-        <div className="flex w-full gap-2">
+        <div className="flex flex-wrap w-full gap-2">
             {/* 여행지 설정 */}
-            <div className="inline-flex gap-9 px-7 py-4 rounded-lg border border-solid border-[#e9e9e9]">
+            <div className="inline-flex gap-9 px-7 py-4 rounded-lg border border-solid border-[#e9e9e9] flex-1 min-w-[200px]">
                 <Image
                     src="/icon/home/pinIcon.svg"
                     alt="위치 아이콘"
@@ -41,7 +41,7 @@ export default function FilterSelector() {
                     <Button
                         variant={'outline'}
                         className={cn(
-                            'gap-9 pl-7 pr-[18px] h-auto min-w-[273px]',
+                            'gap-9 pl-7 pr-[18px] h-auto w-[273px] min-w-[200px]',
                             !date && 'text-[#999999]',
                         )}
                     >
@@ -94,7 +94,7 @@ export default function FilterSelector() {
 
             {/* 동행 테마 */}
             <Select>
-                <SelectTrigger className="gap-9 pl-7 pr-[18px] py-4  h-auto">
+                <SelectTrigger className="gap-9 pl-7 pr-[18px] py-4 h-auto min-w-[150px]">
                     <div className="flex gap-5">
                         <Image
                             src="/icon/home/openedBookIcon.svg"
@@ -112,7 +112,7 @@ export default function FilterSelector() {
 
             {/* 동행 인원 */}
             <Select>
-                <SelectTrigger className="gap-6 pl-7 pr-[18px] py-4 h-auto">
+                <SelectTrigger className="gap-6 pl-7 pr-[18px] py-4 h-auto min-w-[150px]">
                     <div className="flex gap-5">
                         <Image
                             src="/icon/home/groupIcon.svg"
@@ -130,7 +130,7 @@ export default function FilterSelector() {
 
             {/* 선호 정보 */}
             <Select>
-                <SelectTrigger className="gap-6 pl-7 pr-[18px] py-4 h-auto">
+                <SelectTrigger className="gap-6 pl-7 pr-[18px] py-4 h-auto min-w-[150px]">
                     <div className="flex gap-5">
                         <Image
                             src="/icon/home/smileIcon.svg"
@@ -149,7 +149,7 @@ export default function FilterSelector() {
             {/* 검색 버튼 */}
             <Button
                 variant="default"
-                className="gap-9 px-8 py-4 h-auto font-semibold text-base"
+                className="gap-9 px-8 py-4 h-auto font-semibold text-base min-w-[100px]"
             >
                 검색
             </Button>
