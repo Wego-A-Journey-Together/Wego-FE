@@ -10,7 +10,7 @@ const trendingPost = [
         gender: '여자',
         startDate: '25.03.10',
         endDate: '25.03.12',
-        userId: '김동키아이디',
+        userId: 'dongki',
     },
     {
         id: 2,
@@ -23,7 +23,7 @@ const trendingPost = [
         gender: '남자',
         startDate: '25.03.25',
         endDate: '25.03.26',
-        userId: '백종원아이디',
+        userId: 'baek',
     },
     {
         id: 3,
@@ -35,7 +35,7 @@ const trendingPost = [
         gender: '여자',
         startDate: '25.03.20',
         endDate: '25.03.22',
-        userId: '최카페아이디',
+        userId: 'choi',
     },
     {
         id: 4,
@@ -47,7 +47,7 @@ const trendingPost = [
         gender: '남자',
         startDate: '25.03.15',
         endDate: '25.03.17',
-        userId: '역마살아이디',
+        userId: 'hangout',
     },
     {
         id: 5,
@@ -59,7 +59,7 @@ const trendingPost = [
         gender: '여자',
         startDate: '25.04.01',
         endDate: '25.04.03',
-        userId: '김드릴아이디',
+        userId: 'drill',
     },
 ];
 
