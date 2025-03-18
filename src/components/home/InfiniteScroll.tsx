@@ -39,23 +39,16 @@ export default function InfiniteScroll() {
     }, [isInView, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
     return (
-        <div
-            className="mt-6 grid gap-y-10"
-            style={{ gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)' }}
-        >
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-[1200px] px-4">
             {data?.pages.map((page) =>
                 page.map((post: Post) => (
-                    <div
-                        key={post.id}
-                        className="gap-10 place-self-start even:place-self-end"
-                    >
+                    <div key={post.id}>
                         <RecruitPost />
                     </div>
                 )),
             )}
             {isFetchingNextPage && (
-                <div className="col-span-2 flex justify-center items-center py-4">
-                    {/* 로딩 중 ui */}
+                <div className="col-span-full flex justify-center items-center py-4">
                     <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-black"></div>
                 </div>
             )}

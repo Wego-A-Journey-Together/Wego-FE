@@ -11,7 +11,7 @@ export default function RecruitPost() {
     ];
 
     return (
-        <article className="flex flex-col w-[580px] gap-2.5 px-[34px] py-[30px] bg-[#f5f6f7] rounded-xl">
+        <article className="flex flex-col gap-2.5 px-[34px] py-[30px] bg-[#f5f6f7] rounded-xl">
             {/* 헤더 섹션 */}
             <header className="flex flex-col w-full">
                 <div className="flex items-center gap-2 w-full mb-2">
@@ -73,7 +73,7 @@ export default function RecruitPost() {
             <hr className="w-full h-px border-0 bg-gray-200 mb-3.5" />
 
             {/* 유저 프로필 */}
-            <section className="flex items-center justify-between w-full">
+            <section className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-4 md:gap-2">
                 {/* 아이콘 */}
                 <div className="flex items-center gap-3">
                     <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
@@ -108,15 +108,15 @@ export default function RecruitPost() {
                 </div>
 
                 {/* 상호작용 버튼 */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-full md:w-auto">
                     <Button
                         variant="outline"
-                        className="flex items-center gap-1.5 px-[30px] py-2 bg-white rounded-lg"
+                        className="flex items-center gap-1.5 px-[30px] py-2 bg-white rounded-lg flex-1 md:flex-none"
                     >
                         <Heart />
                         <span className="font-semibold">찜하기</span>
                     </Button>
-                    <Button className="flex items-center gap-2.5 px-[30px] py-2 bg-sky-blue rounded-lg">
+                    <Button className="flex items-center gap-2.5 px-[30px] py-2 bg-sky-blue rounded-lg flex-1">
                         <span className="font-semibold text-white text-sm leading-[21px]">
                             동행하기
                         </span>
