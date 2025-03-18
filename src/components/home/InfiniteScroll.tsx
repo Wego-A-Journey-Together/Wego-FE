@@ -39,7 +39,7 @@ export default function InfiniteScroll() {
     }, [isInView, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
     return (
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-[1200px] px-4">
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-[1200px]">
             {data?.pages.map((page) =>
                 page.map((post: Post) => (
                     <div key={post.id}>
