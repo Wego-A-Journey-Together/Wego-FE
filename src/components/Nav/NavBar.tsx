@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function NavBar() {
     return (
-        <header className="h-18 flex items-center justify-between w-full px-5">
+        <header className="h-18 flex items-center justify-between w-full">
             {/*좌측 섹션*/}
             <section className="flex items-center gap-3">
                 {/*로고*/}
