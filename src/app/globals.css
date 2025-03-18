@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "tailwindcss-animate";
 
@@ -13,7 +13,7 @@
 :root {
     /*피그마 시안 컬러 적용*/
     --background-light: #ffffff;
-    --sky-blue: #0AC7E4;
+    --sky-blue: #0ac7e4;
     /*--------------*/
     --background: oklch(1 0 0);
     --foreground: oklch(0.141 0.005 285.823);
@@ -52,7 +52,7 @@
 
 .dark {
     --background-light: #333333; /* 다크 모드에서의 밝은 배경색 */
-    --sky-blue: #0AC7E4; /* 동일 */
+    --sky-blue: #0ac7e4; /* 동일 */
     --background: oklch(0.141 0.005 285.823);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.141 0.005 285.823);
@@ -88,7 +88,7 @@
 }
 
 @theme inline {
-    --color-background-light: var(--background-light);/*배경색*/
+    --color-background-light: var(--background-light); /*배경색*/
     --color-sky-blue: var(--sky-blue); /*하늘색*/
     --color-background: var(--background);
     --color-foreground: var(--foreground);
@@ -153,5 +153,8 @@
 
     .font-orienta {
         font-family: var(--font-orienta, Orienta), sans-serif;
+    }
+    .font-pretendard {
+        font-family: var(--font-pretendard), sans-serif;
     }
 }
