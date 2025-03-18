@@ -78,9 +78,7 @@ export default function RecruitPost() {
                 <div className="flex items-center gap-3">
                     <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
                         <Image
-                            src={
-                                'https://helpx.adobe.com/content/dam/help/en/photoshop/using/quick-actions/remove-background-before-qa1.png'
-                            }
+                            src={'/image/dogProfile.png'}
                             alt="유저 프로필 이미지"
                             width={50}
                             height={50}
