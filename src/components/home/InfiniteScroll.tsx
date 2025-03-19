@@ -36,7 +36,7 @@ export default function InfiniteScroll() {
         if (isInView && hasNextPage && !isFetchingNextPage) {
             fetchNextPage();
         }
-    }, [isInView, fetchNextPage, hasNextPage, isFetchingNextPage]);
+    }, [isInView, fetchNextPage, isFetchingNextPage]);
 
     return (
         <div className="mt-6 grid max-w-[1200px] grid-cols-1 gap-6 lg:grid-cols-2">
