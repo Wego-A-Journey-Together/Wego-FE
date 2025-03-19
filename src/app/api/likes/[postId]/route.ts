@@ -23,6 +23,8 @@ export async function PATCH(req: NextRequest, { params }: ApiRouteProps) {
                 { status: 400 },
             );
         }
+
+        // test 위한 1초 버퍼 ( ui 변경과 실제 콘솔 간극 확인용 )
         await new Promise((res) => setTimeout(res, 1000));
 
         console.log('클라이언트 요청:', data.like);

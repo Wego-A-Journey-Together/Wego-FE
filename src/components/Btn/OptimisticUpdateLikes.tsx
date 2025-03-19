@@ -25,12 +25,18 @@ export default function OptimisticUpdateLikes({
      * todo : 로그인 구현 후에 유저의 아이디를 포함해야 정확한 찜 로직으로 동작할 것 입니다 .
      * @param id
      */
-    const changeLike = async (id: number) => {
-        const res = await fetch('/api/likes/' + id, {
+    const changeLike = async ({
+        postId,
+        newLike,
+    }: {
+        postId: number;
+        newLike: boolean;
+    }) => {
+        const res = await fetch(`/api/likes/${postId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                like: !isLike,
+                like: newLike,
             }),
         });
         if (!res.ok) {
@@ -104,8 +110,10 @@ export default function OptimisticUpdateLikes({
 
     // 버튼 클릭 시 -> mutate(id)
     const handleClick = () => {
-        mutate(id);
+        const newLikeState = !isLike;
+        mutate({ postId: id, newLike: newLikeState });
     };
+
     return (
         <Button
             variant="outline"
