@@ -39,7 +39,7 @@ export default function InfiniteScroll() {
     }, [isInView, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
     return (
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-[1200px]">
+        <div className="mt-6 grid max-w-[1200px] grid-cols-1 gap-6 lg:grid-cols-2">
             {data?.pages.map((page) =>
                 page.map((post: Post) => (
                     <div key={post.id}>
@@ -48,8 +48,8 @@ export default function InfiniteScroll() {
                 )),
             )}
             {isFetchingNextPage && (
-                <div className="col-span-full flex justify-center items-center py-4">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-black"></div>
+                <div className="col-span-full flex items-center justify-center py-4">
+                    <div className="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-black"></div>
                 </div>
             )}
 
