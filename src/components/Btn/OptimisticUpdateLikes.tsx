@@ -5,11 +5,15 @@ import { cn } from '@/lib';
 import { Heart } from 'lucide-react';
 import { useState } from 'react';
 
-export default function OptimisticUpdateLikes() {
+interface OptimisticUpdateLikesProps {
+    id: string;
+}
+
+export default function OptimisticUpdateLikes({
+    id,
+}: OptimisticUpdateLikesProps) {
     const [isLike, setIsLike] = useState(false);
-    const handleClick = async () => {
-        setIsLike((prev) => !prev);
-    };
+    const handleClick = {};
     return (
         <Button
             variant="outline"
