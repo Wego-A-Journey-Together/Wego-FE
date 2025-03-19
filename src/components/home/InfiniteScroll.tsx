@@ -33,10 +33,15 @@ export default function InfiniteScroll() {
         });
 
     useEffect(() => {
-        if (isInView && hasNextPage && !isFetchingNextPage) {
+        if (
+            isInView &&
+            hasNextPage &&
+            !isFetchingNextPage &&
+            window.scrollY > 100
+        ) {
             fetchNextPage();
         }
-    }, [isInView, fetchNextPage, isFetchingNextPage]);
+    }, [isInView, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
     return (
         <div className="mt-6 grid max-w-[1200px] grid-cols-1 gap-6 lg:grid-cols-2">
