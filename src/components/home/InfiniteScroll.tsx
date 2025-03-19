@@ -48,7 +48,7 @@ export default function InfiniteScroll() {
             {data?.pages.map((page) =>
                 page.map((post: Post) => (
                     <div key={post.id}>
-                        <RecruitPost />
+                        <RecruitPost id={post.id} />
                     </div>
                 )),
             )}

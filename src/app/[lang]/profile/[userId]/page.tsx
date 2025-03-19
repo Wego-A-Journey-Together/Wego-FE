@@ -15,7 +15,7 @@ export default async function ProfilePage({ params }: TestPageProps) {
         notFound();
     }
     return (
-        <div className="w-full min-h-screen relative flex flex-col justify-center items-center gap-3">
+        <div className="relative flex min-h-screen w-full flex-col items-center justify-center gap-3">
             <h1 className={`text-2xl font-black`}>
                 {user.userName}개인 페이지에요
             </h1>
