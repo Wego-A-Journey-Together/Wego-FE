@@ -16,32 +16,26 @@ export default function InfiniteScroll() {
     const ref = useRef(null);
     const isInView = useInView(ref);
 
-    const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-        useInfiniteQuery({
-            queryKey: ['posts'],
-            queryFn: async ({ pageParam = 1 }) => {
-                const response = await fetch(
-                    // 임시 데이터입니다.
-                    `https://jsonplaceholder.typicode.com/posts?_page=${pageParam}&_limit=10`,
-                );
-                return response.json();
-            },
-            getNextPageParam: (lastPage, allPages) => {
-                return lastPage.length ? allPages.length + 1 : undefined;
-            },
-            initialPageParam: 1,
-        });
+    const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
+        queryKey: ['posts'],
+        queryFn: async ({ pageParam = 1 }) => {
+            const response = await fetch(
+                // 임시 데이터입니다.
+                `https://jsonplaceholder.typicode.com/posts?_page=${pageParam}&_limit=10`,
+            );
+            return response.json();
+        },
+        getNextPageParam: (lastPage, allPages) => {
+            return lastPage.length ? allPages.length + 1 : undefined;
+        },
+        initialPageParam: 1,
+    });
 
     useEffect(() => {
-        if (
-            isInView &&
-            hasNextPage &&
-            !isFetchingNextPage &&
-            window.scrollY > 100
-        ) {
+        if (isInView && !isFetchingNextPage) {
             fetchNextPage();
         }
-    }, [isInView, fetchNextPage, hasNextPage, isFetchingNextPage]);
+    }, [isInView, fetchNextPage, isFetchingNextPage]);
 
     return (
         <div className="mt-6 grid max-w-[1200px] grid-cols-1 gap-6 lg:grid-cols-2">
