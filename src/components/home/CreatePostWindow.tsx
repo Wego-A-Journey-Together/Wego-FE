@@ -23,7 +23,9 @@ export default function CreatePostWindow() {
     return (
         <div
             className={`fixed bottom-10 left-1/2 z-10 max-h-[140px] w-[420px] -translate-x-1/2 rounded-2xl bg-white shadow-md transition-all duration-300 ${
-                isVisible ? 'opacity-100' : 'opacity-0'
+                isVisible
+                    ? 'translate-y-0 opacity-100'
+                    : 'translate-y-10 opacity-0'
             }`}
         >
             <div className="flex flex-col items-center gap-4 px-5 py-6">
