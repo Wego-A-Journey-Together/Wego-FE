@@ -23,11 +23,13 @@ export async function PATCH(req: NextRequest, { params }: ApiRouteProps) {
                 { status: 400 },
             );
         }
+        await new Promise((res) => setTimeout(res, 1000));
+
+        console.log('클라이언트 요청:', data.like);
         return NextResponse.json(
             {
                 success: true,
-                postId: postId, // 경로 파라미터
-                receivedLike: data.like, // 클라이언트가 보낸 최종 상태
+                postId: postId,
             },
             { status: 200 },
         );

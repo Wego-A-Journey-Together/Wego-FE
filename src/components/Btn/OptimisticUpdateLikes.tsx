@@ -27,10 +27,10 @@ export default function OptimisticUpdateLikes({
      */
     const changeLike = async (id: number) => {
         const res = await fetch('/api/likes/' + id, {
-            method: 'POST',
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                id: id,
+                like: !isLike,
             }),
         });
         if (!res.ok) {
