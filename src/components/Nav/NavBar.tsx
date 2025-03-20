@@ -10,7 +10,7 @@ export default function NavBar() {
         <header className="flex h-18 w-full items-center justify-between">
             {/*모바일 햄버거 메뉴*/}
             <section className="md:hidden">
-                <Menu />
+                <Menu className="h-5 w-5 sm:h-7.5 sm:w-7.5" />
             </section>
 
             {/*좌측 섹션*/}
