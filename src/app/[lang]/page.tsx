@@ -8,7 +8,7 @@ export default function Home() {
     return (
         <div className="max-h-auto min-h-screen">
             {/* 인기 모임 캐러셀 영역 */}
-            <TrendingCarousel className="mt-8" />
+            <TrendingCarousel className="mt-5 sm:mt-7.5" />
 
             {/* 필터링 영역 */}
             <h1 className="mt-[75px] mb-[26px] text-2xl font-semibold">

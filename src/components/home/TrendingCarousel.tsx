@@ -31,8 +31,10 @@ export function TrendingCarousel({ className }: TrendingCarouselProps) {
                     loop: true,
                 }}
             >
-                <section className={`flex justify-between`}>
-                    <div className={`align-center mb-5 flex gap-2 text-center`}>
+                <section className={`-mb-1 flex justify-between sm:mb-0`}>
+                    <div
+                        className={`align-center mb-5 flex gap-1.5 text-center`}
+                    >
                         {isMobile ? (
                             <Image
                                 src={'/icon/trending.svg'}
