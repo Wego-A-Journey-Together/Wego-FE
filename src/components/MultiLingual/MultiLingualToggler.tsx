@@ -35,7 +35,7 @@ export default function MultiLingualToggler() {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-0 cursor-pointer">
+            <DropdownMenuTrigger className="flex cursor-pointer items-center gap-0">
                 {/*  Globe 아이콘 */}
                 <Image
                     src="/icon/globe.png"
@@ -45,16 +45,16 @@ export default function MultiLingualToggler() {
                 />
 
                 {/* 현재 선택된 언어 */}
-                <span className="min-w-[60px] text-sm font-medium text-gray-600">
+                <span className="hidden min-w-[60px] text-sm font-medium text-gray-600 md:block">
                     {selectedLang === 'ko' ? '한국어' : 'English'}
                 </span>
-                <ChevronDown className={`w-6 h-3`} />
+                <ChevronDown className={`h-3 w-6`} />
             </DropdownMenuTrigger>
 
             {/* 드롭다운 메뉴 */}
             <DropdownMenuContent
                 align="start"
-                className="bg-white dark:bg-neutral-800 shadow-none"
+                className="bg-white px-0 shadow-none dark:bg-neutral-800"
             >
                 <DropdownMenuItem onClick={() => handleLanguageChange('ko')}>
                     🇰🇷 한국어

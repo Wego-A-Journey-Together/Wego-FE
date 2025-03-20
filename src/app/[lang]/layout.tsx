@@ -48,14 +48,16 @@ export default async function RootLayout({
     return (
         <html
             lang="en"
-            className={`${isDarkMode ? 'dark' : ''} ${pretendard.variable} ${orienta.variable} w-full`}
+            className={`${isDarkMode ? 'dark' : ''} ${pretendard.variable} ${orienta.variable} w-full overflow-x-hidden`}
         >
             <body
-                className={`font-pretendard antialiased bg-custom-light w-full`}
+                className={`font-pretendard bg-custom-light w-full antialiased`}
             >
                 <ReduxProvider>
                     <TanstackProviders>
-                        <div className={`max-w-[1200px] mx-auto`}>
+                        <div
+                            className={`mx-auto max-w-[1200px] px-4 sm:px-6 md:px-5`}
+                        >
                             <ThemeToggler colorTheme={isDarkMode} />
                             <NavBar />
                             {children}
