@@ -1,5 +1,6 @@
 'use client';
 
+import { ReponsiveCalender } from '@/components/home/ReponsiveCalender';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
@@ -297,7 +298,7 @@ export default function FilterSelector() {
                 <div className="rounded-lg bg-[#F5F6F7] px-5 py-[30px]">
                     <div className="flex flex-col gap-5">
                         <h3 className="text-lg font-bold">날짜 지정</h3>
-                        <Calendar
+                        <ReponsiveCalender
                             className="m-auto w-full"
                             initialFocus
                             mode="range"
