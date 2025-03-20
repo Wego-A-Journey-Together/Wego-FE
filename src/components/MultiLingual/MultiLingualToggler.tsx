@@ -54,7 +54,7 @@ export default function MultiLingualToggler() {
             {/* 드롭다운 메뉴 */}
             <DropdownMenuContent
                 align="start"
-                className="bg-white shadow-none dark:bg-neutral-800"
+                className="bg-white px-0 shadow-none dark:bg-neutral-800"
             >
                 <DropdownMenuItem onClick={() => handleLanguageChange('ko')}>
                     🇰🇷 한국어

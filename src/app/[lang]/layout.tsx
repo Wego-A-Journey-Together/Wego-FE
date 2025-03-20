@@ -48,7 +48,7 @@ export default async function RootLayout({
     return (
         <html
             lang="en"
-            className={`${isDarkMode ? 'dark' : ''} ${pretendard.variable} ${orienta.variable} w-full`}
+            className={`${isDarkMode ? 'dark' : ''} ${pretendard.variable} ${orienta.variable} w-full overflow-hidden`}
         >
             <body
                 className={`font-pretendard bg-custom-light w-full antialiased`}
