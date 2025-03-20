@@ -18,7 +18,7 @@ export default function NavBar() {
                 {/*로고*/}
                 <Logo />
                 {/*서치바*/}
-                <SearchBar className="bg-neutral-100 dark:bg-neutral-800" />
+                <SearchBar className="hidden bg-neutral-100 md:flex dark:bg-neutral-800" />
             </section>
 
             {/*우측섹션*/}
