@@ -25,7 +25,7 @@ export default function NavBar() {
             )}
 
             {/*좌측 섹션*/}
-            <section className="flex items-center gap-3">
+            <section className="absolute left-1/2 -translate-x-1/2 transform items-center gap-3 md:static md:flex md:translate-x-0">
                 {/*로고*/}
                 <Logo />
                 {/*서치바*/}
