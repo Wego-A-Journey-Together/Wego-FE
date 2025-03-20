@@ -13,8 +13,14 @@ const buttonVariants = cva(
                     'bg-sky-blue text-white text-sm cursor-pointer hover:bg-sky-blue/90',
                 destructive:
                     'bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40',
+                // 디폴트와 유사하게 수정했습니다.
                 outline:
-                    'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+                    'border border-input text-[#999999] text-sm bg-background hover:bg-accent hover:text-accent-foreground',
+                // outline에서 선택됐을 때 css입니다.
+                selected:
+                    'border border-[#333333] text-[#333333] text-sm bg-[#0AC7E4]/8 hover:bg-[#0AC7E4]/12',
+                // 회색 버튼
+                gray: 'bg-[#F5F6F7] text-[#666666] text-sm cursor-pointer hover:bg-[#F5F6F7]/90',
                 secondary:
                     'bg-secondary text-secondary-foreground hover:bg-secondary/80',
                 ghost: 'hover:bg-accent hover:text-accent-foreground',
