@@ -8,10 +8,10 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from '@/components/ui/carousel';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { cn } from '@/lib';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 import trendingPost from '../../../public/data/trending';
 
@@ -20,41 +20,38 @@ interface TrendingCarouselProps {
 }
 
 export function TrendingCarousel({ className }: TrendingCarouselProps) {
-    const [align, setAlign] = useState<'start' | 'center'>('start');
+    const isMobile = useMediaQuery('(max-width: 630px)');
 
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth < 768) {
-                setAlign('center');
-            } else {
-                setAlign('start');
-            }
-        };
-
-        // 초기 실행 및 이벤트 등록
-        handleResize();
-        window.addEventListener('resize', handleResize);
-
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
     return (
         <div className={cn('relative w-full overflow-hidden', className)}>
             <Carousel
                 className="w-full"
                 opts={{
-                    align,
+                    align: 'start',
                     loop: true,
                 }}
             >
                 <section className={`flex justify-between`}>
-                    <div className={`align-center mb-5 flex gap-2`}>
-                        <Image
-                            src={'/icon/trending.png'}
-                            alt={'Hot'}
-                            width={26}
-                            height={26}
-                        />
-                        <h2 className={`flex text-xl font-semibold`}>
+                    <div className={`align-center mb-5 flex gap-2 text-center`}>
+                        {isMobile ? (
+                            <Image
+                                src={'/icon/trending.svg'}
+                                alt={'Hot'}
+                                width={18}
+                                height={18}
+                                className={'translate-y-0.5'}
+                            />
+                        ) : (
+                            <Image
+                                src={'/icon/trending.svg'}
+                                alt={'Hot'}
+                                width={26}
+                                height={26}
+                            />
+                        )}
+                        <h2
+                            className={`flex items-end text-base font-semibold sm:text-xl`}
+                        >
                             이번 주 Hot한 동행
                         </h2>
                     </div>
@@ -71,13 +68,13 @@ export function TrendingCarousel({ className }: TrendingCarouselProps) {
                     </div>
                 </section>
 
-                <CarouselContent className={`gap-1`}>
+                <CarouselContent className="gap-1 px-1">
                     {trendingPost.map((trend, index) => (
                         <CarouselItem
                             key={index}
-                            className="min-w-[400px] basis-auto"
+                            className="min-w-[264px] basis-auto sm:min-w-[400px]"
                         >
-                            <CardContent className="relative flex h-[248px] w-[400px] cursor-pointer items-center justify-center overflow-hidden rounded-xl p-0">
+                            <CardContent className="relative flex h-[164px] w-[264px] cursor-pointer items-center justify-center overflow-hidden rounded-xl p-0 sm:h-[248px] sm:w-[400px]">
                                 <Link
                                     href={`/buddy/${trend.id}`}
                                     className="relative h-full w-full"
