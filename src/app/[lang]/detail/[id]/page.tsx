@@ -23,7 +23,7 @@ export default async function DetailPage({ params }: TestPageProps) {
         <div className="relative flex min-h-screen w-full max-w-[1200px] flex-col gap-3 pb-[77px]">
             <UserProfile post={post} />
             <PostContent post={post} />
-            <PostLocation />
+            <PostLocation location={post.location} />
             <RecruitFooter title={post.title} />
         </div>
     );

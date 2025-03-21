@@ -12,10 +12,9 @@ export default function RecruitFooter({ title }: RecruitFooterProps) {
             <div className="mx-auto flex max-w-[1240px] items-center justify-between px-4">
                 <div className="flex items-center gap-1.5">
                     <Badge>동행구함</Badge>
-
-                    <h1 className="text-base font-semibold text-black">
+                    <p className="text-base font-semibold text-black">
                         {title}
-                    </h1>
+                    </p>
                 </div>
 
                 <div className="flex items-center gap-5">
