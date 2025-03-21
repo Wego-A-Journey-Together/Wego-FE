@@ -2,6 +2,7 @@ import PostContent from '@/components/detail/PostContent';
 import PostLocation from '@/components/detail/PostLocation';
 import RecruitFooter from '@/components/detail/RecruitFooter';
 import UserProfile from '@/components/detail/UserProfile';
+import Tab from '@/components/detail/Tab';
 import { Bookmark } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
@@ -26,15 +27,15 @@ export default async function DetailPage({ params }: TestPageProps) {
             <section>
                 <div className="rounded-xl bg-amber-600 md:h-75 md:w-full" />
             </section>
-            {/*30픽셀 여백 ( 우선 제목에 마진탑 줬습니다 )*/}
+            {/*제목 섹션 */}
             <section className={`mt-7.5 flex justify-between`}>
                 <div>
-                    <h1 className={`mb-1 text-xl font-bold`}>{post.title} </h1>
-                    <div className="flex items-center text-sm text-neutral-500">
+                    <h1 className={`mb-1 text-2xl font-bold`}>{post.title} </h1>
+                    <div className="flex items-center text-sm text-[#666666]">
                         <span>조회수 {post.view}</span>
-                        <div className="mx-2.5 h-2.5 w-px bg-neutral-300"></div>
+                        <div className="mx-2.5 h-2.5 w-px bg-neutral-400"></div>
                         <span>찜 {post.bookMark}</span>
-                        <div className="mx-2.5 h-2.5 w-px bg-neutral-300"></div>
+                        <div className="mx-2.5 h-2.5 w-px bg-neutral-400"></div>
                         <span>댓글 {post.commentCount}</span>
                     </div>
                 </div>
@@ -42,8 +43,16 @@ export default async function DetailPage({ params }: TestPageProps) {
                 <Bookmark fill={`black`} className={`my-auto`} />
             </section>
             {/*주최자정보섹션*/}
-            <section></section>
-            <div className="flex flex-col gap-3">
+
+            {/*탭 섹션*/}
+            <section
+                className={`sticky top-18 mt-17.5 border-b border-b-[#AAAAAAA]`}
+            >
+                <p className={`sr-only`}>탭그룹</p>
+                <Tab />
+            </section>
+
+            <div className="flex h-[400vh] flex-col gap-3">
                 <p>id: {post.id}</p>
                 <p>title: {post.title}</p>
                 <p>userName: {post.userName}</p>
