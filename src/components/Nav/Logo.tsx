@@ -5,7 +5,7 @@ export default function Logo() {
         <div className="flex items-center">
             <Link
                 href="/"
-                className={`text-sky-blue font-orienta text-2xl leading-none font-semibold sm:text-4xl`}
+                className={`text-sky-blue font-orienta text-2xl leading-none sm:text-3xl`}
             >
                 Wego
             </Link>

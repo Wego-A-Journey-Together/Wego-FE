@@ -3,6 +3,7 @@ import PostLocation from '@/components/detail/PostLocation';
 import RecruitFooter from '@/components/detail/RecruitFooter';
 import UserProfile from '@/components/detail/UserProfile';
 import Tab from '@/components/detail/Tab';
+import TabSection from '@/components/detail/TabSection';
 import { Bookmark } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
@@ -43,13 +44,8 @@ export default async function DetailPage({ params }: TestPageProps) {
                 <Bookmark fill={`black`} className={`my-auto`} />
             </section>
             {/*주최자정보섹션*/}
-
-            {/*탭 섹션*/}
-            <section
-                className={`sticky top-18 mt-17.5 border-b border-b-[#AAAAAAA]`}
-            >
-                <p className={`sr-only`}>탭그룹</p>
-                <Tab />
+            <section>
+                <TabSection post={post} />
             </section>
 
             <div className="flex h-[400vh] flex-col gap-3">
