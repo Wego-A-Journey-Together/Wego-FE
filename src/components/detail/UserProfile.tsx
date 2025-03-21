@@ -25,7 +25,7 @@ export default function UserProfile({ post }: PostContentProps) {
                         </div>
                         <div className="flex items-center gap-2 rounded-[24.53px] bg-[#e5e8ea] px-3 py-1.5">
                             <span className="text-xs text-[#666666]">
-                                {post.title}
+                                {post.statusMessage}
                             </span>
                             <div className="h-1.5 w-px bg-gray-300" />
                             <span className="text-xs text-[#666666]">
@@ -49,8 +49,7 @@ export default function UserProfile({ post }: PostContentProps) {
                             height={16}
                         />
                         <h2 className="text-base font-semibold">
-                            {'4.6'}
-                            {'(12)'}
+                            {`${post.rating.toFixed(1)}(${post.reviewCount})`}
                         </h2>
                     </div>
 

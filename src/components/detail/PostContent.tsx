@@ -2,7 +2,7 @@ import { PostContentProps } from '@/types/PostContent';
 import Image from 'next/image';
 
 export default function PostContent({ post }: PostContentProps) {
-    console.log(post);
+    // 임시데이터
     const hashtags = ['#제주도', '#무계획', '#먹방여행', '#ENFP', '#삼시육끼'];
 
     return (
@@ -48,7 +48,8 @@ export default function PostContent({ post }: PostContentProps) {
                                 </div>
                             </div>
                             <div className="text-base font-medium">
-                                25.03.24 - 25.03.24 (0일)
+                                {/* TODO 날짜 계산해서 n일 로직은 아직 못 넣었어요,,🥲 */}
+                                {post.startDate} - {post.endDate} ({'n'}일)
                             </div>
                         </div>
 
@@ -134,17 +135,7 @@ export default function PostContent({ post }: PostContentProps) {
 
                     {/* 본문 임시 */}
                     <p className="text-lg leading-[130%] font-medium text-[#333333]">
-                        제주도 혼여행 계획중인데 혼자 돌아다니면 심심할 것
-                        같아서 같이 재미있게 여행다니실 분 구합니다. <br />
-                        아직 자세한 여행계획은 없는 상태이지만 일정에 우도는
-                        포함되어있으면 좋겠어요. <br />
-                        <br />
-                        운전 가능합니다. <br />
-                        <br />
-                        제가 먹는걸 좋아해서 먹는 걸 좋아하는 분이시면 좋을 것
-                        같습니다.
-                        <br />
-                        95년생 여자라서 같은 나이 또래였으면 좋겠습니다.
+                        {post.content}
                     </p>
                 </div>
             </div>
