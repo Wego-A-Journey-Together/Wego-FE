@@ -1,4 +1,6 @@
 import PostContent from '@/components/detail/PostContent';
+import PostLocation from '@/components/detail/PostLocation';
+import RecruitFooter from '@/components/detail/RecruitFooter';
 import UserProfile from '@/components/detail/UserProfile';
 import { notFound } from 'next/navigation';
 
@@ -16,10 +18,13 @@ export default async function DetailPage({ params }: TestPageProps) {
     if (!post) {
         notFound();
     }
+
     return (
-        <div className="relative flex min-h-screen w-full flex-col gap-3">
+        <div className="relative flex min-h-screen w-full max-w-[1200px] flex-col gap-3 pb-[77px]">
             <UserProfile post={post} />
             <PostContent post={post} />
+            <PostLocation />
+            <RecruitFooter title={post.title} />
         </div>
     );
 }
