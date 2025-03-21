@@ -4,7 +4,7 @@ import Image from 'next/image';
 export default function PostContent({ post }: PostContentProps) {
     return (
         <>
-            <div className="mb-[60px] flex flex-col items-start gap-[30px]">
+            <div className="mt-12.5 mb-[60px] flex flex-col items-start gap-[30px]">
                 <div className="w-full">
                     <h2 className="text-xl font-bold text-black">동행 정보</h2>
                 </div>
