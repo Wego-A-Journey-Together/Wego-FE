@@ -1,3 +1,7 @@
+import PostContent from '@/components/detail/PostContent';
+import PostLocation from '@/components/detail/PostLocation';
+import RecruitFooter from '@/components/detail/RecruitFooter';
+import UserProfile from '@/components/detail/UserProfile';
 import { Bookmark } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
@@ -15,6 +19,7 @@ export default async function DetailPage({ params }: TestPageProps) {
     if (!post) {
         notFound();
     }
+
     return (
         <div className="relative min-h-screen w-full">
             {/*배너*/}
@@ -46,6 +51,12 @@ export default async function DetailPage({ params }: TestPageProps) {
                 <p>gender: {post.gender}</p>
                 <p>startDate: {post.startDate}</p>
                 <p>endDate: {post.endDate}</p>
+            </div>
+            <div className="relative flex min-h-screen w-full max-w-[1200px] flex-col gap-3 pb-[77px]">
+                <UserProfile post={post} />
+                <PostContent post={post} />
+                <PostLocation location={post.location} />
+                <RecruitFooter title={post.title} />
             </div>
         </div>
     );
