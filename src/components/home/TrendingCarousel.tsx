@@ -78,7 +78,7 @@ export function TrendingCarousel({ className }: TrendingCarouselProps) {
                         >
                             <CardContent className="relative flex h-[164px] w-[264px] cursor-pointer items-center justify-center overflow-hidden rounded-xl p-0 sm:h-[248px] sm:w-[400px]">
                                 <Link
-                                    href={`/buddy/${trend.id}`}
+                                    href={`/detail/${trend.id}`}
                                     className="relative h-full w-full"
                                 >
                                     <Image

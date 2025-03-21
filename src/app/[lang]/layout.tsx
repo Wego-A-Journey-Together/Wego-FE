@@ -56,7 +56,7 @@ export default async function RootLayout({
                 <ReduxProvider>
                     <TanstackProviders>
                         <div
-                            className={`mx-auto max-w-[1200px] px-4 sm:px-6 md:px-5`}
+                            className={`mx-auto max-w-[1240px] px-4 sm:px-6 md:px-5`}
                         >
                             <ThemeToggler colorTheme={isDarkMode} />
                             <NavBar />
