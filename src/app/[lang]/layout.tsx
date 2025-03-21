@@ -59,7 +59,9 @@ export default async function RootLayout({
                             className={`mx-auto max-w-[1240px] px-4 sm:px-6 md:px-5`}
                         >
                             <ThemeToggler colorTheme={isDarkMode} />
-                            <NavBar />
+                            <NavBar
+                                className={`bg-custom-light sticky top-0 z-40`}
+                            />
                             {children}
                         </div>
                     </TanstackProviders>

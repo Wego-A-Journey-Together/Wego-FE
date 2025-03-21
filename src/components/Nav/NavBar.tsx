@@ -6,12 +6,22 @@ import Hamburger from '@/components/Nav/Hamburger';
 import Logo from '@/components/Nav/Logo';
 import { SearchBar } from '@/components/Nav/SearchBar';
 import useMediaQuery from '@/hooks/useMediaQuery';
+import { cn } from '@/lib';
 
-export default function NavBar() {
+interface NavProps {
+    className?: string;
+}
+
+export default function NavBar({ className }: NavProps) {
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
     return (
-        <header className="flex h-18 w-full items-center justify-between">
+        <header
+            className={cn(
+                'flex h-18 w-full items-center justify-between',
+                className,
+            )}
+        >
             {/*햄버거 메뉴*/}
             {!isDesktop && <Hamburger />}
 
