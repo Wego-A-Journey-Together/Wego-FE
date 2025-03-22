@@ -1,32 +1,34 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { motion, useMotionValueEvent, useScroll } from 'motion/react';
 import { useEffect, useState } from 'react';
 
 export default function CreatePostWindow() {
     const [isVisible, setIsVisible] = useState(true);
-    const [prevScroll, setPrevScroll] = useState(0);
+    const { scrollY } = useScroll();
+    const [initialRender, setInitialRender] = useState(true);
 
     useEffect(() => {
-        const handleScroll = () => {
-            const currentScrollY = window.scrollY;
-            const isScrollDown = currentScrollY > prevScroll;
+        setInitialRender(false);
+    }, []);
 
-            if (isScrollDown) setIsVisible(false);
-            else setIsVisible(true);
+    useMotionValueEvent(scrollY, 'change', (latest) => {
+        // 스크롤한 상태에서 새로고침시 게시글 입력 버튼 안나오는 현상 수정
+        if (initialRender) return;
 
-            setPrevScroll(currentScrollY);
-        };
-        window.addEventListener('scroll', handleScroll);
-    }, [prevScroll]);
+        const previous = scrollY.getPrevious();
+        if (previous !== undefined) {
+            setIsVisible(latest < previous);
+        }
+    });
 
     return (
-        <div
-            className={`fixed bottom-10 left-1/2 z-10 max-h-[140px] w-[420px] -translate-x-1/2 rounded-2xl bg-white shadow-md transition-all duration-300 ${
-                isVisible
-                    ? 'translate-y-0 opacity-100'
-                    : 'translate-y-10 opacity-0'
-            }`}
+        <motion.div
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: isVisible ? 0 : 10, opacity: isVisible ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed bottom-10 left-1/2 z-10 max-h-[140px] w-[420px] -translate-x-1/2 rounded-2xl bg-white shadow-md"
         >
             <div className="flex flex-col items-center gap-4 px-5 py-6">
                 <p className="text-sm text-[#666666]">
@@ -38,6 +40,6 @@ export default function CreatePostWindow() {
                     </span>
                 </Button>
             </div>
-        </div>
+        </motion.div>
     );
 }
