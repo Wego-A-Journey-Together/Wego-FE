@@ -34,7 +34,7 @@ export default async function DetailPage({ params }: TestPageProps) {
                         src={post.imageSrc}
                         fill
                         className={`object-cover`}
-                        alt={`배경사진임`}
+                        alt={`배경사진`}
                     />
                 </div>
             </section>

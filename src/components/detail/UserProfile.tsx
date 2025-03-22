@@ -14,7 +14,7 @@ export default function UserProfile({ post }: PostContentProps) {
                             alt="유저 프로필 이미지"
                             width={50}
                             height={50}
-                            className="h-full w-full object-cover"
+                            className="z-0 h-full w-full object-cover"
                         />
                     </div>
                     {/* 유저 정보 */}
