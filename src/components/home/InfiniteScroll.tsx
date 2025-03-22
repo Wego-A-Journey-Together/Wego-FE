@@ -36,7 +36,6 @@ export default function InfiniteScroll() {
                 `https://jsonplaceholder.typicode.com/posts?_page=${pageParam}&_limit=10`,
             );
             return response.json();
-            // return [];
         },
         getNextPageParam: (lastPage, allPages) => {
             return lastPage.length ? allPages.length + 1 : undefined;
@@ -45,9 +44,15 @@ export default function InfiniteScroll() {
     });
 
     useEffect(() => {
-        if (isInView && !isFetchingNextPage && hasNextPage) {
-            fetchNextPage();
-        }
+        const handleFetchNext = async () => {
+            if (isInView && !isFetchingNextPage && hasNextPage) {
+                await fetchNextPage({ cancelRefetch: false });
+            }
+        };
+
+        // 디바운싱 처리를 통한 데이터 두 번 로드되는 버그 수정
+        const timeoutId = setTimeout(handleFetchNext, 100);
+        return () => clearTimeout(timeoutId);
     }, [isInView, fetchNextPage, isFetchingNextPage, hasNextPage]);
 
     if (isError) {
