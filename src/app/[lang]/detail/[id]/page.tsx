@@ -46,12 +46,22 @@ export default async function DetailPage({ params }: TestPageProps) {
             <section>
                 <UserProfile post={post} />
             </section>
+            {/*scrollspy 네비게이션 탭 섹션*/}
             <TabSection />
+            {/*상세 정보 섹션*/}
             <section>
                 <PostContent post={post} />
             </section>
+            {/*지도 섹션*/}
+            <section>
+                <PostLocation location={post.location} />
+            </section>
+            {/*댓글 섹션*/}
+            <section></section>
+            {/*리뷰 섹션*/}
+            <section></section>
 
-            <PostLocation location={post.location} />
+            {/*푸터 섹션 (참여하기,문의채팅)*/}
             <RecruitFooter title={post.title} />
         </div>
     );
