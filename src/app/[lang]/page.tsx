@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 export default function Home() {
     return (
-        <div className="max-h-auto min-h-screen">
+        <main>
             {/* 인기 모임 캐러셀 영역 */}
             <TrendingCarousel className="mt-5 sm:mt-7.5" />
 
@@ -24,12 +24,9 @@ export default function Home() {
             </section>
 
             {/* 동행 모집글 리스트 */}
-            <section className="m-auto max-h-auto min-h-screen">
+            <section className="m-auto">
                 <InfiniteScroll />
             </section>
-
-            {/* 동행 모집 글쓰기 */}
-            <CreatePostWindow />
-        </div>
+        </main>
     );
 }
