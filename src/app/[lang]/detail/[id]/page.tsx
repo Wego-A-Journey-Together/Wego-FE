@@ -1,3 +1,4 @@
+import PostComment from '@/components/detail/PostComment';
 import PostContent from '@/components/detail/PostContent';
 import PostLocation from '@/components/detail/PostLocation';
 import RecruitFooter from '@/components/detail/RecruitFooter';
@@ -56,8 +57,11 @@ export default async function DetailPage({ params }: TestPageProps) {
             <section>
                 <PostLocation location={post.location} />
             </section>
+            {/*todo: 멤버 소개 섹션*/}
             {/*댓글 섹션*/}
-            <section></section>
+            <section className={`mt-15`}>
+                <PostComment />
+            </section>
             {/*리뷰 섹션*/}
             <section></section>
 
