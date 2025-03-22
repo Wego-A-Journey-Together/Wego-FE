@@ -1,4 +1,3 @@
-import CreatePostWindow from '@/components/home/CreatePostWindow';
 import FilterSelector from '@/components/home/FilterSelector';
 import InfiniteScroll from '@/components/home/InfiniteScroll';
 import { TrendingCarousel } from '@/components/home/TrendingCarousel';

@@ -1,6 +1,6 @@
 'use client';
 
-import { Variants, motion } from 'motion/react';
+import { motion } from 'motion/react';
 
 export default function LoadingThreeDots() {
     const dotVariants = {
@@ -53,5 +53,3 @@ function StyleSheet() {
         </style>
     );
 }
-
-// background-color: #0AC7E4;
