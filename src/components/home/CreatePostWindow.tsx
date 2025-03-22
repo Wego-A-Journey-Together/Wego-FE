@@ -2,13 +2,21 @@
 
 import { Button } from '@/components/ui/button';
 import { motion, useMotionValueEvent, useScroll } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function CreatePostWindow() {
     const [isVisible, setIsVisible] = useState(true);
     const { scrollY } = useScroll();
+    const [initialRender, setInitialRender] = useState(true);
+
+    useEffect(() => {
+        setInitialRender(false);
+    }, []);
 
     useMotionValueEvent(scrollY, 'change', (latest) => {
+        // 스크롤한 상태에서 새로고침시 게시글 입력 버튼 안나오는 현상 수정
+        if (initialRender) return;
+
         const previous = scrollY.getPrevious();
         if (previous !== undefined) {
             setIsVisible(latest < previous);
