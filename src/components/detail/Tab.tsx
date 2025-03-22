@@ -21,7 +21,7 @@ export default function Tab() {
     };
     return (
         <div
-            className={`bg-custom-light z-40 flex gap-7.5 text-lg leading-loose font-semibold text-gray-400`}
+            className={`bg-custom-light relative z-50 flex gap-7.5 text-lg leading-loose font-semibold text-gray-400`}
         >
             {tabItems.map((tab, idx) => {
                 return (
