@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import { postComments } from '../../../public/data/comments';
+import {postComments} from '../../../public/data/comments';
 
 export default function PostComment() {
     const totalComments = postComments.length;
@@ -14,22 +14,33 @@ export default function PostComment() {
             {/*댓글 섹션*/}
             {postComments.map((comment, idx) => (
                 <div className={`mt-7.5`} key={`post-comment-${idx}`}>
+
                     {/*유저 정보 섹션*/}
                     <div className="flex items-center gap-3">
-                        <div className="h-[50px] w-[50px] overflow-hidden rounded-full">
+                        {/*유저 이미지*/}
+                        <div className="w-8 h-8 relative aspect-square">
                             <Image
                                 src={comment.userIcon}
                                 alt="유저 프로필 이미지"
-                                width={50}
-                                height={50}
-                                className="h-full w-full object-cover"
+                                fill
+                                className="rounded-full object-cover"
                             />
                         </div>
 
                         {/* 유저 정보 */}
-                        <div className="w-full text-[15px] font-semibold text-black">
+                        <div className="w-full text-sm font-semibold text-black">
                             {comment.userName}
                         </div>
+                    </div>
+
+                    {/*댓글 본문 */}
+                    <div className={`mt-2.5`}>
+                        <p className={`text-[#333333] font-medium text-base`}>{comment.content}</p>
+                    </div>
+                    {/*날짜 섹션*/}
+
+                    <div className={`mt-2.5`}>
+                        <p className={`text-[#666666] font-normal text-xs`}>{comment.updatedAt.toString()}</p>
                     </div>
                 </div>
             ))}
