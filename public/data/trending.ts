@@ -27,7 +27,7 @@ const trendingPost = [
         preferredGender: '여',
         maxMembers: 4,
         currentMembers: 1,
-        hashtags: ['제주도', '맛집투어', '올레길', '렌트카'],
+        hashtags: ['#제주도', '#맛집투어', '#올레길', '#렌트카'],
     },
     {
         id: 2,
@@ -56,7 +56,7 @@ const trendingPost = [
         preferredGender: '무관',
         maxMembers: 3,
         currentMembers: 1,
-        hashtags: ['맛집투어', '카페투어', '망원동'],
+        hashtags: ['#맛집투어', '#카페투어', '#망원동'],
     },
     {
         id: 3,
@@ -85,7 +85,7 @@ const trendingPost = [
         preferredGender: '여',
         maxMembers: 4,
         currentMembers: 2,
-        hashtags: ['카페투어', '바다', '커피'],
+        hashtags: ['#카페투어', '#바다', '#커피'],
     },
     {
         id: 4,
@@ -116,11 +116,11 @@ const trendingPost = [
         maxMembers: 5,
         currentMembers: 1,
         hashtags: [
-            '해운대',
-            '광안리',
-            '감천문화마을',
-            '자갈치시장',
-            '부산여행',
+            '#해운대',
+            '#광안리',
+            '#감천문화마을',
+            '#자갈치시장',
+            '#부산여행',
         ],
     },
     {
@@ -149,7 +149,7 @@ const trendingPost = [
         preferredGender: '여',
         maxMembers: 3,
         currentMembers: 1,
-        hashtags: ['설악산', '중앙시장'],
+        hashtags: ['#설악산', '#중앙시장'],
     },
 ];
 
