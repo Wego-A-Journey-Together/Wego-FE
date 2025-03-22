@@ -1,6 +1,7 @@
+import { dateFormat } from '@/lib';
 import Image from 'next/image';
 
-import {postComments} from '../../../public/data/comments';
+import { postComments } from '../../../public/data/comments';
 
 export default function PostComment() {
     const totalComments = postComments.length;
@@ -13,12 +14,11 @@ export default function PostComment() {
 
             {/*댓글 섹션*/}
             {postComments.map((comment, idx) => (
-                <div className={`mt-7.5`} key={`post-comment-${idx}`}>
-
+                <div key={`post-comment-${idx}`}>
                     {/*유저 정보 섹션*/}
                     <div className="flex items-center gap-3">
                         {/*유저 이미지*/}
-                        <div className="w-8 h-8 relative aspect-square">
+                        <div className="relative aspect-square h-8 w-8">
                             <Image
                                 src={comment.userIcon}
                                 alt="유저 프로필 이미지"
@@ -35,27 +35,27 @@ export default function PostComment() {
 
                     {/*댓글 본문 */}
                     <div className={`mt-2.5`}>
-                        <p className={`text-[#333333] font-medium text-base`}>{comment.content}</p>
+                        <p className={`text-base font-medium text-[#333333]`}>
+                            {comment.content}
+                        </p>
                     </div>
-                    {/*날짜 섹션*/}
 
-                    <div className={`mt-2.5`}>
-                        <p className={`text-[#666666] font-normal text-xs`}>{comment.updatedAt.toString()}</p>
+                    <div className={`mt-2.5 flex justify-start gap-[27px]`}>
+                        {/*날짜 섹션*/}
+                        <p className={`text-xs font-normal text-[#666666]`}>
+                            {dateFormat({ date: comment.updatedAt })}
+                        </p>
+                        {/*todo: 답글달기 클릭시 답글 입력 (디자이너 분들께 질문하기 )*/}
+                        <p
+                            className={`cursor-pointer text-xs font-medium text-[#666666]`}
+                        >
+                            답글달기
+                        </p>
                     </div>
+                    {/*세퍼레이터*/}
+                    <div className="my-5 h-px w-full bg-[#e9e9e9]" />
                 </div>
             ))}
-            <h2 className={`mb-7.5 text-xl font-bold text-neutral-950`}>
-                댓글 {totalComments}
-            </h2>
-            <h2 className={`mb-7.5 text-xl font-bold text-neutral-950`}>
-                댓글 {totalComments}
-            </h2>
-            <h2 className={`mb-7.5 text-xl font-bold text-neutral-950`}>
-                댓글 {totalComments}
-            </h2>
-            <h2 className={`mb-7.5 text-xl font-bold text-neutral-950`}>
-                댓글 {totalComments}
-            </h2>
         </div>
     );
 }

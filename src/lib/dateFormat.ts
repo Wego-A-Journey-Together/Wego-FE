@@ -6,7 +6,7 @@ import {ko} from "date-fns/locale";
  * 예시 : 2025.03.24 오후 8:45
  * @param date
  */
-const dateFormat = ({date = new Date()}) => {
+export function dateFormat({date = new Date()}) {
     const formattedDate = format(date, 'yyyy.MM.dd a h:mm', {locale: ko});
 
     return (

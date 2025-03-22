@@ -10,6 +10,7 @@ const trendingPost = [
         userName: '김동키',
         statusMessage: '혼여행러',
         rating: 5.0,
+
         reviewCount: 29,
         age: '20대',
         gender: '여자',
@@ -62,7 +63,7 @@ const trendingPost = [
         title: '강릉 카페 투어 동행',
         content:
             '3월 20일부터 22일까지 강릉 카페투어 가실 분 구합니다! 안목커피거리부터 시작해서 주문진, 정동진 쪽 예쁜 카페들 다니면서 커피도 마시고 사진도 찍을 계획이에요. 카페 투어와 바다 구경을 좋아하시는 분이면 좋겠어요. 숙소는 강릉 시내에서 잡을 예정입니다 ☕️',
-        imageSrc: '/image/jejuGirl.png', // 기본 이미지
+        imageSrc: '/data/TemporalBG.png',
         profileImage: '/image/userIcon.png',
         userName: '최카페',
         statusMessage: '카페 블로거',
@@ -73,6 +74,7 @@ const trendingPost = [
         startDate: '25.03.20',
         endDate: '25.03.22',
         userId: 'choi',
+
         view: 234,
         bookMark: 3,
         commentCount: 3,
@@ -93,7 +95,9 @@ const trendingPost = [
         imageSrc: '/image/jejuGirl.png', // 기본 이미지
         profileImage: '/image/userIcon.png',
         userName: '역마살',
+
         statusMessage: '집이 싫어요',
+
         rating: 2.3,
         reviewCount: 592,
         age: '30대',
