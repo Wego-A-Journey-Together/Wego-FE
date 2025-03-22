@@ -30,7 +30,12 @@ export default async function DetailPage({ params }: TestPageProps) {
             {/*배너*/}
             <section>
                 <div className="relative rounded-xl md:h-75 md:w-full">
-                    <Image src={post.imageSrc} fill alt={`배경사진임`} />
+                    <Image
+                        src={post.imageSrc}
+                        fill
+                        className={`object-cover`}
+                        alt={`배경사진임`}
+                    />
                 </div>
             </section>
             {/*제목 섹션 */}
