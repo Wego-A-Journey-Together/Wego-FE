@@ -452,17 +452,17 @@ export default function FilterSelector() {
 
             {/* 모바일 모달 진입 버튼 */}
             <div className="block w-full min-[1200px]:hidden">
-                <Image
-                    src={'/icon/home/searchIcon.svg'}
-                    alt="검색 아이콘"
-                    width={16.5}
-                    height={16.5}
-                />
                 <Button
                     variant="gray"
-                    className="mt-20 w-full text-base font-semibold"
+                    className="w-full text-base font-semibold"
                     onClick={() => setIsOpen(true)}
                 >
+                    <Image
+                        src={'/icon/home/searchIcon.svg'}
+                        alt="검색 아이콘"
+                        width={16.5}
+                        height={16.5}
+                    />
                     동행글 조건 입력하기
                 </Button>
 
