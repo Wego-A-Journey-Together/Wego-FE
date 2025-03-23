@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const tabItems = [
     '상세 정보',
@@ -20,10 +20,50 @@ export default function Tab({
 }) {
     const [selectedTab, setSelectedTab] = useState<TabItem>(tabItems[0]);
 
+    // IntersectionObserver 콜백함수
+    const handleIntersection: IntersectionObserverCallback = (
+        entries,
+        observer,
+    ) => {
+        /**
+         * 각 entry가 감지되었을 때,
+         * 해당 entry.target과 일치하는 ref를 찾아 탭 인덱스를 계산하고,
+         * 현재 탭 상태를 업데이트한다.
+         */
+        entries.forEach((entry) => {
+            // 요소가 잡히면 찾아서
+            if (entry.isIntersecting) {
+                const tabIndex = refs.findIndex(
+                    (ref) => ref.current === entry.target,
+                );
+                // 업데이트
+                setSelectedTab(tabItems[tabIndex]);
+            }
+        });
+    };
+    /**
+     * ScrollSpy 기능 구현체
+     */
+    useEffect(() => {
+        const observer = new IntersectionObserver(handleIntersection, {
+            root: null, // 뷰포트기준
+            threshold: 0.7,
+        });
+        refs.forEach((ref) => {
+            if (ref.current) {
+                observer.observe(ref.current);
+            }
+        });
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
     const handleChangeTab = (idx: number) => {
         setSelectedTab(tabItems[idx]);
         refs[idx].current?.scrollIntoView({
-            behavior: 'auto',
+            behavior: 'smooth',
             block: 'start',
         });
     };

@@ -11,9 +11,7 @@ import { useRef } from 'react';
 import { TrendingPost } from '../../../public/data/trending';
 
 export default function TabSection({ post }: { post: TrendingPost }) {
-    /**
-     * 커스텀 훅을 만드는게 좋아보임.
-     */
+    // 스크롤 할 ref 위치 기록
     const contentAreaRef = useRef<HTMLDivElement>(null);
     const locationAreaRef = useRef<HTMLDivElement>(null);
     const memberAreaRef = useRef<HTMLDivElement>(null);
