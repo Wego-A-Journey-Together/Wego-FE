@@ -30,9 +30,9 @@ export default function Tab() {
                         // 선택되면 커서 포인터 해제 하는게 좋을 것 같아서 넣었습니다.( 선택시 액션 또 발생하면 안좋을 것 같음 )
                         // select-none : 탭인데 클릭시에 선택되는 문제가 있어서 넣었습니다.
                         className={cn(
-                            `cursor-pointer transition-all duration-300 select-none`,
+                            `cursor-pointer border-b-2 border-transparent transition-all duration-300 select-none`,
                             selectedTab === tab &&
-                                `border-sky-blue text-sky-blue cursor-default border-b-2`,
+                                `border-sky-blue text-sky-blue cursor-default`,
                         )}
                         onClick={() => handleChangeTab(idx)}
                     >
