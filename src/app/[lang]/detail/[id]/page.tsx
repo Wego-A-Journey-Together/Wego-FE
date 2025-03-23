@@ -1,8 +1,3 @@
-import PostComment from '@/components/detail/PostComment';
-import PostContent from '@/components/detail/PostContent';
-import PostInput from '@/components/detail/PostInput';
-import PostLocation from '@/components/detail/PostLocation';
-import PostReview from '@/components/detail/PostReview';
 import RecruitFooter from '@/components/detail/RecruitFooter';
 import TabSection from '@/components/detail/TabSection';
 import UserProfile from '@/components/detail/UserProfile';
@@ -58,25 +53,8 @@ export default async function DetailPage({ params }: TestPageProps) {
                 <UserProfile post={post} />
             </section>
             {/*scrollspy 네비게이션 탭 섹션*/}
-            <TabSection />
+            <TabSection post={post} />
             {/*상세 정보 섹션*/}
-            <section>
-                <PostContent post={post} />
-            </section>
-            {/*지도 섹션*/}
-            <section>
-                <PostLocation location={post.location} />
-            </section>
-            {/*todo: 멤버 소개 섹션*/}
-            {/*댓글 섹션*/}
-            <section className={`mt-15`}>
-                <PostComment />
-                <PostInput />
-            </section>
-            {/*리뷰 섹션*/}
-            <section>
-                <PostReview />
-            </section>
 
             {/*푸터 섹션 (참여하기,문의채팅)*/}
             {/* 푸터 마진 */}

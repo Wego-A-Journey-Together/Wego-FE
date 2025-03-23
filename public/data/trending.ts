@@ -153,4 +153,6 @@ const trendingPost = [
     },
 ];
 
+export type TrendingPost = (typeof trendingPost)[number];
+
 export default trendingPost;
