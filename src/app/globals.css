@@ -158,4 +158,13 @@
     .font-pretendard {
         font-family: var(--font-pretendard), sans-serif;
     }
+
+    /* 스크롤바 숨김 처리 클래스 추가 */
+    .scrollbar-hide {
+        -ms-overflow-style: none; /* IE와 Edge 브라우저용 */
+        scrollbar-width: none; /* Firefox 브라우저용 */
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { ReponsiveCalender } from '@/components/home/ReponsiveCalender';
+import { ScrollCalender } from '@/components/home/ScrollCalender';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
@@ -48,7 +48,7 @@ const ageOptions = [
 export default function FilterSelector() {
     const [location, setLocation] = useState<string>('');
     const [date, setDate] = useState<DateRange | undefined>(undefined);
-    const [groupTheme, setgroupTheme] = useState<string>('');
+    const [groupTheme, setGroupTheme] = useState<string>('');
     const [people, setPeople] = useState<string>('');
     const [gender, setGender] = useState<string>('');
     const [age, setAge] = useState<string>('');
@@ -80,9 +80,9 @@ export default function FilterSelector() {
 
     // 데스크탑 필터
     const DesktopFilterOptions = () => (
-        <div className="flex w-full flex-wrap gap-2">
+        <div className="flex w-full flex-wrap justify-between">
             {/* 여행지 설정 */}
-            <div className="inline-flex min-w-[200px] flex-1 gap-9 rounded-lg border border-solid border-[#e9e9e9] px-7 py-4">
+            <div className="inline-flex w-[239px] gap-9 rounded-lg border border-solid border-[#e9e9e9] px-7 py-4">
                 <Image
                     src="/icon/home/pinIcon.svg"
                     alt="위치 아이콘"
@@ -90,7 +90,7 @@ export default function FilterSelector() {
                     height={17}
                 />
                 <Input
-                    className="h-auto border-0 p-0 tracking-[-0.02px] text-[#999999] shadow-none placeholder:text-[#999999] focus-visible:ring-0"
+                    className="h-auto w-auto border-0 p-0 tracking-[-0.02px] text-[#999999] shadow-none placeholder:text-[#999999] focus-visible:ring-0"
                     placeholder="여행지는 어디인가요?"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
@@ -103,7 +103,7 @@ export default function FilterSelector() {
                     <Button
                         variant={'outline'}
                         className={cn(
-                            'h-auto w-[273px] min-w-[200px] gap-9 pr-[18px] pl-7',
+                            'h-auto w-[271px] gap-9 pr-[18px] pl-7',
                             !date && 'text-[#999999]',
                         )}
                     >
@@ -155,8 +155,8 @@ export default function FilterSelector() {
             </Popover>
 
             {/* 동행 테마 */}
-            <Select value={groupTheme} onValueChange={setgroupTheme}>
-                <SelectTrigger className="h-auto min-w-[150px] gap-9 py-4 pr-[18px] pl-7">
+            <Select value={groupTheme} onValueChange={setGroupTheme}>
+                <SelectTrigger className="h-auto w-[176px] gap-9 py-4 pr-[18px] pl-7">
                     <div className="flex gap-5">
                         <Image
                             src="/icon/home/openedBookIcon.svg"
@@ -182,7 +182,7 @@ export default function FilterSelector() {
 
             {/* 동행 인원 */}
             <Select value={people} onValueChange={setPeople}>
-                <SelectTrigger className="h-auto min-w-[150px] gap-6 py-4 pr-[18px] pl-7">
+                <SelectTrigger className="h-auto w-[176px] gap-6 py-4 pr-[18px] pl-7">
                     <div className="flex gap-5">
                         <Image
                             src="/icon/home/groupIcon.svg"
@@ -191,7 +191,7 @@ export default function FilterSelector() {
                             height={17}
                         />
                         <SelectValue
-                            placeholder="동행 인원"
+                            placeholder="인원 수"
                             className="text-base font-normal tracking-[-0.02px] text-[#999999]"
                         />
                     </div>
@@ -206,62 +206,87 @@ export default function FilterSelector() {
                 </SelectContent>
             </Select>
 
-            {/* 성별 */}
-            <Select value={gender} onValueChange={setGender}>
-                <SelectTrigger className="h-auto min-w-[150px] gap-6 py-4 pr-[18px] pl-7">
-                    <div className="flex gap-5">
-                        <Image
-                            src="/icon/home/smileIcon.svg"
-                            alt="성별 아이콘"
-                            width={17}
-                            height={17}
-                        />
-                        <SelectValue
-                            placeholder="성별"
-                            className="text-base font-normal text-[#999999]"
-                        />
+            {/* 성별 & 나이 통합 */}
+            <Popover>
+                <PopoverTrigger asChild>
+                    <Button
+                        variant={'outline'}
+                        className="h-auto w-[176px] gap-6 py-4 pr-[18px] pl-7"
+                    >
+                        <div className="flex gap-5">
+                            <Image
+                                src="/icon/home/smileIcon.svg"
+                                alt="성별/나이 아이콘"
+                                width={17}
+                                height={17}
+                            />
+                            <span className="text-base font-normal text-[#999999]">
+                                {gender || age
+                                    ? `${gender} ${age}`.trim()
+                                    : '성별/나이'}
+                            </span>
+                        </div>
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-5">
+                    <div className="flex flex-col gap-6">
+                        {/* 성별 */}
+                        <div className="flex flex-col gap-3">
+                            <h3 className="text-sm font-bold">성별</h3>
+                            <div className="flex flex-wrap gap-2">
+                                {genderOptions.map((option) => (
+                                    <Button
+                                        key={option}
+                                        size="sm"
+                                        className="h-8 px-3"
+                                        variant={
+                                            gender === option
+                                                ? 'selected'
+                                                : 'outline'
+                                        }
+                                        onClick={() =>
+                                            setGender(
+                                                gender === option ? '' : option,
+                                            )
+                                        }
+                                    >
+                                        {option}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 나이 */}
+                        <div className="flex flex-col gap-3">
+                            <h3 className="text-sm font-bold">나이</h3>
+                            <div className="flex flex-wrap gap-2">
+                                {ageOptions.map((option) => (
+                                    <Button
+                                        key={option}
+                                        size="sm"
+                                        className="h-8 px-3"
+                                        variant={
+                                            age === option
+                                                ? 'selected'
+                                                : 'outline'
+                                        }
+                                        onClick={() =>
+                                            setAge(age === option ? '' : option)
+                                        }
+                                    >
+                                        {option}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
                     </div>
-                </SelectTrigger>
-
-                <SelectContent>
-                    {genderOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                            {option}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-
-            {/* 나이 */}
-            <Select value={age} onValueChange={setAge}>
-                <SelectTrigger className="h-auto min-w-[150px] gap-6 py-4 pr-[18px] pl-7">
-                    <div className="flex gap-5">
-                        <Image
-                            src="/icon/home/smileIcon.svg"
-                            alt="나이 아이콘"
-                            width={17}
-                            height={17}
-                        />
-                        <SelectValue
-                            placeholder="나이"
-                            className="text-base font-normal text-[#999999]"
-                        />
-                    </div>
-                </SelectTrigger>
-
-                <SelectContent>
-                    {ageOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                            {option}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
+                </PopoverContent>
+            </Popover>
 
             {/* 데스크탑 뷰에서 검색 버튼 */}
             <Button
                 variant="default"
-                className="h-auto min-w-[100px] gap-9 px-8 py-4 text-base font-semibold"
+                className="h-auto w-[92px] gap-9 px-8 py-4 text-base font-semibold"
                 onClick={handleSearch}
             >
                 검색
@@ -298,16 +323,7 @@ export default function FilterSelector() {
                 <div className="rounded-lg bg-[#F5F6F7] px-5 py-[30px]">
                     <div className="flex flex-col gap-5">
                         <h3 className="text-lg font-bold">날짜 지정</h3>
-                        <ReponsiveCalender
-                            className="m-auto w-full"
-                            initialFocus
-                            mode="range"
-                            defaultMonth={date?.from}
-                            selected={date}
-                            onSelect={setDate}
-                            numberOfMonths={1}
-                            locale={ko}
-                        />
+                        <ScrollCalender />
                     </div>
                 </div>
 
@@ -326,7 +342,7 @@ export default function FilterSelector() {
                                             : 'outline'
                                     }
                                     onClick={() =>
-                                        setgroupTheme(
+                                        setGroupTheme(
                                             groupTheme === option ? '' : option,
                                         )
                                     }
@@ -430,18 +446,24 @@ export default function FilterSelector() {
     return (
         <>
             {/* 기존 데스크탑 옵션 */}
-            <div className="hidden w-full md:block">
+            <div className="hidden w-full min-[1200px]:block">
                 <DesktopFilterOptions />
             </div>
 
             {/* 모바일 모달 진입 버튼 */}
-            <div className="block w-full md:hidden">
+            <div className="block w-full min-[1200px]:hidden">
+                <Image
+                    src={'/icon/home/searchIcon.svg'}
+                    alt="검색 아이콘"
+                    width={16.5}
+                    height={16.5}
+                />
                 <Button
                     variant="gray"
-                    className="w-full py-4 text-base font-semibold"
+                    className="mt-20 w-full text-base font-semibold"
                     onClick={() => setIsOpen(true)}
                 >
-                    동행글 조건입력하기
+                    동행글 조건 입력하기
                 </Button>
 
                 {/* 모바일 모달 */}

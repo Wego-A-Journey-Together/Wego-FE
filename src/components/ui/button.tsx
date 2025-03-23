@@ -21,6 +21,9 @@ const buttonVariants = cva(
                     'border border-[#333333] text-[#333333] text-sm bg-[#0AC7E4]/8 hover:bg-[#0AC7E4]/12',
                 // 회색 버튼
                 gray: 'bg-[#F5F6F7] text-[#666666] text-sm cursor-pointer hover:bg-[#F5F6F7]/90',
+                // 더 어두운 회색 버튼
+                darkGray:
+                    'bg-[#999999] text-white text-sm cursor-pointer hover:bg-[#F5F6F7]/90',
                 secondary:
                     'bg-secondary text-secondary-foreground hover:bg-secondary/80',
                 ghost: 'hover:bg-accent hover:text-accent-foreground',
