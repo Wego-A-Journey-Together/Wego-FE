@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 const tabItems = [
     '상세 정보',
@@ -13,11 +13,19 @@ const tabItems = [
 
 type TabItem = (typeof tabItems)[number];
 
-export default function Tab() {
+export default function Tab({
+    refs,
+}: {
+    refs: React.RefObject<HTMLDivElement | null>[];
+}) {
     const [selectedTab, setSelectedTab] = useState<TabItem>(tabItems[0]);
 
     const handleChangeTab = (idx: number) => {
         setSelectedTab(tabItems[idx]);
+        refs[idx].current?.scrollIntoView({
+            behavior: 'auto',
+            block: 'start',
+        });
     };
     return (
         <div
