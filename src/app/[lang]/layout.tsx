@@ -48,11 +48,9 @@ export default async function RootLayout({
     return (
         <html
             lang="en"
-            className={`${isDarkMode ? 'dark' : ''} ${pretendard.variable} ${orienta.variable} w-full overflow-x-hidden`}
+            className={`${isDarkMode ? 'dark' : ''} ${pretendard.variable} ${orienta.variable} `}
         >
-            <body
-                className={`font-pretendard bg-custom-light w-full antialiased`}
-            >
+            <body className={`font-pretendard bg-custom-light antialiased`}>
                 <ReduxProvider>
                     <TanstackProviders>
                         <div
