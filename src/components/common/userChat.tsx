@@ -5,6 +5,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Calendar, MoreHorizontal, Star, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
+import ChatList from './ChatList';
+import ChatNotice from './ChatNotice';
+
 interface UserChatProps extends PostContentProps {
     onClose?: () => void;
     onParticipate?: () => void;
@@ -121,29 +124,8 @@ export default function UserChat({
 
                     {/* 채팅 말풍선 섹션 */}
                     <section className="flex-1 overflow-y-auto p-4">
-                        <div className="flex h-full items-center justify-center">
-                            <div className="max-w-[368px] rounded-xl bg-[#f9f9f9] p-5">
-                                <h3 className="mb-[30px] text-center text-lg font-semibold text-[#333333]">
-                                    🎁 동행 찾기를 위한 TIP 🎁
-                                </h3>
-                                <h4 className="mb-5 text-center text-base font-semibold text-[#333333]">
-                                    여행 스타일을 파악할 수 있게 자기소개를
-                                    나눠보세요
-                                </h4>
-                                {/* 메세지 없는 경우에만 출력 */}
-                                <p className="text-center text-sm leading-[18.2px] text-[#333333]">
-                                    ex) 안녕하세요! 20대 중반 직장인입니다.
-                                    <br />
-                                    뭐든지 잘 먹어서 저랑 함께하지면
-                                    <br />
-                                    여러 메뉴를 드셔보실 수 있으실 겁니다.
-                                    <br />
-                                    친화력도 엄청 좋은 ENFP이니 걱정말고
-                                    <br />
-                                    여행을 같이 즐겨봐요!
-                                </p>
-                            </div>
-                        </div>
+                        {/* TODO 조건 부분에 메세지가 있는지 없는지 반환 필요 */}
+                        {true ? <ChatList /> : <ChatNotice />}
                     </section>
 
                     {/* 메세지 입력 영역 */}
