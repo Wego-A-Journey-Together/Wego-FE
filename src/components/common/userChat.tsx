@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { PostContentProps } from '@/types/PostContent';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Calendar, MoreHorizontal, Star, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import ChatList from './ChatList';
 import ChatNotice from './ChatNotice';
