@@ -58,7 +58,7 @@ export default async function DetailPage({ params }: TestPageProps) {
             {/*푸터 섹션 (참여하기,문의채팅)*/}
             {/* 푸터 마진 */}
             <div className={`h-20`} />
-            <RecruitFooter title={post.title} />
+            <RecruitFooter post={post} />
         </div>
     );
 }
