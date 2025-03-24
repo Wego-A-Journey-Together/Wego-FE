@@ -115,14 +115,14 @@ export default function Like({ id, className }: LikeProps) {
     return (
         <div
             className={cn(
-                'flex flex-1 cursor-pointer items-center gap-1.5 rounded-lg bg-white px-[30px] py-2 md:flex-none',
+                'flex flex-1 cursor-pointer items-center gap-1.5 rounded-lg px-[30px] py-2 md:flex-none',
                 className,
             )}
             onClick={handleClick}
         >
             <Bookmark
                 className={cn(
-                    'stroke-[#666666] stroke-1 transition-colors',
+                    'stroke-[#666666] stroke-2 transition-colors',
                     isLike && 'fill-neutral-500',
                 )}
             />
