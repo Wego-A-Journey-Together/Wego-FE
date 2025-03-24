@@ -1,13 +1,13 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Heart } from 'lucide-react';
+import { Bookmark } from 'lucide-react';
 import { useState } from 'react';
 
 interface OptimisticUpdateLikesProps {
     id: number;
+    className?: string;
 }
 
 interface ItemData {
@@ -16,6 +16,7 @@ interface ItemData {
 
 export default function OptimisticUpdateLikes({
     id,
+    className,
 }: OptimisticUpdateLikesProps) {
     const [isLike, setIsLike] = useState<boolean>(false);
     const queryClient = useQueryClient();
@@ -115,18 +116,19 @@ export default function OptimisticUpdateLikes({
     };
 
     return (
-        <Button
-            variant="outline"
-            className="flex flex-1 items-center gap-1.5 rounded-lg bg-white px-[30px] py-2 md:flex-none"
+        <div
+            className={cn(
+                'flex flex-1 items-center gap-1.5 rounded-lg bg-white px-[30px] py-2 md:flex-none',
+                className,
+            )}
             onClick={handleClick}
         >
-            <Heart
+            <Bookmark
                 className={cn(
-                    'transition-colors',
-                    isLike && 'fill-rose-700 stroke-rose-500',
+                    'stroke-[#666666] stroke-1 transition-colors',
+                    isLike && 'fill-neutral-500',
                 )}
             />
-            <span className="font-semibold">찜하기</span>
-        </Button>
+        </div>
     );
 }

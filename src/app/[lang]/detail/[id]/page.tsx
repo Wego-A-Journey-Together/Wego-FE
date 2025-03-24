@@ -1,7 +1,7 @@
+import OptimisticUpdateLikes from '@/components/Btn/OptimisticUpdateLikes';
 import RecruitFooter from '@/components/detail/RecruitFooter';
 import TabSection from '@/components/detail/TabSection';
 import UserProfile from '@/components/detail/UserProfile';
-import { Bookmark } from 'lucide-react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
@@ -45,8 +45,10 @@ export default async function DetailPage({ params }: TestPageProps) {
                         <span>댓글 {post.commentCount}</span>
                     </div>
                 </div>
-                {/*todo: isBookMarked? 조건부 fill */}
-                <Bookmark fill={`black`} className={`my-auto`} />
+                <OptimisticUpdateLikes
+                    className={`my-auto px-0`}
+                    id={post.id}
+                />
             </section>
             {/*주최자정보섹션*/}
             <section>

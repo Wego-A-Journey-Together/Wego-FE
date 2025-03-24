@@ -1,5 +1,4 @@
 import OptimisticUpdateLikes from '@/components/Btn/OptimisticUpdateLikes';
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
 //todo : 현재는 낙관적 업데이트를 위한 단순한 id 만 정의 (데이터 바인딩 x )
@@ -115,12 +114,7 @@ export default function RecruitPost({ id }: RecruitPostProps) {
                 {/* 상호작용 버튼 */}
                 <div className="flex w-full items-center gap-2 md:w-auto">
                     {/*낙관적 업데이트 찜 버튼*/}
-                    <OptimisticUpdateLikes id={id} />
-                    <Button className="bg-sky-blue flex flex-1 items-center gap-2.5 rounded-lg px-[30px] py-2">
-                        <span className="text-sm leading-[21px] font-semibold text-white">
-                            동행하기
-                        </span>
-                    </Button>
+                    <OptimisticUpdateLikes id={id} className={`px-0`} />
                 </div>
             </section>
         </article>
