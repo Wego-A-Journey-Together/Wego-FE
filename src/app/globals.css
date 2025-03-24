@@ -12,7 +12,7 @@
 
 :root {
     /*피그마 시안 컬러 적용*/
-    --background-light: #ffffff;
+    --background-light: #f5f5f5;
     --sky-blue: #0ac7e4;
     /*--------------*/
     --background: oklch(1 0 0);
@@ -154,6 +154,7 @@
     .font-orienta {
         font-family: var(--font-orienta, Orienta), sans-serif;
     }
+
     .font-pretendard {
         font-family: var(--font-pretendard), sans-serif;
     }
