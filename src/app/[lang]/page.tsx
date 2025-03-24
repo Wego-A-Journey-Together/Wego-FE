@@ -29,3 +29,10 @@ export default function Home() {
         </main>
     );
 }
+
+/**
+ * SEO 와 정적 빌드를 위한 언어 설정
+ */
+export async function generateStaticParams() {
+    return [{ lang: 'ko' }, { lang: 'en' }];
+}

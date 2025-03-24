@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Bookmark } from 'lucide-react';
 import { useState } from 'react';
 
-interface OptimisticUpdateLikesProps {
+interface LikeProps {
     id: number;
     className?: string;
 }
@@ -14,10 +14,7 @@ interface ItemData {
     liked: boolean;
 }
 
-export default function OptimisticUpdateLikes({
-    id,
-    className,
-}: OptimisticUpdateLikesProps) {
+export default function Like({ id, className }: LikeProps) {
     const [isLike, setIsLike] = useState<boolean>(false);
     const queryClient = useQueryClient();
 
@@ -118,7 +115,7 @@ export default function OptimisticUpdateLikes({
     return (
         <div
             className={cn(
-                'flex flex-1 items-center gap-1.5 rounded-lg bg-white px-[30px] py-2 md:flex-none',
+                'flex flex-1 cursor-pointer items-center gap-1.5 rounded-lg bg-white px-[30px] py-2 md:flex-none',
                 className,
             )}
             onClick={handleClick}

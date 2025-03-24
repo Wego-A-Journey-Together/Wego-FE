@@ -1,17 +1,11 @@
 'use client';
 
-import KAKAOLogin from '@/components/Btn/KAKAOLogin';
-import { Button } from '@/components/ui/button';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
-import { cn } from '@/lib';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function LoginBtn() {
+export default function KAKAOLogin() {
     const params = useParams(); // 지원하지 않는 언어인 경우 기본값으로 한국어 사용
     const [selectedLang, setSelectedLang] = useState('ko');
 
@@ -24,25 +18,24 @@ export default function LoginBtn() {
 
     const translations = {
         ko: {
-            text: '로그인 및 회원가입',
+            kakaoImage: '/kakao/wideKorean.png',
         },
         en: {
-            text: 'login or sign up',
+            kakaoImage: '/kakao/wideEnglish.png',
         },
     };
 
+    //lang 이 "ko"나 "en"이 아닐 경우에도 fallback "ko"를 기준으로 번역합니다
     const t = translations[selectedLang as keyof typeof translations];
-
     return (
-        <Popover>
-            <PopoverTrigger asChild>
-                <Button className={cn(`h-[37px] w-41 px-7 py-2.5`)}>
-                    {t.text}
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-fit">
-                <KAKAOLogin />
-            </PopoverContent>
-        </Popover>
+        <Link href={`/auth/login`}>
+            <Image
+                src={t.kakaoImage}
+                alt={'카카오 로그인'}
+                width={300}
+                height={45}
+                className={`h-9 w-60 object-contain`}
+            />
+        </Link>
     );
 }

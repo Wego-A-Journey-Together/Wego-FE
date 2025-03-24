@@ -47,7 +47,7 @@ export default function Tab({
                 }
             });
         },
-        [refs, tabItems],
+        [refs],
     );
     /**
      * ScrollSpy 기능 구현체

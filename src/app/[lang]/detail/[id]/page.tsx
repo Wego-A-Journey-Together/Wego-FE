@@ -1,4 +1,4 @@
-import OptimisticUpdateLikes from '@/components/Btn/OptimisticUpdateLikes';
+import Like from '@/components/Btn/Like';
 import RecruitFooter from '@/components/detail/RecruitFooter';
 import TabSection from '@/components/detail/TabSection';
 import UserProfile from '@/components/detail/UserProfile';
@@ -45,10 +45,7 @@ export default async function DetailPage({ params }: TestPageProps) {
                         <span>댓글 {post.commentCount}</span>
                     </div>
                 </div>
-                <OptimisticUpdateLikes
-                    className={`my-auto px-0`}
-                    id={post.id}
-                />
+                <Like className={`my-auto px-0`} id={post.id} />
             </section>
             {/*주최자정보섹션*/}
             <section>
