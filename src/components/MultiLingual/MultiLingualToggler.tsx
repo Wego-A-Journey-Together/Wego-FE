@@ -38,7 +38,7 @@ export default function MultiLingualToggler() {
             <DropdownMenuTrigger className="flex cursor-pointer items-center gap-0">
                 {/*  Globe 아이콘 */}
                 <Image
-                    src="/icon/globe.png"
+                    src="/icon/globe.svg"
                     width={18}
                     height={18}
                     alt="globe"
