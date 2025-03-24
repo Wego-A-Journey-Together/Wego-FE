@@ -287,7 +287,13 @@ export const ScrollCalender = () => {
         } else {
             refs.isLoadingMonths.current = false;
         }
-    }, [visibleMonths, minDate]);
+    }, [
+        visibleMonths,
+        minDate,
+        refs.calendar,
+        refs.isLoadingMonths,
+        refs.loadingStage,
+    ]);
 
     // 스크롤 처리 함수
     const handleScroll = useCallback(() => {
@@ -315,7 +321,15 @@ export const ScrollCalender = () => {
                 );
             }
         }
-    }, [visibleMonths, maxDate, loadPreviousMonths]);
+    }, [
+        visibleMonths,
+        maxDate,
+        loadPreviousMonths,
+        refs.calendar,
+        refs.isLoadingMonths,
+        refs.loadingStage,
+        refs.prevScrollPosition,
+    ]);
 
     // 초기 렌더링 시 현재 월로 스크롤
     useEffect(() => {
@@ -325,7 +339,7 @@ export const ScrollCalender = () => {
                 refs.isInitialRender.current = false;
             }, 50);
         }
-    }, [visibleMonths]);
+    }, [visibleMonths, refs.isInitialRender, refs.month]);
 
     // 스크롤 이벤트 리스너 설정
     useEffect(() => {
@@ -335,7 +349,7 @@ export const ScrollCalender = () => {
             return () =>
                 calendarElement.removeEventListener('scroll', handleScroll);
         }
-    }, [handleScroll]);
+    }, [handleScroll, refs.calendar]);
 
     return (
         <div className="flex h-full w-full flex-col items-center justify-start p-4 font-sans">
