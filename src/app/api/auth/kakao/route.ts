@@ -6,11 +6,28 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
     const SPRING_URI = process.env.SPRING_URI;
-    // 인가 코드 꺼내기
-    const kakaoCode = (await req.json()).code;
 
-    // 없으면 에러
-    if (!kakaoCode) return NextResponse.error();
+    // 선언만 하기
+    let kakaoCode: string | undefined;
+
+    // 인가 코드 꺼내기
+    try {
+        //할당
+        kakaoCode = (await req.json()).code;
+
+        if (!kakaoCode) {
+            return NextResponse.json(
+                { message: '인가 코드 없음' },
+                { status: 400 },
+            );
+        }
+    } catch (err) {
+        console.error('JSON 파싱 실패:', err);
+        return NextResponse.json(
+            { message: '잘못된 요청입니다.' },
+            { status: 400 },
+        );
+    }
 
     try {
         //todo 실제 백엔드에서 인가코드 받을 주소로 세팅 해야함
