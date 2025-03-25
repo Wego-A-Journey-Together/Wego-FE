@@ -36,17 +36,18 @@ export default function WritePage() {
 
     const onSubmit = async (values: z.infer<typeof postSchema>) => {
         console.log('Form values:', values);
-        console.log('Description type:', typeof values.description);
+        console.log('Title:', values.title);
 
-        // JSON 형식이면 문자열로 변환해서 로그 보기
-        if (typeof values.description === 'object') {
-            console.log(
-                'JSON as string:',
-                JSON.stringify(values.description, null, 2),
-            );
-        }
+        // 직렬화된 JSON 문자열 확인
+        console.log('Serialized description:', values.description);
 
+        //todo: BE 팀과 이야기 후 json 직렬화하여 본문 부분 전송하기로 했습니다.
         // 여기서 API 요청 처리
+        // fetch('/api/posts', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify(values)
+        // })
     };
 
     return (
@@ -78,20 +79,22 @@ export default function WritePage() {
                                 <FormItem className={'w-full'}>
                                     <FormLabel>본문 내용</FormLabel>
                                     <FormControl>
-                                        {/* JSON 형식으로 저장하는 방식으로 변경 */}
+                                        {/*Tiptap 에디터 부분*/}
                                         <ContentEditor
                                             content={field.value}
                                             onChange={(
                                                 content,
                                                 contentType,
                                             ) => {
-                                                if (contentType === 'json') {
-                                                    // JSON 형식으로 저장
-                                                    field.onChange(content);
-                                                } else {
-                                                    // HTML 문자열로 저장 (원래 방식)
-                                                    field.onChange(content);
-                                                }
+                                                // HTML 타입이 감지되면 XSS 공격 위험이 있다고 합니다.
+                                                if (contentType !== 'json')
+                                                    return;
+
+                                                // Tiptap 반환값 체크 -> json 방식 채택
+                                                console.log(content);
+                                                const serialJSON =
+                                                    JSON.stringify(content);
+                                                field.onChange(serialJSON);
                                             }}
                                             contentType="json" // JSON 사용 설정
                                         />

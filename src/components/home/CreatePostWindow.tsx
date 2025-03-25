@@ -7,6 +7,7 @@ import {
     useMotionValueEvent,
     useScroll,
 } from 'motion/react';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function CreatePostWindow() {
@@ -42,9 +43,12 @@ export default function CreatePostWindow() {
                             찾고 있는 동행이 없다면?
                         </p>
                         <Button className="h-[59px] w-full">
-                            <span className="text-lg font-bold text-white">
+                            <Link
+                                href={'/write'}
+                                className="text-lg font-bold text-white"
+                            >
                                 내가 원하는 동행글 작성하기
-                            </span>
+                            </Link>
                         </Button>
                     </div>
                 </motion.div>
