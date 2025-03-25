@@ -41,7 +41,7 @@ function Calendar({
                 },
             }}
             classNames={{
-                months: 'flex flex-col sm:flex-row gap-2',
+                months: 'flex flex-col sm:flex-row gap-2 ',
                 month: 'flex flex-col gap-4 w-[250px]',
                 caption:
                     'flex justify-center pt-1 relative items-center w-full',
@@ -53,10 +53,10 @@ function Calendar({
                 nav_button_previous: 'absolute left-2',
                 nav_button_next: 'absolute right-2',
                 table: 'w-[250px] border-collapse',
-                head_row: 'flex w-full ',
+                head_row: 'grid grid-cols-7 w-full',
                 head_cell:
-                    'text-foreground rounded-md w-7 font-semibold text-[0.8rem] flex justify-center',
-                row: 'flex w-full justify-between mt-2',
+                    'text-foreground rounded-md font-semibold text-[0.8rem] flex justify-center',
+                row: 'grid grid-cols-7 w-full mt-2',
                 cell: cn(
                     'relative p-0 text-center text-sm focus-within:relative focus-within:z-20',
                     props.mode === 'range'
