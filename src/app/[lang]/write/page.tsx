@@ -35,9 +35,6 @@ export default function WritePage() {
     });
 
     const onSubmit = async (values: z.infer<typeof postSchema>) => {
-        console.log('Form values:', values);
-        console.log('Title:', values.title);
-
         // 직렬화된 JSON 문자열 확인
         console.log('Serialized description:', values.description);
 
@@ -91,7 +88,10 @@ export default function WritePage() {
                                                     return;
 
                                                 // Tiptap 반환값 체크 -> json 방식 채택
-                                                console.log(content);
+                                                console.log(
+                                                    '원본 json:',
+                                                    content,
+                                                );
                                                 const serialJSON =
                                                     JSON.stringify(content);
                                                 field.onChange(serialJSON);
