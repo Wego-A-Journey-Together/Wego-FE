@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
+import { Search } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 const SearchBar = ({
@@ -134,13 +134,7 @@ const SearchBar = ({
                     aria-label="검색"
                     onClick={handleSearch}
                 >
-                    <Image
-                        src="/icon/search.png"
-                        alt="Search"
-                        width={15}
-                        height={15}
-                        className="pointer-events-none"
-                    />
+                    <Search size={15} className="pointer-events-none" />
                 </Button>
             </div>
 
@@ -152,13 +146,7 @@ const SearchBar = ({
                     onClick={() => setIsSearchOpen(!isSearchOpen)}
                     aria-label="검색 토글"
                 >
-                    <Image
-                        src="/icon/search.png"
-                        alt="Search"
-                        width={15}
-                        height={15}
-                        className="pointer-events-none"
-                    />
+                    <Search size={15} className="pointer-events-none" />
                 </Button>
 
                 {/* 모바일에서 검색 아이콘 클릭 시 나타나는 검색창 */}
