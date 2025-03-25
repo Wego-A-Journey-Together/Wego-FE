@@ -36,6 +36,7 @@ export default function MultiLingualToggler() {
         <DropdownMenu>
             <DropdownMenuTrigger className="flex cursor-pointer items-center gap-0">
                 {/*  Globe 아이콘 */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     src="/icon/globe.svg"
                     width="18"
