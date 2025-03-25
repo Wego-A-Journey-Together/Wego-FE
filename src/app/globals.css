@@ -164,7 +164,9 @@
         -ms-overflow-style: none; /* IE와 Edge 브라우저용 */
         scrollbar-width: none; /* Firefox 브라우저용 */
     }
+
     .scrollbar-hide::-webkit-scrollbar {
         display: none;
     }
 }
+

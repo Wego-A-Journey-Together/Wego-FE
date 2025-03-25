@@ -7,7 +7,6 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
-import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -37,11 +36,13 @@ export default function MultiLingualToggler() {
         <DropdownMenu>
             <DropdownMenuTrigger className="flex cursor-pointer items-center gap-0">
                 {/*  Globe 아이콘 */}
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                     src="/icon/globe.svg"
-                    width={18}
-                    height={18}
+                    width="18"
+                    height="18"
                     alt="globe"
+                    style={{ width: '18px', height: '18px' }}
                 />
 
                 {/* 현재 선택된 언어 */}

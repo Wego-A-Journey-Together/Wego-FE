@@ -1,11 +1,11 @@
 'use client';
 
 import RecruitPost from '@/components/common/RecruitPost';
-import { Button } from '@/components/ui/button';
-import { PostContentProps } from '@/types/PostContent';
+ 
+ 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { motion, useInView } from 'motion/react';
-import Link from 'next/link';
+ 
 import { useEffect, useRef } from 'react';
 
 // api 생기면 삭제
@@ -28,6 +28,7 @@ export default function InfiniteScroll() {
     } = useInfiniteQuery({
         queryKey: ['posts'],
         queryFn: async ({ pageParam = 1 }) => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const response = await fetch(
                 // 임시 링크입니다.
                 `https://jsonplaceholder.typicode.com/posts?_page=${pageParam}&_limit=12`,
@@ -57,6 +58,7 @@ export default function InfiniteScroll() {
         return <div>Error: {error.message}</div>;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hasNoData = data?.pages[0]?.length === 0;
 
     return (
