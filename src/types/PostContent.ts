@@ -12,6 +12,7 @@ export interface PostContentProps {
         reviewCount: number;
         age: string;
         gender: string;
+        isGroupOpen: boolean;
 
         startDate: string;
         endDate: string;
