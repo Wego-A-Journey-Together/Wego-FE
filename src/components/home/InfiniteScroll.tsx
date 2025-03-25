@@ -2,19 +2,16 @@
 
 import RecruitPost from '@/components/common/RecruitPost';
 import { Button } from '@/components/ui/button';
+import { PostContentProps } from '@/types/PostContent';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { motion, useInView } from 'motion/react';
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
+// api 생기면 삭제
+import trendingPost from '../../../public/data/trending';
 import LoadingThreeDots from '../common/LoadingThreeDots';
 import CreatePostWindow from './CreatePostWindow';
-
-// 임시 타입
-interface Post {
-    id: number;
-    title: string;
-    body: string;
-}
 
 export default function InfiniteScroll() {
     const ref = useRef(null);
@@ -32,10 +29,11 @@ export default function InfiniteScroll() {
         queryKey: ['posts'],
         queryFn: async ({ pageParam = 1 }) => {
             const response = await fetch(
-                // 임시 데이터입니다.
-                `https://jsonplaceholder.typicode.com/posts?_page=${pageParam}&_limit=10`,
+                // 임시 링크입니다.
+                `https://jsonplaceholder.typicode.com/posts?_page=${pageParam}&_limit=12`,
             );
-            return response.json();
+            // return response.json();
+            return [];
         },
         getNextPageParam: (lastPage, allPages) => {
             return lastPage.length ? allPages.length + 1 : undefined;
@@ -69,21 +67,20 @@ export default function InfiniteScroll() {
                 </div>
             )}
 
-            {!hasNoData &&
-                data?.pages.map((page) =>
-                    page.map((post: Post) => (
-                        <motion.div
-                            key={post.id}
-                            initial={{ y: 30, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            <RecruitPost id={post.id} />
-                        </motion.div>
-                    )),
-                )}
+            {/* 임시 데이터 */}
+            {trendingPost.map((post) => (
+                <motion.div
+                    key={post.id}
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <RecruitPost post={post} />
+                </motion.div>
+            ))}
 
-            {hasNoData && (
+            {/* api 생기면 다시 활성화, 글이 없는 경우 띄울 Ui */}
+            {/* {hasNoData && (
                 <div className="col-span-full mx-auto w-full max-w-[380px]">
                     <div className="mt-40 mb-[329px] flex flex-col items-center gap-[30px]">
                         <p className="text-center text-base font-medium text-gray-500">
@@ -99,10 +96,11 @@ export default function InfiniteScroll() {
                         </Button>
                     </div>
                 </div>
-            )}
-
+            )} */}
             {/* 첫 로딩을 끝낸 이후 데이터가 있으면 게시글 작성 버튼을 fixed로 띄웁니다. */}
-            {!isLoading && !hasNoData && <CreatePostWindow />}
+            {/* {!isLoading && !hasNoData && <CreatePostWindow />} */}
+
+            <CreatePostWindow />
 
             {isFetchingNextPage && (
                 <div className="col-span-full py-8">
