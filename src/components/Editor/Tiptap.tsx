@@ -2,8 +2,10 @@
 
 import { mergeAttributes } from '@tiptap/core';
 import Heading from '@tiptap/extension-heading';
+import Highlight from '@tiptap/extension-highlight';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
+import TextAlign from '@tiptap/extension-text-align';
 import { EditorContent, JSONContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
@@ -83,6 +85,10 @@ export default function ContentEditor({
             CustomOrderedList,
             Image.configure({ allowBase64: true, inline: false }),
             CustomLink.configure({ openOnClick: false }),
+            TextAlign.configure({
+                types: ['heading', 'paragraph'],
+            }),
+            Highlight,
         ],
         content: initialContent,
         editorProps: {

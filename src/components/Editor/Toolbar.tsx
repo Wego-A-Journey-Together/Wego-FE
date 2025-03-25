@@ -5,7 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Toggle } from '@/components/ui/toggle';
 import { type Editor } from '@tiptap/react';
 import {
+    AlignCenter,
+    AlignLeft,
+    AlignRight,
     Bold,
+    Highlighter,
     Image as ImageIcon,
     Italic,
     Link2,
@@ -50,7 +54,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
     };
 
     return (
-        <div className="bg-background mb-2 flex flex-wrap items-center gap-2 rounded-md border p-2">
+        <div className="bg-background scrollbar-hide mb-2 flex flex-nowrap items-center gap-2 overflow-x-auto rounded-md border p-2">
             {/* Heading 버튼 */}
             <button
                 onClick={() => {
@@ -120,6 +124,55 @@ export default function Toolbar({ editor }: ToolbarProps) {
                 aria-label="기울임"
             >
                 <Italic className="h-4 w-4" />
+            </Toggle>
+
+            <Toggle
+                size="sm"
+                pressed={editor.isActive({ textAlign: 'left' })}
+                onPressedChange={() =>
+                    editor.chain().focus().setTextAlign('left').run()
+                }
+                className="flex h-8 w-8 items-center justify-center p-0"
+                aria-label="왼쪽 정렬"
+            >
+                <AlignLeft className="h-4 w-4" />
+            </Toggle>
+
+            <Toggle
+                size="sm"
+                pressed={editor.isActive({ textAlign: 'center' })}
+                onPressedChange={() =>
+                    editor.chain().focus().setTextAlign('center').run()
+                }
+                className="flex h-8 w-8 items-center justify-center p-0"
+                aria-label="가운데 정렬"
+            >
+                <AlignCenter className="h-4 w-4" />
+            </Toggle>
+
+            <Toggle
+                size="sm"
+                pressed={editor.isActive({ textAlign: 'right' })}
+                onPressedChange={() =>
+                    editor.chain().focus().setTextAlign('right').run()
+                }
+                className="flex h-8 w-8 items-center justify-center p-0"
+                aria-label="오른쪽 정렬"
+            >
+                <AlignRight className="h-4 w-4" />
+            </Toggle>
+
+            {/* 하이라이트 */}
+            <Toggle
+                size="sm"
+                pressed={editor.isActive('highlight')}
+                onPressedChange={() =>
+                    editor.chain().focus().toggleHighlight().run()
+                }
+                className="flex h-8 w-8 items-center justify-center p-0"
+                aria-label="하이라이트"
+            >
+                <Highlighter className="h-4 w-4" />
             </Toggle>
 
             <Toggle

@@ -75,7 +75,7 @@ export default function WritePage() {
                             name="description"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Tiptap</FormLabel>
+                                    <FormLabel>본문 내용</FormLabel>
                                     <FormControl>
                                         {/* JSON 형식으로 저장하는 방식으로 변경 */}
                                         <ContentEditor
