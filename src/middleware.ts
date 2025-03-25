@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+
+
+
+
 // 지원하는 언어 목록
 const locales = ['ko', 'en'];
 const defaultLocale = 'ko'; // 기본값은 한국어
@@ -12,7 +16,9 @@ export function middleware(request: NextRequest) {
     if (
         pathname.startsWith('/_next') ||
         pathname.startsWith('/api') ||
-        pathname.includes('.')
+        pathname.includes('.') ||
+        // 로그인 callback URL 감시 X
+        pathname.startsWith('/auth/kakao/callback')
     ) {
         return NextResponse.next();
     }

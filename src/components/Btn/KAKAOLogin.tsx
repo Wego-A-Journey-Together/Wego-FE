@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -25,17 +24,19 @@ export default function KAKAOLogin() {
         },
     };
 
+    const handleClick = () => {};
+
     //lang 이 "ko"나 "en"이 아닐 경우에도 fallback "ko"를 기준으로 번역합니다
     const t = translations[selectedLang as keyof typeof translations];
+
     return (
-        <Link href={`/auth/login`}>
-            <Image
-                src={t.kakaoImage}
-                alt={'카카오 로그인'}
-                width={300}
-                height={45}
-                className={`h-9 w-60 object-contain`}
-            />
-        </Link>
+        <Image
+            src={t.kakaoImage}
+            alt={'카카오 로그인'}
+            width={300}
+            height={45}
+            className={`h-9 w-60 object-contain`}
+            onClick={handleClick}
+        />
     );
 }
