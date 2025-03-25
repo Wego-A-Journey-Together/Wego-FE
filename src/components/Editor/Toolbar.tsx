@@ -26,6 +26,8 @@ export default function Toolbar({ editor }: ToolbarProps) {
     const [imageUrl, setImageUrl] = useState('');
     const [linkUrl, setLinkUrl] = useState('');
 
+    const [highlightColor, setHighlightColor] = useState('#A0F0ED');
+
     if (!editor) {
         return null;
     }
@@ -183,17 +185,30 @@ export default function Toolbar({ editor }: ToolbarProps) {
                 </Toggle>
 
                 {/* 하이라이트 */}
-                <Toggle
-                    size="sm"
-                    pressed={editor.isActive('highlight')}
-                    onPressedChange={() =>
-                        editor.chain().focus().toggleHighlight().run()
-                    }
-                    className="flex h-8 w-8 items-center justify-center p-0"
-                    aria-label="하이라이트"
-                >
-                    <Highlighter className="h-4 w-4" />
-                </Toggle>
+                <div className="flex items-center gap-2">
+                    <Toggle
+                        size="sm"
+                        pressed={editor.isActive('highlight')}
+                        onPressedChange={() =>
+                            editor
+                                .chain()
+                                .focus()
+                                .toggleHighlight({ color: highlightColor })
+                                .run()
+                        }
+                        className="flex h-8 w-8 items-center justify-center p-0"
+                        aria-label="하이라이트"
+                    >
+                        <Highlighter className="h-4 w-4" />
+                    </Toggle>
+                    <input
+                        type="color"
+                        value={highlightColor}
+                        onChange={(e) => setHighlightColor(e.target.value)}
+                        className="h-8 w-8 rounded border p-0"
+                        title="하이라이트 색상 선택"
+                    />
+                </div>
 
                 <Toggle
                     size="sm"

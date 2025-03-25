@@ -88,7 +88,9 @@ export default function ContentEditor({
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
             }),
-            Highlight,
+            Highlight.configure({
+                multicolor: true,
+            }),
         ],
         content: initialContent,
         editorProps: {
