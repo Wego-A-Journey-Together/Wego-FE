@@ -36,7 +36,7 @@ export const GroupThemeFilter = () => {
                         {groupThemeOptions.map((option) => (
                             <Button
                                 key={option}
-                                className="min-w-[76px]"
+                                className="w-fit min-w-[76px]"
                                 variant={
                                     groupTheme === option
                                         ? 'selected'
@@ -74,7 +74,11 @@ export const GroupThemeFilter = () => {
                     />
                     <SelectValue
                         placeholder="동행 테마"
-                        className="tracking-[-0.02px] text-[#999999]"
+                        className={
+                            groupTheme
+                                ? 'text-base font-medium tracking-[-0.02px] text-black'
+                                : 'tracking-[-0.02px] text-[#999999]'
+                        }
                     />
                 </div>
             </SelectTrigger>
