@@ -1,16 +1,14 @@
 'use client';
 
 import RecruitPost from '@/components/common/RecruitPost';
- 
- 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { motion, useInView } from 'motion/react';
- 
 import { useEffect, useRef } from 'react';
 
 // api 생기면 삭제
 import trendingPost from '../../../public/data/trending';
 import LoadingThreeDots from '../common/LoadingThreeDots';
+import { Button } from '../ui/button';
 import CreatePostWindow from './CreatePostWindow';
 
 export default function InfiniteScroll() {
@@ -28,13 +26,11 @@ export default function InfiniteScroll() {
     } = useInfiniteQuery({
         queryKey: ['posts'],
         queryFn: async ({ pageParam = 1 }) => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const response = await fetch(
                 // 임시 링크입니다.
-                `https://jsonplaceholder.typicode.com/posts?_page=${pageParam}&_limit=12`,
+                `https://test.typicode.com/posts?_page=${pageParam}&_limit=12`,
             );
-            // return response.json();
-            return [];
+            return response.json();
         },
         getNextPageParam: (lastPage, allPages) => {
             return lastPage.length ? allPages.length + 1 : undefined;
@@ -55,10 +51,15 @@ export default function InfiniteScroll() {
     }, [isInView, fetchNextPage, isFetchingNextPage, hasNextPage]);
 
     if (isError) {
-        return <div>Error: {error.message}</div>;
+        return (
+            <div className="col-span-full mx-auto mt-40 flex flex-col items-center gap-5">
+                <p className="mb-30 text-base font-medium text-gray-200">
+                    {`일시적인 오류가 발생했습니다. ${error}`}
+                </p>
+            </div>
+        );
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hasNoData = data?.pages[0]?.length === 0;
 
     return (
@@ -82,7 +83,7 @@ export default function InfiniteScroll() {
             ))}
 
             {/* api 생기면 다시 활성화, 글이 없는 경우 띄울 Ui */}
-            {/* {hasNoData && (
+            {hasNoData && (
                 <div className="col-span-full mx-auto w-full max-w-[380px]">
                     <div className="mt-40 mb-[329px] flex flex-col items-center gap-[30px]">
                         <p className="text-center text-base font-medium text-gray-500">
@@ -98,9 +99,9 @@ export default function InfiniteScroll() {
                         </Button>
                     </div>
                 </div>
-            )} */}
+            )}
             {/* 첫 로딩을 끝낸 이후 데이터가 있으면 게시글 작성 버튼을 fixed로 띄웁니다. */}
-            {/* {!isLoading && !hasNoData && <CreatePostWindow />} */}
+            {!isLoading && !hasNoData && <CreatePostWindow />}
 
             <CreatePostWindow />
 
