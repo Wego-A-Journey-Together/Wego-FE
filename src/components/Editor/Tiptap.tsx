@@ -1,10 +1,48 @@
 'use client';
 
+import { mergeAttributes } from '@tiptap/core';
+import Heading from '@tiptap/extension-heading';
 import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
 import { EditorContent, JSONContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
+import CustomBulletList from './CustomBulletList';
+import CustomOrderedList from './CustomOrderedList';
 import Toolbar from './Toolbar';
+
+// 커스텀 Heading extension: 각 헤딩 레벨에 Tailwind 클래스를 적용
+const CustomHeading = Heading.extend({
+    renderHTML({ node, HTMLAttributes }) {
+        const level = node.attrs.level;
+        let classes = '';
+        if (level === 1) {
+            classes = 'text-4xl font-bold my-4';
+        } else if (level === 2) {
+            classes = 'text-3xl font-semibold my-3';
+        } else if (level === 3) {
+            classes = 'text-2xl font-medium my-2';
+        }
+        return [
+            `h${level}`,
+            mergeAttributes(HTMLAttributes, { class: classes }),
+            0,
+        ];
+    },
+});
+
+// 커스텀 Link extension: 링크에 Tailwind 스타일 적용 (파란색, 밑줄)
+const CustomLink = Link.extend({
+    renderHTML({ HTMLAttributes }) {
+        return [
+            'a',
+            mergeAttributes(HTMLAttributes, {
+                class: 'text-blue-500 underline',
+            }),
+            0,
+        ];
+    },
+});
 
 type ContentEditorProps = {
     content?: string | JSONContent;
@@ -20,13 +58,9 @@ export default function ContentEditor({
     onChange = () => {},
     contentType = 'html',
 }: ContentEditorProps) {
-    // 초기 내용 설정
-    const initialContent =
-        typeof content === 'string'
-            ? content // HTML 문자열인 경우
-            : content; // JSON 객체인 경우
+    // 초기 내용: HTML 문자열 혹은 JSONContent 모두 지원
+    const initialContent = typeof content === 'string' ? content : content;
 
-    // onChange가 함수인지 확인하는 안전 래퍼
     const handleChange = (html: string, jsonContent: JSONContent) => {
         if (typeof onChange === 'function') {
             if (contentType === 'html') {
@@ -40,52 +74,25 @@ export default function ContentEditor({
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
-                heading: { levels: [2, 3] },
+                heading: false,
+                bulletList: false,
+                orderedList: false,
             }),
-            Image.configure({
-                allowBase64: true,
-                inline: false,
-            }),
+            CustomHeading.configure({ levels: [1, 2, 3] }),
+            CustomBulletList,
+            CustomOrderedList,
+            Image.configure({ allowBase64: true, inline: false }),
+            CustomLink.configure({ openOnClick: false }),
         ],
         content: initialContent,
         editorProps: {
             attributes: {
                 class: 'min-h-[300px] max-h-[600px] overflow-y-auto p-4 border rounded-md focus:outline-none prose prose-sm md:prose-base max-w-none',
             },
-            handlePaste: (view, event) => {
-                const items = event.clipboardData?.items;
-                if (!items) return false;
-
-                for (const item of items) {
-                    if (item.type.startsWith('image/')) {
-                        event.preventDefault();
-                        const blob = item.getAsFile();
-
-                        if (blob && editor) {
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                                const dataUrl = e.target?.result;
-                                if (typeof dataUrl === 'string') {
-                                    editor
-                                        .chain()
-                                        .focus()
-                                        .setImage({ src: dataUrl })
-                                        .run();
-                                }
-                            };
-                            reader.readAsDataURL(blob);
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            },
         },
         onUpdate: ({ editor }) => {
-            // HTML과 JSON 모두 전달
             handleChange(editor.getHTML(), editor.getJSON());
         },
-        // SSR 문제 해결을 위한 설정
         immediatelyRender: false,
     });
 
