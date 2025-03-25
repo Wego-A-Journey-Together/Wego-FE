@@ -2,7 +2,7 @@
 
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 import * as React from 'react';
 import { DayPicker } from 'react-day-picker';
 
@@ -15,44 +15,67 @@ function Calendar({
     return (
         <DayPicker
             showOutsideDays={showOutsideDays}
-            className={cn('p-3', className)}
+            className={cn('w-[250px] p-3', className)}
+            formatters={{
+                // 영문으로 월, 요일을 표시
+                formatWeekdayName: (weekday) =>
+                    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][
+                        weekday.getDay()
+                    ],
+                formatCaption: (date) => {
+                    const months = [
+                        'January',
+                        'February',
+                        'March',
+                        'April',
+                        'May',
+                        'June',
+                        'July',
+                        'August',
+                        'September',
+                        'October',
+                        'November',
+                        'December',
+                    ];
+                    return `${months[date.getMonth()]} ${date.getFullYear()}`;
+                },
+            }}
             classNames={{
                 months: 'flex flex-col sm:flex-row gap-2',
-                month: 'flex flex-col gap-4',
+                month: 'flex flex-col gap-4 w-[250px]',
                 caption:
                     'flex justify-center pt-1 relative items-center w-full',
                 caption_label: 'text-sm font-medium',
                 nav: 'flex items-center gap-1',
                 nav_button: cn(
-                    buttonVariants({ variant: 'outline' }),
-                    'size-7 bg-transparent p-0 opacity-50 hover:opacity-100',
+                    'w-4 h-4 bg-transparent hover:bg-transparent flex items-center justify-center p-0 cursor-pointer',
                 ),
-                nav_button_previous: 'absolute left-1',
-                nav_button_next: 'absolute right-1',
-                table: 'w-full border-collapse space-x-1',
-                head_row: 'flex',
+                nav_button_previous: 'absolute left-2',
+                nav_button_next: 'absolute right-2',
+                table: 'w-[250px] border-collapse',
+                head_row: 'flex w-full ',
                 head_cell:
-                    'text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]',
-                row: 'flex w-full mt-2',
+                    'text-foreground rounded-md w-7 font-semibold text-[0.8rem] flex justify-center',
+                row: 'flex w-full justify-between mt-2',
                 cell: cn(
-                    'relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md',
+                    'relative p-0 text-center text-sm focus-within:relative focus-within:z-20',
                     props.mode === 'range'
-                        ? '[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md'
-                        : '[&:has([aria-selected])]:rounded-md',
+                        ? '[&:has(>.day-range-end)]:rounded-r-lg [&:has(>.day-range-start)]:rounded-l-lg first:[&:has([aria-selected])]:rounded-l-lg last:[&:has([aria-selected])]:rounded-r-lg'
+                        : '[&:has([aria-selected])]:rounded-lg',
                 ),
                 day: cn(
                     buttonVariants({ variant: 'ghost' }),
-                    'size-8 p-0 font-normal aria-selected:opacity-100',
+                    'size-8 p-0 font-medium aria-selected:opacity-100',
                 ),
                 day_range_start:
-                    'day-range-start aria-selected:bg-sky-blue aria-selected:text-primary-foreground',
+                    'day-range-start aria-selected:bg-sky-blue aria-selected:text-primary-foreground rounded-l-lg',
                 day_range_end:
-                    'day-range-end aria-selected:bg-sky-blue aria-selected:text-primary-foreground',
+                    'day-range-end aria-selected:bg-sky-blue aria-selected:text-primary-foreground rounded-r-lg',
                 day_selected:
-                    'bg-sky-blue text-primary-foreground hover:bg-sky-blue hover:text-primary-foreground focus:bg-sky-blue focus:text-primary-foreground',
+                    'bg-sky-blue text-primary-foreground hover:bg-sky-blue hover:text-primary-foreground focus:bg-sky-blue focus:text-primary-foreground rounded-lg',
                 day_today: 'bg-accent text-accent-foreground',
                 day_outside:
-                    'day-outside text-muted-foreground aria-selected:text-muted-foreground',
+                    'day-outside aria-selected:text-muted-foreground text-[#999999]',
                 day_disabled: 'text-muted-foreground opacity-50',
                 day_range_middle:
                     'aria-selected:bg-accent aria-selected:text-accent-foreground',
@@ -61,13 +84,21 @@ function Calendar({
             }}
             components={{
                 IconLeft: ({ className, ...props }) => (
-                    <ChevronLeft
+                    <Image
+                        src="/icon/home/prevMonth.svg"
+                        alt="Previous Month"
+                        width={16}
+                        height={16}
                         className={cn('size-4', className)}
                         {...props}
                     />
                 ),
                 IconRight: ({ className, ...props }) => (
-                    <ChevronRight
+                    <Image
+                        src="/icon/home/nextMonth.svg"
+                        alt="Next Month"
+                        width={16}
+                        height={16}
                         className={cn('size-4', className)}
                         {...props}
                     />

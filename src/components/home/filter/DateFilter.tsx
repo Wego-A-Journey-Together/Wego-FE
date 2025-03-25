@@ -15,6 +15,7 @@ import { setDateAction } from '@/redux/slices/filterSlice';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Image from 'next/image';
+import { useCallback } from 'react';
 
 export const DateFilter = () => {
     const date = useAppSelector((state) => state.filter.date);
@@ -23,6 +24,10 @@ export const DateFilter = () => {
 
     const fromDate = date?.from ? new Date(date.from) : null;
     const toDate = date?.to ? new Date(date.to) : null;
+
+    const resetSelection = useCallback(() => {
+        dispatch(setDateAction(undefined));
+    }, [dispatch]);
 
     if (isMobile) {
         return (
@@ -41,7 +46,7 @@ export const DateFilter = () => {
                 <Button
                     variant={'outline'}
                     className={cn(
-                        'h-auto w-[271px] gap-9 pr-[18px] pl-7',
+                        'h-auto w-[271px] gap-6 pr-[18px] pl-7',
                         !date && 'text-[#999999]',
                     )}
                 >
@@ -51,9 +56,11 @@ export const DateFilter = () => {
                         width={17}
                         height={17}
                     />
+
+                    {/* 선택한 범위가 몇박인지 계산 */}
                     {fromDate ? (
                         toDate ? (
-                            <span className="mr-auto text-base font-normal">
+                            <span className="mr-3 text-base font-medium text-black">
                                 {format(fromDate, 'MM.dd E', { locale: ko })} -{' '}
                                 {format(toDate, 'MM.dd E', { locale: ko })} (
                                 {Math.ceil(
@@ -63,29 +70,45 @@ export const DateFilter = () => {
                                 박)
                             </span>
                         ) : (
-                            <span className="mr-auto text-base font-normal">
+                            <span className="mr-auto text-base font-medium text-black">
                                 {format(fromDate, 'MM.dd E', { locale: ko })}
                             </span>
                         )
                     ) : (
-                        <span className="mr-auto">날짜는 언제인가요?</span>
+                        <span className="mr-auto text-base">
+                            날짜는 언제인가요?
+                        </span>
                     )}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-2" align="start">
-                <Calendar
-                    initialFocus
-                    mode="range"
-                    defaultMonth={fromDate || undefined}
-                    selected={
-                        fromDate
-                            ? { from: fromDate, to: toDate || undefined }
-                            : undefined
-                    }
-                    onSelect={(newDate) => dispatch(setDateAction(newDate))}
-                    numberOfMonths={1}
-                    locale={ko}
-                />
+            <PopoverContent className="w-[336px] p-3" align="start">
+                <div className="flex flex-col items-center gap-2">
+                    <Calendar
+                        initialFocus
+                        mode="range"
+                        defaultMonth={fromDate || undefined}
+                        selected={
+                            fromDate
+                                ? { from: fromDate, to: toDate || undefined }
+                                : undefined
+                        }
+                        onSelect={(newDate) => dispatch(setDateAction(newDate))}
+                        numberOfMonths={1}
+                        locale={ko}
+                        className="flex justify-center"
+                    />
+
+                    {/* 초기화 버튼 */}
+                    <div className="mb-2 w-[250px]">
+                        <Button
+                            variant={'reset'}
+                            onClick={resetSelection}
+                            className="h-10 w-full rounded-lg border-1 text-sm"
+                        >
+                            초기화
+                        </Button>
+                    </div>
+                </div>
             </PopoverContent>
         </Popover>
     );
