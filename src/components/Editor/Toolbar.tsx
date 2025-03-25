@@ -54,180 +54,211 @@ export default function Toolbar({ editor }: ToolbarProps) {
     };
 
     return (
-        <div className="bg-background scrollbar-hide mb-2 flex flex-nowrap items-center gap-2 overflow-x-auto rounded-md border p-2">
-            {/* Heading 버튼 */}
-            <button
-                onClick={() => {
-                    if (editor.isActive('heading', { level: 1 })) {
-                        editor.chain().focus().setParagraph().run();
-                    } else {
-                        editor.chain().focus().setHeading({ level: 1 }).run();
+        <div className="bg-background scrollbar-hide mb-2 flex flex-row flex-wrap items-center justify-between gap-3 overflow-x-auto rounded-md border p-2">
+            {/*모바일 상단*/}
+            <section className="flex w-full flex-wrap justify-between md:w-auto">
+                {/* Heading 버튼 */}
+                <button
+                    onClick={() => {
+                        if (editor.isActive('heading', { level: 1 })) {
+                            editor.chain().focus().setParagraph().run();
+                        } else {
+                            editor
+                                .chain()
+                                .focus()
+                                .setHeading({ level: 1 })
+                                .run();
+                        }
+                    }}
+                    className={`flex h-8 w-8 items-center justify-center p-0 text-xs ${
+                        editor.isActive('heading', { level: 1 })
+                            ? 'font-bold'
+                            : ''
+                    }`}
+                    aria-label="헤딩 1"
+                >
+                    H1
+                </button>
+                <button
+                    onClick={() => {
+                        if (editor.isActive('heading', { level: 2 })) {
+                            editor.chain().focus().setParagraph().run();
+                        } else {
+                            editor
+                                .chain()
+                                .focus()
+                                .setHeading({ level: 2 })
+                                .run();
+                        }
+                    }}
+                    className={`flex h-8 w-8 items-center justify-center p-0 text-xs ${
+                        editor.isActive('heading', { level: 2 })
+                            ? 'font-bold'
+                            : ''
+                    }`}
+                    aria-label="헤딩 2"
+                >
+                    H2
+                </button>
+                <button
+                    onClick={() => {
+                        if (editor.isActive('heading', { level: 3 })) {
+                            editor.chain().focus().setParagraph().run();
+                        } else {
+                            editor
+                                .chain()
+                                .focus()
+                                .setHeading({ level: 3 })
+                                .run();
+                        }
+                    }}
+                    className={`flex h-8 w-8 items-center justify-center p-0 text-xs ${
+                        editor.isActive('heading', { level: 3 })
+                            ? 'font-bold'
+                            : ''
+                    }`}
+                    aria-label="헤딩 3"
+                >
+                    H3
+                </button>
+
+                <Toggle
+                    size="sm"
+                    pressed={editor.isActive('bold')}
+                    onPressedChange={() =>
+                        editor.chain().focus().toggleBold().run()
                     }
-                }}
-                className={`flex h-8 w-8 items-center justify-center p-0 text-xs ${
-                    editor.isActive('heading', { level: 1 }) ? 'font-bold' : ''
-                }`}
-                aria-label="헤딩 1"
-            >
-                H1
-            </button>
-            <button
-                onClick={() => {
-                    if (editor.isActive('heading', { level: 2 })) {
-                        editor.chain().focus().setParagraph().run();
-                    } else {
-                        editor.chain().focus().setHeading({ level: 2 }).run();
+                    className="flex h-8 w-8 items-center justify-center p-0"
+                    aria-label="굵게"
+                >
+                    <Bold className="h-4 w-4" />
+                </Toggle>
+
+                <Toggle
+                    size="sm"
+                    pressed={editor.isActive('italic')}
+                    onPressedChange={() =>
+                        editor.chain().focus().toggleItalic().run()
                     }
-                }}
-                className={`flex h-8 w-8 items-center justify-center p-0 text-xs ${
-                    editor.isActive('heading', { level: 2 }) ? 'font-bold' : ''
-                }`}
-                aria-label="헤딩 2"
-            >
-                H2
-            </button>
-            <button
-                onClick={() => {
-                    if (editor.isActive('heading', { level: 3 })) {
-                        editor.chain().focus().setParagraph().run();
-                    } else {
-                        editor.chain().focus().setHeading({ level: 3 }).run();
+                    className="flex h-8 w-8 items-center justify-center p-0"
+                    aria-label="기울임"
+                >
+                    <Italic className="h-4 w-4" />
+                </Toggle>
+
+                <Toggle
+                    size="sm"
+                    pressed={editor.isActive({ textAlign: 'left' })}
+                    onPressedChange={() =>
+                        editor.chain().focus().setTextAlign('left').run()
                     }
-                }}
-                className={`flex h-8 w-8 items-center justify-center p-0 text-xs ${
-                    editor.isActive('heading', { level: 3 }) ? 'font-bold' : ''
-                }`}
-                aria-label="헤딩 3"
-            >
-                H3
-            </button>
+                    className="flex h-8 w-8 items-center justify-center p-0"
+                    aria-label="왼쪽 정렬"
+                >
+                    <AlignLeft className="h-4 w-4" />
+                </Toggle>
 
-            <Toggle
-                size="sm"
-                pressed={editor.isActive('bold')}
-                onPressedChange={() =>
-                    editor.chain().focus().toggleBold().run()
-                }
-                className="flex h-8 w-8 items-center justify-center p-0"
-                aria-label="굵게"
-            >
-                <Bold className="h-4 w-4" />
-            </Toggle>
+                <Toggle
+                    size="sm"
+                    pressed={editor.isActive({ textAlign: 'center' })}
+                    onPressedChange={() =>
+                        editor.chain().focus().setTextAlign('center').run()
+                    }
+                    className="flex h-8 w-8 items-center justify-center p-0"
+                    aria-label="가운데 정렬"
+                >
+                    <AlignCenter className="h-4 w-4" />
+                </Toggle>
 
-            <Toggle
-                size="sm"
-                pressed={editor.isActive('italic')}
-                onPressedChange={() =>
-                    editor.chain().focus().toggleItalic().run()
-                }
-                className="flex h-8 w-8 items-center justify-center p-0"
-                aria-label="기울임"
-            >
-                <Italic className="h-4 w-4" />
-            </Toggle>
+                <Toggle
+                    size="sm"
+                    pressed={editor.isActive({ textAlign: 'right' })}
+                    onPressedChange={() =>
+                        editor.chain().focus().setTextAlign('right').run()
+                    }
+                    className="flex h-8 w-8 items-center justify-center p-0"
+                    aria-label="오른쪽 정렬"
+                >
+                    <AlignRight className="h-4 w-4" />
+                </Toggle>
 
-            <Toggle
-                size="sm"
-                pressed={editor.isActive({ textAlign: 'left' })}
-                onPressedChange={() =>
-                    editor.chain().focus().setTextAlign('left').run()
-                }
-                className="flex h-8 w-8 items-center justify-center p-0"
-                aria-label="왼쪽 정렬"
-            >
-                <AlignLeft className="h-4 w-4" />
-            </Toggle>
+                {/* 하이라이트 */}
+                <Toggle
+                    size="sm"
+                    pressed={editor.isActive('highlight')}
+                    onPressedChange={() =>
+                        editor.chain().focus().toggleHighlight().run()
+                    }
+                    className="flex h-8 w-8 items-center justify-center p-0"
+                    aria-label="하이라이트"
+                >
+                    <Highlighter className="h-4 w-4" />
+                </Toggle>
 
-            <Toggle
-                size="sm"
-                pressed={editor.isActive({ textAlign: 'center' })}
-                onPressedChange={() =>
-                    editor.chain().focus().setTextAlign('center').run()
-                }
-                className="flex h-8 w-8 items-center justify-center p-0"
-                aria-label="가운데 정렬"
-            >
-                <AlignCenter className="h-4 w-4" />
-            </Toggle>
+                <Toggle
+                    size="sm"
+                    pressed={editor.isActive('bulletList')}
+                    onPressedChange={() =>
+                        editor.chain().focus().toggleBulletList().run()
+                    }
+                    className="flex h-8 w-8 items-center justify-center p-0"
+                    aria-label="글머리 기호"
+                >
+                    <List className="h-4 w-4" />
+                </Toggle>
 
-            <Toggle
-                size="sm"
-                pressed={editor.isActive({ textAlign: 'right' })}
-                onPressedChange={() =>
-                    editor.chain().focus().setTextAlign('right').run()
-                }
-                className="flex h-8 w-8 items-center justify-center p-0"
-                aria-label="오른쪽 정렬"
-            >
-                <AlignRight className="h-4 w-4" />
-            </Toggle>
+                <Toggle
+                    size="sm"
+                    pressed={editor.isActive('orderedList')}
+                    onPressedChange={() =>
+                        editor.chain().focus().toggleOrderedList().run()
+                    }
+                    className="flex h-8 w-8 items-center justify-center p-0"
+                    aria-label="번호 매기기"
+                >
+                    <ListOrdered className="h-4 w-4" />
+                </Toggle>
+            </section>
+            {/*모바일 하단*/}
+            <section className="flex w-full flex-nowrap gap-2 overflow-x-auto md:w-auto">
+                {/* 링크 임베드 */}
+                <div className="ml-2 flex min-w-0 flex-1 items-center gap-1">
+                    <Link2 className="text-muted-foreground h-4 w-4 flex-shrink-0" />
+                    <Input
+                        type="text"
+                        placeholder="링크 URL 입력"
+                        value={linkUrl}
+                        onChange={(e) => setLinkUrl(e.target.value)}
+                        className="h-8 min-w-0 flex-1 text-xs"
+                    />
+                    <Button
+                        onClick={addLink}
+                        size="sm"
+                        className="h-8 flex-shrink-0"
+                    >
+                        추가
+                    </Button>
+                </div>
 
-            {/* 하이라이트 */}
-            <Toggle
-                size="sm"
-                pressed={editor.isActive('highlight')}
-                onPressedChange={() =>
-                    editor.chain().focus().toggleHighlight().run()
-                }
-                className="flex h-8 w-8 items-center justify-center p-0"
-                aria-label="하이라이트"
-            >
-                <Highlighter className="h-4 w-4" />
-            </Toggle>
-
-            <Toggle
-                size="sm"
-                pressed={editor.isActive('bulletList')}
-                onPressedChange={() =>
-                    editor.chain().focus().toggleBulletList().run()
-                }
-                className="flex h-8 w-8 items-center justify-center p-0"
-                aria-label="글머리 기호"
-            >
-                <List className="h-4 w-4" />
-            </Toggle>
-
-            <Toggle
-                size="sm"
-                pressed={editor.isActive('orderedList')}
-                onPressedChange={() =>
-                    editor.chain().focus().toggleOrderedList().run()
-                }
-                className="flex h-8 w-8 items-center justify-center p-0"
-                aria-label="번호 매기기"
-            >
-                <ListOrdered className="h-4 w-4" />
-            </Toggle>
-
-            {/* 링크 임베드 */}
-            <div className="ml-2 flex items-center gap-1">
-                <Link2 className="text-muted-foreground h-4 w-4" />
-                <Input
-                    type="text"
-                    placeholder="링크 URL 입력"
-                    value={linkUrl}
-                    onChange={(e) => setLinkUrl(e.target.value)}
-                    className="h-8 w-48 text-xs md:w-60"
-                />
-                <Button onClick={addLink} size="sm" className="h-8">
-                    추가
-                </Button>
-            </div>
-
-            {/* 이미지 URL 입력 */}
-            <div className="ml-2 flex items-center gap-1">
-                <ImageIcon className="text-muted-foreground h-4 w-4" />
-                <Input
-                    type="text"
-                    placeholder="이미지 URL 입력"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    className="h-8 w-48 text-xs md:w-60"
-                />
-                <Button onClick={addImage} size="sm" className="h-8">
-                    추가
-                </Button>
-            </div>
+                {/* 이미지 URL 입력 */}
+                <div className="ml-2 flex min-w-0 flex-1 items-center gap-1">
+                    <ImageIcon className="text-muted-foreground h-4 w-4 flex-shrink-0" />
+                    <Input
+                        type="text"
+                        placeholder="이미지 URL 입력"
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        className="h-8 min-w-0 flex-1 text-xs"
+                    />
+                    <Button
+                        onClick={addImage}
+                        size="sm"
+                        className="h-8 flex-shrink-0"
+                    >
+                        추가
+                    </Button>
+                </div>
+            </section>
         </div>
     );
 }

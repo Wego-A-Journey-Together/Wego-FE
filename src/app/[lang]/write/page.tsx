@@ -50,20 +50,21 @@ export default function WritePage() {
     };
 
     return (
-        <div>
-            <main className={'p-24'}>
+        <div className="mx-auto w-full">
+            <main className="mx-auto w-full flex-col">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <FormField
                             control={form.control}
                             name="title"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className={'w-full'}>
                                     <FormLabel>Title</FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder="Main title for your article"
                                             {...field}
+                                            className={`w-full`}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -74,7 +75,7 @@ export default function WritePage() {
                             control={form.control}
                             name="description"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className={'w-full'}>
                                     <FormLabel>본문 내용</FormLabel>
                                     <FormControl>
                                         {/* JSON 형식으로 저장하는 방식으로 변경 */}
