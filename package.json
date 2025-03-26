@@ -43,6 +43,7 @@
     "framer-motion": "^12.4.10",
     "lucide-react": "^0.476.0",
     "motion": "^12.4.10",
+    "nanoid": "^5.1.5",
     "next": "15.2.0",
     "popover": "^2.4.1",
     "postcss": "^8.5.3",
