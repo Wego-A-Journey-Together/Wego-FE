@@ -1,8 +1,5 @@
+import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-
-
-
-
 
 /**
  * redirect uri 에서 인가코드를 뽑아 BE로 전달하는 route
@@ -14,11 +11,12 @@ export async function POST(req: NextRequest) {
 
     // 선언만 하기
     let code: string | undefined;
+    let state: string | undefined;
 
-    // 인가 코드 꺼내기
+    // 인가 코드 꺼내기 && state 값 검증
     try {
         //할당
-        ({ code } = await req.json());
+        ({ code, state } = await req.json());
 
         if (!code) {
             return NextResponse.json(
@@ -26,6 +24,26 @@ export async function POST(req: NextRequest) {
                 { status: 400 },
             );
         }
+        const userCookie = await cookies();
+        const originState = userCookie.get('kakao_auth_state');
+
+        // state 가 없거나, 쿠키에 state 가 없다면 비정상 접근 처리
+        if (!(originState && state)) {
+            return NextResponse.json(
+                { message: '비정상 접근 입니다.' },
+                { status: 400 },
+            );
+        }
+
+        // state 가 올바르게 도착 했는지 검증
+        if (originState.value !== state) {
+            return NextResponse.json(
+                { message: '인증 정보가 유효하지 않습니다' },
+                { status: 400 },
+            );
+        }
+        // 쿠키 지우기 ( 인가코드 전달을 위한 쿠키 이므로 )
+        userCookie.delete('kakao_auth_state');
     } catch (err) {
         console.error('JSON 파싱 실패:', err);
         return NextResponse.json(
