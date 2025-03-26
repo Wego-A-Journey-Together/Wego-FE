@@ -4,18 +4,23 @@ import { NextRequest, NextResponse } from 'next/server';
 
 
 
+/**
+ * redirect uri 에서 인가코드를 뽑아 BE로 전달하는 route
+ * @param req
+ * @constructor
+ */
 export async function POST(req: NextRequest) {
     const SPRING_URI = process.env.SPRING_URI;
 
     // 선언만 하기
-    let kakaoCode: string | undefined;
+    let code: string | undefined;
 
     // 인가 코드 꺼내기
     try {
         //할당
-        kakaoCode = (await req.json()).code;
+        ({ code } = await req.json());
 
-        if (!kakaoCode) {
+        if (!code) {
             return NextResponse.json(
                 { message: '인가 코드 없음' },
                 { status: 400 },
@@ -34,7 +39,7 @@ export async function POST(req: NextRequest) {
         const res = await fetch(`${SPRING_URI}/api/user/kakao/callback`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ kakaoCode }),
+            body: JSON.stringify({ code }),
         });
 
         const data = await res.json();
