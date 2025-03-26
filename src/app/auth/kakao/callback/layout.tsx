@@ -1,4 +1,5 @@
-import React from 'react';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import React, { Suspense } from 'react';
 
 import '../../../globals.css';
 
@@ -14,7 +15,10 @@ export default function KakaoCallbackLayout({
 }) {
     return (
         <html lang="ko">
-            <body>{children}</body>
+            <body>
+                {/*useSearchParams() 를 사용하려면 부모에서 Suspense 로 감아야 빌드 에러가 안난다.*/}
+                <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
+            </body>
         </html>
     );
 }
