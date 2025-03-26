@@ -51,6 +51,7 @@ export default function CallBackPage() {
             try {
                 //인가코드 획득
                 const code = searchParams.get('code');
+                const state = searchParams.get('state');
 
                 // 코드가 없으면 바로 홈페이지로 리디렉션
                 if (!code) {
@@ -63,6 +64,7 @@ export default function CallBackPage() {
 
                 // todo: 인가코드 체크용 콘솔로그 -> 배포전 제거하기
                 console.log('인가코드:', code);
+                console.log('카카오state:', state);
 
                 // 인가 코드를 BFF(/api/auth/kakao)에 POST 요청
                 const response = await fetch('/api/auth/kakao', {
@@ -72,7 +74,7 @@ export default function CallBackPage() {
                     },
                     //todo: HttpOnly 쿠키 사용시 유지 회의에 따라 결정
                     credentials: 'include',
-                    body: JSON.stringify({ code }),
+                    body: JSON.stringify({ code, state }),
                 });
 
                 // 실패 응답시 메시지 띄운 후 3초후 홈페이지 리디렉션
