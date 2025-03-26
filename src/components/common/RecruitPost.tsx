@@ -1,4 +1,5 @@
 import Like from '@/components/Btn/Like';
+import { extractPreview } from '@/lib';
 import { PostContentProps } from '@/types/PostContent';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -67,7 +68,7 @@ export default function RecruitPost({ post }: PostContentProps) {
 
                     {/* 본문 미리보기 */}
                     <p className="mb-3.5 h-[62px] w-full overflow-hidden text-base leading-[20.8px] font-normal text-[#333333]">
-                        {post.content}
+                        {extractPreview(post.content)}
                     </p>
                 </Link>
             </header>
