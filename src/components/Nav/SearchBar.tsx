@@ -122,7 +122,7 @@ const SearchBar = ({
                     value={desktopValue}
                     onChange={handleDesktopInputChange}
                     className={cn(
-                        'm-0 h-full border-0 bg-neutral-100 pr-10 shadow-none placeholder:text-neutral-500 dark:bg-neutral-800 dark:placeholder:text-neutral-200',
+                        'm-0 h-full border-0 bg-neutral-100 pr-10 shadow-none placeholder:text-neutral-500 focus:outline-none focus-visible:border-0 focus-visible:ring-0 dark:bg-neutral-800 dark:placeholder:text-neutral-200',
                         className,
                     )}
                     {...props}
@@ -163,7 +163,7 @@ const SearchBar = ({
                                 value={mobileValue}
                                 onChange={handleMobileInputChange}
                                 onKeyDown={handleMobileKeyDown}
-                                className="m-0 h-full border-0 pr-10 shadow-none placeholder:text-neutral-500 dark:placeholder:text-neutral-200"
+                                className="m-0 h-full border-0 pr-10 shadow-none placeholder:text-neutral-500 focus:outline-none focus-visible:border-0 focus-visible:ring-0 dark:placeholder:text-neutral-200"
                                 autoFocus
                                 {...props}
                             />

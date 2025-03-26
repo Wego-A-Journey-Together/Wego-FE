@@ -11,7 +11,7 @@ export const MobileFilterButton = () => {
     return (
         <Button
             variant="gray"
-            className="w-full text-base font-semibold"
+            className="h-12 w-full py-[14.5px] text-base font-semibold"
             onClick={() => dispatch(openModal())}
         >
             <Image
@@ -20,7 +20,7 @@ export const MobileFilterButton = () => {
                 width={16.5}
                 height={16.5}
             />
-            동행글 조건 입력하기
+            <p>동행글 조건 입력하기</p>
         </Button>
     );
 };

@@ -22,7 +22,6 @@ export default function InfiniteScroll() {
         isFetchingNextPage,
         isLoading,
         isError,
-        error,
     } = useInfiniteQuery({
         queryKey: ['posts'],
         queryFn: async ({ pageParam = 1 }) => {
@@ -53,9 +52,12 @@ export default function InfiniteScroll() {
     if (isError) {
         return (
             <div className="col-span-full mx-auto mt-40 flex flex-col items-center gap-5">
-                <p className="mb-30 text-base font-medium text-gray-200">
-                    {`일시적인 오류가 발생했습니다. ${error}`}
+                <p className="text-base font-medium text-gray-500">
+                    일시적인 오류가 발생했어요
                 </p>
+                <Button onClick={() => window.location.reload()}>
+                    새로고침
+                </Button>
             </div>
         );
     }

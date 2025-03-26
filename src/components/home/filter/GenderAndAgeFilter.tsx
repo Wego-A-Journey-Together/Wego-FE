@@ -9,6 +9,7 @@ import {
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setAge, setGender } from '@/redux/slices/filterSlice';
+import { ChevronDownIcon } from 'lucide-react';
 import Image from 'next/image';
 
 const genderOptions = ['무관', '여성', '남성'];
@@ -97,24 +98,27 @@ export const GenderAndAgeFilter = () => {
             <PopoverTrigger asChild>
                 <Button
                     variant={'outline'}
-                    className="h-auto w-[176px] gap-6 py-4 pr-[18px] pl-7"
+                    className="h-auto w-[176px] justify-between gap-6 py-4 pr-[18px]"
                 >
-                    <div className="flex gap-5">
+                    <div className="flex items-center gap-5 pl-3">
                         <Image
                             src="/icon/home/smileIcon.svg"
                             alt="성별/나이 아이콘"
                             width={17}
                             height={17}
                         />
-                        <span className="text-base font-normal text-[#999999]">
+                        <span
+                            className={`text-base font-normal ${gender || age ? 'text-foreground' : 'text-[#999999]'}`}
+                        >
                             {gender || age
                                 ? `${gender} ${age}`.trim()
                                 : '성별/나이'}
                         </span>
                     </div>
+                    <ChevronDownIcon className="mr-1.5 size-4 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-5">
+            <PopoverContent align="start" className="w-[306px] px-7 py-6">
                 <div className="flex flex-col gap-6">
                     {/* 성별 */}
                     <div className="flex flex-col gap-3">
@@ -123,8 +127,7 @@ export const GenderAndAgeFilter = () => {
                             {genderOptions.map((option) => (
                                 <Button
                                     key={option}
-                                    size="sm"
-                                    className="h-8 px-3"
+                                    className="h-8 w-[52px] px-3"
                                     variant={
                                         gender === option
                                             ? 'selected'
@@ -152,7 +155,7 @@ export const GenderAndAgeFilter = () => {
                                 <Button
                                     key={option}
                                     size="sm"
-                                    className="h-8 px-3"
+                                    className="h-8 w-[52px] px-3"
                                     variant={
                                         age === option ? 'selected' : 'outline'
                                     }

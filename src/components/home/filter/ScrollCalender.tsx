@@ -21,9 +21,9 @@ import { Button } from '../../ui/button';
 
 // 요일 표시 컴포넌트 - 간결하게 변경
 const RenderDays = () => (
-    <div className="mb-4 grid w-full grid-cols-7 items-center pb-2">
+    <div className="m-auto mb-4 grid w-2/3 grid-cols-7 items-center pb-2">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
-            <div className="text-center text-sm font-medium" key={i}>
+            <div className="w-full text-center text-sm font-medium" key={i}>
                 {day}
             </div>
         ))}
@@ -32,7 +32,7 @@ const RenderDays = () => (
 
 // 달력 헤더 컴포넌트 - 월과 연도 표시
 const RenderHeader = ({ currentMonth }: { currentMonth: Date }) => (
-    <div className="mb-2 flex items-center justify-between font-bold">
+    <div className="mb-2 flex items-center justify-between text-center font-bold">
         {currentMonth.toLocaleString('en-US', { month: 'long' })}{' '}
         {format(currentMonth, 'yyyy')}
     </div>
@@ -92,11 +92,10 @@ const RenderCells = ({
         <div className="w-full">
             {getWeeksArray().map((week, weekIndex) => (
                 <div
-                    className="mb-2 grid w-full grid-cols-7"
+                    className="mb-2 grid w-full grid-cols-7 place-items-center"
                     key={`week-${weekIndex}`}
                 >
                     {week.map((day, dayIndex) => {
-                        // 날짜 상태 계산
                         const formattedDate = format(day, 'd');
                         const isSelected =
                             selectedStartDate &&
@@ -112,8 +111,19 @@ const RenderCells = ({
                         return (
                             <div
                                 className={cn(
-                                    'flex cursor-pointer items-center justify-center py-1 transition-transform hover:scale-105',
+                                    'relative flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-transform hover:scale-105',
                                     isNotValid && 'hover:scale-100',
+                                    isRangeDate &&
+                                        !isSelected &&
+                                        !isEndDate &&
+                                        'bg-[#E8E9EA]',
+                                    (isSelected || isEndDate) && 'bg-sky-blue',
+                                    dayIndex === 0 &&
+                                        isRangeDate &&
+                                        'rounded-lg',
+                                    dayIndex === 6 &&
+                                        isRangeDate &&
+                                        'rounded-lg',
                                 )}
                                 key={day.toString()}
                                 onClick={() =>
@@ -124,20 +134,16 @@ const RenderCells = ({
                                     className={cn(
                                         'flex h-8 w-8 items-center justify-center text-center transition-colors',
                                         isNotValid && 'text-gray-300',
-                                        isSunday &&
-                                            !isNotValid &&
-                                            'text-red-500',
+                                        isSunday && !isNotValid && 'text-black',
                                         isSaturday &&
                                             !isNotValid &&
-                                            'text-blue-500',
-                                        isSelected &&
-                                            'rounded-full bg-blue-500 text-white',
-                                        isEndDate &&
-                                            'rounded-full bg-blue-500 text-white',
+                                            'text-black',
+                                        (isSelected || isEndDate) &&
+                                            'rounded-lg text-white',
                                         isRangeDate &&
                                             !isSelected &&
                                             !isEndDate &&
-                                            'rounded-full bg-blue-100',
+                                            'rounded-none',
                                     )}
                                 >
                                     {formattedDate}
@@ -353,41 +359,45 @@ export const ScrollCalender = () => {
 
     return (
         <div className="flex h-full w-full flex-col items-center justify-start p-4 font-sans">
-            <RenderDays />
-            <div
-                ref={refs.calendar}
-                className="scrollbar-hide flex h-[300px] w-full flex-col overflow-y-auto"
-            >
-                {visibleMonths.map((month, index) => (
-                    <div
-                        className="mb-8 w-full opacity-100 transition-opacity"
-                        key={`${month.getFullYear()}-${month.getMonth()}-${index}`}
-                        ref={
-                            isSameMonth(month, currentDate) ? refs.month : null
-                        }
-                    >
-                        <RenderHeader currentMonth={month} />
-                        <RenderCells
-                            currentMonth={month}
-                            selectedStartDate={selectedStartDate}
-                            selectedEndDate={selectedEndDate}
-                            onDateClick={handleDateClick}
-                        />
-                    </div>
-                ))}
+            <div className="w-full">
+                <RenderDays />
+                <div
+                    ref={refs.calendar}
+                    className="scrollbar-hide flex h-[300px] w-full flex-col overflow-y-auto border-y border-[#E8E9EA]"
+                >
+                    {visibleMonths.map((month, index) => (
+                        <div
+                            className="m-auto mb-8 w-2/3 opacity-100 transition-opacity"
+                            key={`${month.getFullYear()}-${month.getMonth()}-${index}`}
+                            ref={
+                                isSameMonth(month, currentDate)
+                                    ? refs.month
+                                    : null
+                            }
+                        >
+                            <RenderHeader currentMonth={month} />
+                            <RenderCells
+                                currentMonth={month}
+                                selectedStartDate={selectedStartDate}
+                                selectedEndDate={selectedEndDate}
+                                onDateClick={handleDateClick}
+                            />
+                        </div>
+                    ))}
+                </div>
             </div>
             <div className="mt-4 flex w-full justify-center gap-2">
                 <Button
                     variant="outline"
                     onClick={resetSelection}
-                    className="transition-transform hover:scale-105 active:scale-95"
+                    className="w-[118px] border-1 border-[#999999]"
                 >
                     초기화
                 </Button>
                 <Button
-                    variant={selectedStartDate ? 'default' : 'ghost'}
+                    variant={selectedStartDate ? 'default' : 'darkGray'}
                     onClick={applyDateRange}
-                    className="transition-transform hover:scale-105 active:scale-95"
+                    className="w-[118px]"
                 >
                     적용
                 </Button>
