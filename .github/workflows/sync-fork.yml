@@ -1,12 +1,14 @@
 name: Synchronize to forked repo
-
 on:
-    push:
-        branches:
-            - main
+    workflow_run:
+        workflows:
+            - 'Push Validation'
+        types:
+            - completed
 
 jobs:
     sync:
+        name: Sync forked repo
         runs-on: ubuntu-latest
 
         steps:
@@ -20,13 +22,16 @@ jobs:
             - name: Add remote-url
               run: |
                   git remote add forked-repo https://jungdadak:${{ secrets.FORKED_REPO_SYNC }}@github.com/jungdadak/sprint1.git
-                  git config --global user.name "jungdadak"
-                  git config --global user.email "junghyun21110@naver.com"
+                  git config user.name jungdadak
+                  git config user.email junghyun21110@naver.com
+
+            - name: Checkout main
+              run: |
+                  git checkout -b main
 
             - name: Push changes to forked-repo
               run: |
-                  git fetch forked-repo main || echo "포크된 저장소에 main 브랜치가 없습니다."
-                  git push forked-repo main || (echo "push에 실패했습니다.")
+                  git push -f forked-repo main:main
 
             - name: Clean up
               run: |
