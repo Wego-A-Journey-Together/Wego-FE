@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function POST(req: NextRequest) {
     const SPRING_URI = process.env.SPRING_URI;
+    const BE_KAKAO_CODE_URI = process.env.BE_KAKAO_CODE_URI;
 
     // 선언만 하기
     let code: string | undefined;
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
 
     try {
         //todo 실제 백엔드에서 인가코드 받을 주소로 세팅 해야함
-        const res = await fetch(`${SPRING_URI}/api/user/kakao/callback`, {
+        const res = await fetch(`${SPRING_URI}${BE_KAKAO_CODE_URI}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ code }),
