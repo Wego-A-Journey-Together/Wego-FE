@@ -8,6 +8,9 @@ export default function KAKAOLogin() {
     const params = useParams(); // 지원하지 않는 언어인 경우 기본값으로 한국어 사용
     const [selectedLang, setSelectedLang] = useState('ko');
 
+    //-----------------------------------------------------------
+    // 다국어 관련
+    //-------------------------------------------------------------
     useEffect(() => {
         // params 에서 lang 값 가져오기
         const lang = params.lang as string;
@@ -24,7 +27,12 @@ export default function KAKAOLogin() {
         },
     };
 
+    //-----------------------------------------------------------
+    // KAKAO 로그인 관련
+    //-------------------------------------------------------------
+
     const handleClick = () => {
+        // 유저를 서버로 이동
         window.location.href = '/api/auth/kakao/login';
     };
 
