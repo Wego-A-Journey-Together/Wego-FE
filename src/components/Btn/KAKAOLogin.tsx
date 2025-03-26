@@ -24,7 +24,9 @@ export default function KAKAOLogin() {
         },
     };
 
-    const handleClick = () => {};
+    const handleClick = () => {
+        window.location.href = '/api/auth/kakao/login';
+    };
 
     //lang 이 "ko"나 "en"이 아닐 경우에도 fallback "ko"를 기준으로 번역합니다
     const t = translations[selectedLang as keyof typeof translations];
