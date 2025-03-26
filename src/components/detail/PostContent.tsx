@@ -1,3 +1,4 @@
+import JsonToHtml from '@/components/detail/JsonToHtml';
 import { PostContentProps } from '@/types/PostContent';
 import Image from 'next/image';
 
@@ -136,7 +137,7 @@ export default function PostContent({ post }: PostContentProps) {
                         </div>
 
                         <article className="text-lg leading-[130%] font-medium text-[#333333]">
-                            {post.content}
+                            <JsonToHtml content={post.content} />
                         </article>
                     </div>
                 </div>

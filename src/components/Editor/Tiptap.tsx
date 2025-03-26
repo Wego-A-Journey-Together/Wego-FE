@@ -14,7 +14,7 @@ import CustomOrderedList from './CustomOrderedList';
 import Toolbar from './Toolbar';
 
 // 커스텀 Heading extension: 각 헤딩 레벨에 Tailwind 클래스를 적용
-const CustomHeading = Heading.extend({
+export const CustomHeading = Heading.extend({
     renderHTML({ node, HTMLAttributes }) {
         const level = node.attrs.level;
         let classes = '';
@@ -34,7 +34,7 @@ const CustomHeading = Heading.extend({
 });
 
 // 커스텀 Link extension: 링크에 Tailwind 스타일 적용 (파란색, 밑줄)
-const CustomLink = Link.extend({
+export const CustomLink = Link.extend({
     renderHTML({ HTMLAttributes }) {
         return [
             'a',

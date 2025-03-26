@@ -36,7 +36,7 @@ export default function WritePage() {
 
     const onSubmit = async (values: z.infer<typeof postSchema>) => {
         // 직렬화된 JSON 문자열 확인
-        // console.log('Serialized description:', values.description);
+        console.log('Serialized description:', values.description);
         //todo: BE 팀과 이야기 후 json 직렬화하여 본문 부분 전송하기로 했습니다.
         // 여기서 API 요청 처리
         // fetch('/api/posts', {
@@ -90,9 +90,7 @@ export default function WritePage() {
 
                                                 const serialJSON =
                                                     JSON.stringify(content);
-                                                console.log(
-                                                    JSON.stringify(serialJSON),
-                                                );
+                                                console.log(serialJSON);
                                                 field.onChange(serialJSON);
                                             }}
                                             contentType="json" // JSON 사용 설정
