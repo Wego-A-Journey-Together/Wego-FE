@@ -9,7 +9,7 @@ export default function ThemeToggler({
     className,
 }: {
     colorTheme: boolean;
-    className: string;
+    className?: string;
 }) {
     // 서버에서 받은 초기 값으로 설정
     const [isDark, setIsDark] = useState(colorTheme);
