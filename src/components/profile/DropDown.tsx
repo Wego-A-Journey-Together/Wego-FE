@@ -62,50 +62,56 @@ export default function DropDown({ name }: { name: string }) {
     };
 
     return (
-        <div className="flex w-full flex-col gap-[50px]">
-            <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-                <div className="flex items-center gap-2.5">
-                    {/*드롭다운 섹션 ( 동행,동행 소감, 받은 소감 )*/}
-                    <h2 className="w-40 text-2xl font-bold">
-                        {getDisplayText(selectOption)}
-                    </h2>{' '}
-                    <PopoverTrigger>
-                        {' '}
-                        <Image
-                            width={18}
-                            height={18}
-                            alt="dropdown icon"
-                            src="/icon/profile/dropDown.svg"
-                            className="cursor-pointer"
-                        />
-                    </PopoverTrigger>
-                </div>
+        <>
+            <div className="mb-10 flex w-full items-center gap-2.5">
+                <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+                    <div className="flex items-center gap-2.5">
+                        {/*드롭다운 섹션 ( 동행,동행 소감, 받은 소감 )*/}
+                        <h2 className="w-40 text-2xl font-bold">
+                            {getDisplayText(selectOption)}
+                        </h2>{' '}
+                        <PopoverTrigger>
+                            {' '}
+                            <Image
+                                width={18}
+                                height={18}
+                                alt="dropdown icon"
+                                src="/icon/profile/dropDown.svg"
+                                className="cursor-pointer"
+                            />
+                        </PopoverTrigger>
+                    </div>
 
-                <PopoverContent
-                    className="mt-2 mr-5 w-40 gap-3 p-0"
-                    align="end"
-                    alignOffset={0}
-                    sideOffset={5}
-                >
-                    {DropDownContents.map((option, idx) => {
-                        return (
-                            <p
-                                key={'key' + idx}
-                                className="hover:text-sky-blue cursor-pointer text-center text-2xl font-bold transition-colors hover:bg-neutral-100"
-                                onClick={() => handleClick(option)}
-                            >
-                                {getDisplayText(option)}
-                            </p>
-                        );
-                    })}
-                </PopoverContent>
-            </Popover>
-
-            <Tab
-                tabItems={currentTabItems}
-                selectedTab={currentSelectedTab}
-                onChange={handleTabChange}
-            />
-        </div>
+                    <PopoverContent
+                        className="mt-2 mr-5 w-40 gap-3 p-0"
+                        align="end"
+                        alignOffset={0}
+                        sideOffset={5}
+                    >
+                        {DropDownContents.map((option, idx) => {
+                            return (
+                                <p
+                                    key={'key' + idx}
+                                    className="hover:text-sky-blue cursor-pointer text-center text-2xl font-bold transition-colors hover:bg-neutral-100"
+                                    onClick={() => handleClick(option)}
+                                >
+                                    {getDisplayText(option)}
+                                </p>
+                            );
+                        })}
+                    </PopoverContent>
+                </Popover>
+            </div>
+            <section
+                className={`sticky top-18 z-50 border-b border-b-[#AAAAAAA]`}
+            >
+                <Tab
+                    tabItems={currentTabItems}
+                    selectedTab={currentSelectedTab}
+                    onChange={handleTabChange}
+                    className={'leading-relaxed'}
+                />
+            </section>
+        </>
     );
 }

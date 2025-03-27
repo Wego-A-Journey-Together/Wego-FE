@@ -12,12 +12,21 @@ interface TabProps {
      * 탭 클릭 시 인덱스를 알리는 콜백
      */
     onChange: (index: number) => void;
+    className?: string;
 }
 
-export default function Tab({ tabItems, selectedTab, onChange }: TabProps) {
+export default function Tab({
+    tabItems,
+    selectedTab,
+    onChange,
+    className,
+}: TabProps) {
     return (
         <div
-            className={`bg-custom-light relative z-50 flex gap-7.5 text-lg leading-loose font-semibold text-gray-400`}
+            className={cn(
+                `bg-custom-light relative z-50 flex gap-7.5 text-lg leading-loose font-semibold text-gray-400`,
+                className,
+            )}
         >
             {tabItems.map((tab, idx) => {
                 return (

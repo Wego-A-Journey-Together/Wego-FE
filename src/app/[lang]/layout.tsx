@@ -1,11 +1,11 @@
 import NavBar from '@/components/Nav/NavBar';
-import ThemeToggler from '@/components/ThemeToggler/DarkModeToggler';
 import TanstackProviders from '@/query/TanstackProvider';
 import ReduxProvider from '@/redux/ReduxProvider';
 import type { Metadata, Viewport } from 'next';
 import { Orienta } from 'next/font/google';
 import localFont from 'next/font/local';
 import { cookies } from 'next/headers';
+import React from 'react';
 
 import '../globals.css';
 
@@ -48,13 +48,13 @@ export default async function RootLayout({
     return (
         <html
             lang="en"
-            className={`${isDarkMode ? 'dark' : ''} ${pretendard.variable} ${orienta.variable} `}
+            className={`${isDarkMode ? 'dark' : ''} ${pretendard.variable} ${orienta.variable}`}
         >
             <body className={`font-pretendard bg-custom-light antialiased`}>
                 <ReduxProvider>
                     <TanstackProviders>
-                        <ThemeToggler colorTheme={isDarkMode} />
                         <NavBar
+                            isDarkMode={isDarkMode}
                             className={`bg-custom-light sticky top-0 z-40`}
                         />
                         <main
