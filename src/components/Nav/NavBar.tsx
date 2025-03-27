@@ -15,12 +15,12 @@ export default function NavBar({ className }: NavProps) {
     return (
         <header
             className={cn(
-                'flex h-18 w-full items-center justify-between',
+                'm-auto flex h-18 w-full items-center justify-between',
                 className,
             )}
         >
             {/* 데스크탑 레이아웃 */}
-            <div className="hidden w-full md:flex md:items-center md:justify-between">
+            <div className="m-auto hidden w-full max-w-[1240px] px-[20px] md:flex md:items-center md:justify-between">
                 <section className="flex items-center gap-3">
                     <Logo />
                     <SearchBar className="bg-neutral-100 dark:bg-neutral-800" />
