@@ -3,6 +3,7 @@
 import { cn } from '@/lib';
 
 interface TabProps {
+    // 탭 목록 문자열
     tabItems: readonly string[];
 
     selectedTab: string; // 혹은 (typeof tabItems)[number]
