@@ -1,18 +1,37 @@
 'use client';
 
-import Tab from "@/components/common/Tab";
-import {Popover, PopoverContent, PopoverTrigger,} from '@/components/ui/popover';
+import Tab from '@/components/common/Tab';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
 import Image from 'next/image';
-import {useState} from 'react';
+import { useState } from 'react';
 
-export default function DropDown({name}: { name: string }) {
+export default function DropDown({ name }: { name: string }) {
     const dropDownOptions = [
-        {id: 'journey', label: '의 동행'},
-        {id: 'sogam', label: '동행 소감'},
-        {id: 'recived', label: '받은 소감'},
+        { id: 'journey', label: '의 동행' },
+        { id: 'sogam', label: '동행 소감' },
     ] as const;
 
-    const tabOptions
+    const tabOptions = [
+        {
+            id: 'journey',
+            label: [
+                '참여중인 동행',
+                '참여 종료된 동행',
+                '내 동행',
+                '작성 댓글',
+            ],
+        },
+        {
+            id: 'sogam',
+            label: ['받은 소감', '작성 가능한 소감', '내가 작성한 소감'],
+        },
+    ];
+
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
     const [selectOption, setSelectOption] = useState<
         (typeof dropDownOptions)[number]
@@ -24,18 +43,30 @@ export default function DropDown({name}: { name: string }) {
 
     const handleClick = (option: (typeof dropDownOptions)[number]) => {
         setSelectOption(option);
+        setIsPopoverOpen(false);
+        setSelectedTabIndex(0);
     };
 
     const getDisplayText = (option: (typeof dropDownOptions)[number]) => {
         return option.id === 'journey' ? name + option.label : option.label;
     };
+    //---------------------------------------------------------
+    //탭 관련 로직
+    //---------------------------------------------------------
+    const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+    const currentTabItems =
+        tabOptions.find((option) => option.id === selectOption.id)?.label || [];
+    const currentSelectedTab = currentTabItems[selectedTabIndex];
+    const handleTabChange = (index: number) => {
+        setSelectedTabIndex(index);
+    };
 
     return (
         <div className="flex w-full flex-col gap-[50px]">
-            <Popover>
+            <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                 <div className="flex items-center gap-2.5">
                     {/*드롭다운 섹션 ( 동행,동행 소감, 받은 소감 )*/}
-                    <h2 className="w-40 text-center text-2xl font-bold">
+                    <h2 className="w-40 text-2xl font-bold">
                         {getDisplayText(selectOption)}
                     </h2>{' '}
                     <PopoverTrigger>
@@ -70,7 +101,11 @@ export default function DropDown({name}: { name: string }) {
                 </PopoverContent>
             </Popover>
 
-            <Tab tabItems={} selectedTab={} onChange={}/>
+            <Tab
+                tabItems={currentTabItems}
+                selectedTab={currentSelectedTab}
+                onChange={handleTabChange}
+            />
         </div>
     );
 }
