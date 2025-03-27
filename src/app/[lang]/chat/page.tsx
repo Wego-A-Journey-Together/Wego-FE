@@ -8,7 +8,7 @@ export default function Chat() {
     return (
         <>
             <div className="fixed inset-x-0 top-0 -z-10 h-full bg-[#F5F6F7]" />
-            <main className="mx-auto w-full max-w-[580px] bg-white">
+            <main className="bg-background-light mx-auto max-w-[580px] border-x-1 border-[#E9E9E9]">
                 <header className="px-5 pt-10 pb-[50px]">
                     <h1 className="text-xl font-semibold">대화 목록</h1>
                 </header>

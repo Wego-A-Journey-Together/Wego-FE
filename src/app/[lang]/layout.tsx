@@ -53,15 +53,15 @@ export default async function RootLayout({
             <body className={`font-pretendard bg-custom-light antialiased`}>
                 <ReduxProvider>
                     <TanstackProviders>
-                        <div
+                        <ThemeToggler colorTheme={isDarkMode} />
+                        <NavBar
+                            className={`bg-custom-light sticky top-0 z-40`}
+                        />
+                        <main
                             className={`mx-auto max-w-[1240px] px-4 sm:px-6 md:px-5`}
                         >
-                            <ThemeToggler colorTheme={isDarkMode} />
-                            <NavBar
-                                className={`bg-custom-light sticky top-0 z-40`}
-                            />
                             {children}
-                        </div>
+                        </main>
                     </TanstackProviders>
                 </ReduxProvider>
             </body>
