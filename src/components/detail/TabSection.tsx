@@ -5,7 +5,7 @@ import PostContent from '@/components/detail/PostContent';
 import PostInput from '@/components/detail/PostInput';
 import PostLocation from '@/components/detail/PostLocation';
 import PostReview from '@/components/detail/PostReview';
-import Tab from '@/components/detail/Tab';
+import ScrollSpy from '@/components/detail/ScrollSpy';
 import { useRef } from 'react';
 
 import { TrendingPost } from '../../../public/data/trending';
@@ -32,7 +32,7 @@ export default function TabSection({ post }: { post: TrendingPost }) {
                 className={`sticky top-18 z-50 mt-17.5 border-b border-b-[#AAAAAAA]`}
             >
                 <p className={`sr-only`}>탭그룹</p>
-                <Tab refs={refs} />
+                <ScrollSpy refs={refs} />
             </section>
             {/*상세 정보 섹션*/}
             <section ref={contentAreaRef} className="scroll-mt-40">

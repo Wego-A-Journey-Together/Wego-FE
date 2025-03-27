@@ -1,6 +1,7 @@
 'use client';
 
 import LoginBtn from '@/components/Btn/LoginBtn';
+import ThemeToggler from '@/components/ThemeToggler/DarkModeToggler';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,7 +12,7 @@ import { cn } from '@/lib';
 import { Menu, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 
-export default function Hamburger() {
+export default function Hamburger({ isDarkMode }: { isDarkMode: boolean }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef(null);
 
@@ -46,8 +47,14 @@ export default function Hamburger() {
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center" className="w-auto">
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem>
                     <LoginBtn />
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <ThemeToggler
+                        colorTheme={isDarkMode}
+                        className={'mx-auto'}
+                    />
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

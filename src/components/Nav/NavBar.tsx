@@ -5,13 +5,15 @@ import MultiLingualToggler from '@/components/MultiLingual/MultiLingualToggler';
 import Hamburger from '@/components/Nav/Hamburger';
 import Logo from '@/components/Nav/Logo';
 import { SearchBar } from '@/components/Nav/SearchBar';
+import ThemeToggler from '@/components/ThemeToggler/DarkModeToggler';
 import { cn } from '@/lib';
 
 interface NavProps {
     className?: string;
+    isDarkMode: boolean;
 }
 
-export default function NavBar({ className }: NavProps) {
+export default function NavBar({ className, isDarkMode }: NavProps) {
     return (
         <header
             className={cn(
@@ -27,6 +29,8 @@ export default function NavBar({ className }: NavProps) {
                 </section>
 
                 <section className="flex items-center">
+                    <ThemeToggler colorTheme={isDarkMode} />
+
                     <LoginBtn />
                     <div className="w-[20px]" />
                     <MultiLingualToggler />
@@ -35,7 +39,7 @@ export default function NavBar({ className }: NavProps) {
 
             {/* 모바일 레이아웃 */}
             <div className="flex w-full items-center justify-between md:hidden">
-                <Hamburger />
+                <Hamburger isDarkMode={isDarkMode} />
 
                 <section className="absolute left-1/2 -translate-x-1/2 transform">
                     <Logo />

@@ -1,6 +1,5 @@
-import MyGroupPost from '@/components/profile/MyGroupPost';
+import DropDown from '@/components/profile/DropDown';
 import MypageProfile from '@/components/profile/MypageProfile';
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
 import trendingPost from '../../../../../public/data/trending';
@@ -25,24 +24,12 @@ export default async function ProfilePage({ params }: TestPageProps) {
                 <div className="flex w-full max-w-[1200px] flex-col gap-[70px]">
                     <MypageProfile user={user} />
 
-                    <section className="flex w-full flex-col gap-[50px]">
-                        <div className="flex items-center gap-2.5">
-                            <h2 className="text-2xl font-bold">
-                                {user.userName}의 동행
-                            </h2>
-                            <Image
-                                width={10}
-                                height={10}
-                                alt="dropdown icon"
-                                src="/icon/profile/dropDown.svg"
-                            />
-                        </div>
-
-                        {/* TODO 이 줄에 탭 기능 코드 넣으면 됩니다. */}
-
-                        {/* 참여 중인 동행 리스트입니다 */}
-                        <MyGroupPost posts={trendingPost} />
+                    {/*드롭다운 섹션 ( 동행,동행 소감, 받은 소감 ), 탭 포함*/}
+                    <section>
+                        <DropDown name={user.userName} />
                     </section>
+
+                    {/* TODO 이 줄에 탭 기능 코드 넣으면 됩니다. */}
                 </div>
             </main>
         </div>
