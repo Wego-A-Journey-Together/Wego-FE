@@ -1,6 +1,5 @@
 import { StarIcon } from 'lucide-react';
 import Image from 'next/image';
-import React from 'react';
 
 interface User {
     userName: string;
