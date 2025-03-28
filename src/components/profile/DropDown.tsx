@@ -1,6 +1,7 @@
 'use client';
 
 import Tab from '@/components/common/Tab';
+import GroupCreateByUser from '@/components/profile/GroupCreateByUser';
 import MyGroupPost from '@/components/profile/MyGroupPost';
 import {
     Popover,
@@ -43,7 +44,7 @@ const TAB_CONTENTS = {
     journey: {
         participating: <MyGroupPost posts={trendingPost} />,
         ended: <div>참여 종료된 동행 리스트</div>,
-        my: <div>내 동행 리스트</div>,
+        my: <GroupCreateByUser posts={trendingPost} />,
         comments: <div>내가 작성한 댓글 목록</div>,
     },
     sogam: {
