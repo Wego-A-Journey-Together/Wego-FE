@@ -1,6 +1,7 @@
 interface PostReview {
     reviewId: number;
     postId: number;
+    postImage: string;
     userId: number;
     userName: string;
     userIcon: string;
@@ -13,6 +14,7 @@ export const postReviews: PostReview[] = [
     {
         reviewId: 1,
         postId: 1,
+        postImage: '/image/jejuGirl.png',
         userId: 1,
         userName: '김동키',
         userIcon: '/image/dogProfile.png',
@@ -23,6 +25,7 @@ export const postReviews: PostReview[] = [
     {
         reviewId: 2,
         postId: 1,
+        postImage: '/image/jejuGirl.png',
         userId: 1,
         userName: '김동키',
         userIcon: '/image/dogProfile.png',
@@ -33,6 +36,7 @@ export const postReviews: PostReview[] = [
     {
         reviewId: 3,
         postId: 1,
+        postImage: '',
         userId: 1,
         userName: '김동키',
         userIcon: '/image/dogProfile.png',

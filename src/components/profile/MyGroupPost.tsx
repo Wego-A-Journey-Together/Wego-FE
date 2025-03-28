@@ -1,51 +1,20 @@
-import { XIcon } from 'lucide-react';
+import Divider from '@/components/common/Divider';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { PostContentProps } from '@/types/PostContent';
 import Image from 'next/image';
 
-import { Button } from '../ui/button';
-
-interface Post {
-    id: number;
-    title: string;
-    isGroupOpen: boolean;
-    startDate: string;
-    endDate: string;
-    ageRange: string;
-    preferredGender: string;
-    currentMembers: number;
-    maxMembers: number;
-    userName: string;
-    imageSrc: string;
-    userId: string;
-    content: string;
-    profileImage: string;
-    statusMessage: string;
-    rating: number;
-    reviewCount: number;
-    age: string;
-    hashtags: string[];
-}
-
 interface MyGroupPostProps {
-    posts: Post[];
+    posts: PostContentProps['post'][];
 }
+
+// 게시글 삭제 여부 임시
+let isDeleted = true;
 
 export default function MyGroupPost({ posts }: MyGroupPostProps) {
-    const groupPosts = posts.map((post) => ({
-        id: post.id,
-        title: post.title,
-        status: post.isGroupOpen ? '모집중' : '동행마감',
-        date: `${post.startDate} - ${post.endDate}`,
-        age: post.ageRange,
-        gender: post.preferredGender,
-        participants: `${post.currentMembers}명 / ${post.maxMembers}명`,
-        host: post.userName,
-        image: post.imageSrc,
-        isDeleted: false,
-    }));
-
     return (
-        <div className="flex w-full flex-col gap-5">
-            {groupPosts.map((post) => (
+        <article className="flex w-full flex-col gap-5">
+            {posts.map((post) => (
                 <div
                     key={post.id}
                     className="relative overflow-visible rounded-xl border-none bg-[#f5f6f7] p-[30px] shadow-none"
@@ -56,44 +25,92 @@ export default function MyGroupPost({ posts }: MyGroupPostProps) {
                             <Image
                                 className="rounded-lg object-cover"
                                 alt={post.title}
-                                src={post.image}
+                                src={post.imageSrc}
                                 fill
                                 sizes="80px"
                             />
                         </div>
                         <div className="flex flex-grow flex-col gap-2">
                             <div className="flex items-center gap-2">
-                                <span className="rounded-full bg-[#e5e8ea] px-2 py-1 text-xs font-medium text-[#666666]">
-                                    {post.status}
-                                </span>
+                                <Badge
+                                    variant={
+                                        post.isGroupOpen ? 'default' : 'disable'
+                                    }
+                                >
+                                    {post.isGroupOpen ? '모집 중' : '모집 마감'}
+                                </Badge>
+
                                 <h3 className="text-lg font-semibold text-black">
                                     {post.title}
                                 </h3>
                             </div>
-                            <div className="flex flex-wrap gap-2 text-sm text-[#666666]">
-                                <span>{post.date}</span>
-                                <span>•</span>
-                                <span>{post.age}</span>
-                                <span>•</span>
-                                <span>{post.gender}</span>
-                                <span>•</span>
-                                <span>{post.participants}</span>
-                            </div>
-                            <div className="flex items-center gap-1 text-sm text-[#666666]">
-                                <span className="font-medium text-black">
-                                    {post.host}
+
+                            {/* 모임 세부 정보 */}
+                            <div className="flex flex-wrap items-center gap-2 text-sm">
+                                {post.startDate} - {post.endDate} ({'n'}일)
+                                <Divider />
+                                {post.age}
+                                <Divider />
+                                {post.preferredGender}
+                                <Divider />
+                                <span>
+                                    <span
+                                        // 모집 인원이 다 찼을 때 black으로 글자 색상 처리
+                                        className={
+                                            post.currentMembers ===
+                                            post.maxMembers
+                                                ? ''
+                                                : 'text-[#666666]'
+                                        }
+                                    >
+                                        {post.currentMembers}명 /{' '}
+                                    </span>
+                                    {post.maxMembers}명
                                 </span>
                             </div>
+                            <div className="flex items-center gap-1 text-sm">
+                                <div className="relative h-5 w-5">
+                                    <Image
+                                        src={post.profileImage}
+                                        width={20}
+                                        height={20}
+                                        alt="유저 아이콘 이미지"
+                                    />
+                                </div>
+                                {post.userName}
+                            </div>
                         </div>
-                        <div className="flex flex-shrink-0 items-center gap-2">
-                            <Button>임시버튼</Button>
+
+                        <div className="flex w-[130px] flex-shrink-0 flex-col items-center gap-2">
+                            <Button
+                                variant={'skyblueOutline'}
+                                className="w-full"
+                            >
+                                <Image
+                                    src="/icon/detail/chatIcon.svg"
+                                    alt="chat"
+                                    width={16}
+                                    height={16}
+                                    className="mr-1.5"
+                                />
+                                문의하기
+                            </Button>
+                            <Button className="w-full">소감 남기기</Button>
                         </div>
                     </div>
 
-                    {post.isDeleted && (
+                    {/* 게시글이 삭제(숨김)처리된 경우 */}
+                    {/* 나중에 key 추가하여 post.isDeleted 로 게시글 삭제 여부 처리 */}
+                    {isDeleted && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-[#000000b2]">
+                            {/* TODO 누르면 사용자에게 해당 게시물이 안 보이게 처리 */}
                             <button className="absolute top-5 right-5 text-white">
-                                <XIcon className="h-[15px] w-[15px]" />
+                                <Image
+                                    src={'/icon/profile/closeIcon.svg'}
+                                    alt="closing button"
+                                    width={15}
+                                    height={15}
+                                />
                             </button>
                             <p className="text-center text-sm font-medium text-white">
                                 주최자가 동행을 삭제 or 비공개했어요
@@ -104,6 +121,6 @@ export default function MyGroupPost({ posts }: MyGroupPostProps) {
                     )}
                 </div>
             ))}
-        </div>
+        </article>
     );
 }
