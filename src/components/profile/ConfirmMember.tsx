@@ -22,7 +22,7 @@ export default function ConfirmMember({
     currentTabIndex,
 }: ConfirmMemberProps) {
     return (
-        <div className="mt-4">
+        <div className="mt-5">
             <div className="text-gray-700">
                 {members && members.length > 0 ? (
                     members.map((member, idx) => {
@@ -34,7 +34,14 @@ export default function ConfirmMember({
                                 <div className="flex items-center justify-between gap-2">
                                     <div className="flex items-center justify-between gap-3">
                                         <div className="flex items-center justify-between gap-3">
-                                            <Checkbox />
+                                            <Checkbox
+                                                className={
+                                                    'h-7 w-7 border-2 border-[#d9d9d9]'
+                                                }
+                                                iconSize={
+                                                    'size-5.5 stroke-[4px]'
+                                                }
+                                            />
                                             <div className="h-[50px] w-[50px] overflow-hidden rounded-full">
                                                 <Image
                                                     src={member.profileImage}
@@ -94,13 +101,19 @@ export default function ConfirmMember({
             </div>
             {/* 하단 체크박스 및 버튼 그룹 */}
             <div className="mt-11 flex items-center justify-between">
-                <Checkbox className={'h-7 w-7'} />
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                        className={'h-7 w-7 border-2 border-[#d9d9d9]'}
+                        iconSize={'size-5.5 stroke-[4px]'}
+                    />
+                    <p className={'text-base text-black'}>전체 선택</p>
+                </div>
                 {currentTabIndex === 0 ? (
                     <div className="flex gap-2">
                         <Button
                             variant="outline"
                             size="sm"
-                            className="h-10 w-[100px] text-xs font-semibold hover:border-rose-500 hover:text-rose-500"
+                            className="h-10 w-[100px] border-[#d9d9d9] text-xs text-[#666666] hover:border-rose-500 hover:text-rose-500"
                         >
                             거절하기
                         </Button>
@@ -115,7 +128,7 @@ export default function ConfirmMember({
                     <Button
                         variant="outline"
                         size="sm"
-                        className="h-10 w-[100px] text-xs font-semibold hover:border-rose-500 hover:text-rose-500"
+                        className="h-10 w-[100px] border-[#d9d9d9] text-xs text-[#666666] hover:border-rose-500 hover:text-rose-500"
                     >
                         거절하기
                     </Button>

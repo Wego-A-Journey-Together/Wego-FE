@@ -9,8 +9,10 @@ import { useState } from 'react';
 
 import { TrendingPost } from '../../../public/data/trending';
 
-const TABS = ['확정 대기중', '참여 확정'] as const;
-
+const getTabItems = (post) => [
+    `확정 대기중 ${post.members.filter((member) => !member.isApproved).length}`,
+    `참여 확정 ${post.members.filter((member) => member.isApproved).length}`,
+];
 export default function GroupCreateByUser({
     posts,
 }: {
@@ -103,9 +105,13 @@ export default function GroupCreateByUser({
                                     className={`mt-4 flex items-center justify-between gap-5`}
                                 >
                                     <Tab
-                                        className={'text-base leading-relaxed'}
-                                        tabItems={TABS}
-                                        selectedTab={TABS[currentTabIndex]}
+                                        className={
+                                            'z-10 text-base leading-relaxed'
+                                        }
+                                        tabItems={getTabItems(post)}
+                                        selectedTab={
+                                            getTabItems(post)[currentTabIndex]
+                                        }
                                         onChange={(idx) => {
                                             setSelectedTabs({
                                                 ...selectedTabs,
