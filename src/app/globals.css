@@ -168,5 +168,17 @@
     .scrollbar-hide::-webkit-scrollbar {
         display: none;
     }
-}
 
+    /* 넘버 인풋 숨김 처리 클래스 추가 */
+    .number-arrow-hide {
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+
+    .number-arrow-hide::-webkit-inner-spin-button,
+    .number-arrow-hide::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        appearance: none;
+        margin: 0;
+    }
+}
