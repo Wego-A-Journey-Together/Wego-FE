@@ -50,6 +50,16 @@ const trendingPost = [
                 isApproved: false,
                 isBanned: false,
             },
+            {
+                id: 100,
+                userName: '맥도날드',
+                statusMessage: '쿼터 파운더 치즈',
+                age: '10대',
+                gender: '남자',
+                profileImage: '/image/userIcon.png',
+                isApproved: false,
+                isBanned: false,
+            },
         ],
     },
     {

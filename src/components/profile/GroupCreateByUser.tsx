@@ -1,6 +1,7 @@
 'use client';
 
 import Tab from '@/components/common/Tab';
+import ConfirmMember from '@/components/profile/ConfirmMember';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, XIcon } from 'lucide-react';
 import Image from 'next/image';
@@ -8,12 +9,14 @@ import { useState } from 'react';
 
 import { TrendingPost } from '../../../public/data/trending';
 
+const TABS = ['확정 대기중', '참여 확정'] as const;
+
 export default function GroupCreateByUser({
     posts,
 }: {
     posts: TrendingPost[];
 }) {
-    const [selectedTabs, setSelectedTabs] = useState<Record<number, string>>(
+    const [selectedTabs, setSelectedTabs] = useState<Record<number, number>>(
         {},
     );
 
@@ -38,13 +41,14 @@ export default function GroupCreateByUser({
         image: post.imageSrc,
         isDeleted: false,
         members: post.participants,
+        location: post.location,
     }));
 
     return (
         <>
             <div className="flex w-full flex-col gap-5">
                 {groupPosts.map((post) => {
-                    const currentTab = selectedTabs[post.id] || '확정 대기중';
+                    const currentTabIndex = selectedTabs[post.id] ?? 0;
                     const isOpen = openTabs[post.id] || false;
                     return (
                         <div
@@ -100,16 +104,12 @@ export default function GroupCreateByUser({
                                 >
                                     <Tab
                                         className={'text-base leading-relaxed'}
-                                        tabItems={['확정 대기중', '참여 확정']}
-                                        selectedTab={currentTab}
+                                        tabItems={TABS}
+                                        selectedTab={TABS[currentTabIndex]}
                                         onChange={(idx) => {
-                                            const newTab = [
-                                                '확정 대기중',
-                                                '참여 확정',
-                                            ][idx];
                                             setSelectedTabs({
                                                 ...selectedTabs,
-                                                [post.id]: newTab,
+                                                [post.id]: idx,
                                             });
                                         }}
                                     />
@@ -130,6 +130,22 @@ export default function GroupCreateByUser({
                                         )}
                                     </div>
                                 </section>
+                                {/*승인 완료와 그렇지 않은 멤버 분기*/}
+                                {currentTabIndex === 0 ? (
+                                    <ConfirmMember
+                                        currentTabIndex={currentTabIndex}
+                                        members={post.members.filter(
+                                            (member) => !member.isApproved,
+                                        )}
+                                    />
+                                ) : (
+                                    <ConfirmMember
+                                        currentTabIndex={currentTabIndex}
+                                        members={post.members.filter(
+                                            (member) => member.isApproved,
+                                        )}
+                                    />
+                                )}
                             </div>
 
                             {post.isDeleted && (
