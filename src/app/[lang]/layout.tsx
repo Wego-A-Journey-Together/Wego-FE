@@ -1,4 +1,5 @@
 import NavBar from '@/components/Nav/NavBar';
+import { cn } from '@/lib';
 import TanstackProviders from '@/query/TanstackProvider';
 import ReduxProvider from '@/redux/ReduxProvider';
 import type { Metadata, Viewport } from 'next';
@@ -70,9 +71,14 @@ export default async function RootLayout({
     return (
         <html
             lang={currentLang}
-            className={`${isDarkMode ? 'dark' : ''} ${pretendard.variable} ${orienta.variable}`}
+            className={cn(pretendard.variable, orienta.variable)}
         >
-            <body className={`font-pretendard bg-custom-light antialiased`}>
+            <body
+                className={cn(
+                    `font-pretendard bg-custom-light antialiased`,
+                    isDarkMode && 'dark',
+                )}
+            >
                 <ReduxProvider>
                     <TanstackProviders>
                         <NavBar
