@@ -30,6 +30,9 @@ const buttonVariants = cva(
                     'bg-[#999999] text-white text-sm hover:bg-[#999999]/90',
                 // 초기화 버튼 (하늘색 외곽선)
                 reset: 'border-1 border-sky-blue text-sky-blue hover:text-sky-blue hover:bg-sky-blue/10 font-semibold text-[14px]',
+                //
+                skyblueOutline:
+                    'border-1 border-sky-blue text-sky-blue hover:text-sky-blue hover:bg-sky-blue/10 font-semibold text-[14px] bg-background-light',
                 secondary:
                     'bg-secondary text-secondary-foreground hover:bg-secondary/80',
                 ghost: 'hover:bg-accent hover:text-accent-foreground',

@@ -1,5 +1,11 @@
+'use client';
+
 import { StarIcon } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
+
+import { Button } from '../ui/button';
+import ProfileEditor from './ProfileEditor';
 
 interface User {
     userName: string;
@@ -17,6 +23,7 @@ interface MypageProfileProps {
 }
 
 export default function MypageProfile({ user }: MypageProfileProps) {
+    const [isEditorOpen, setIsEditorOpen] = useState(false);
     const profileData = {
         name: user.userName,
         status: user.statusMessage,
@@ -50,14 +57,25 @@ export default function MypageProfile({ user }: MypageProfileProps) {
                             priority
                         />
 
-                        <div className="absolute right-0 bottom-0 flex h-7 w-7 items-center justify-center rounded-[14px] border border-solid border-[#d9d9d9] bg-white">
+                        {/* 프로필 수정 버튼 */}
+                        <Button
+                            variant="ghost"
+                            onClick={() => setIsEditorOpen(true)}
+                            className="absolute right-0 bottom-0 flex h-7 w-7 items-center justify-center rounded-[14px] border border-solid border-[#d9d9d9] bg-white p-0"
+                        >
                             <Image
                                 alt="edit"
                                 width={18}
                                 height={18}
                                 src="/icon/profile/profileEdit.svg"
                             />
-                        </div>
+                        </Button>
+
+                        {/* 프로필 수정 모달 창 */}
+                        <ProfileEditor
+                            open={isEditorOpen}
+                            onOpenChange={setIsEditorOpen}
+                        />
                     </div>
 
                     <div className="flex flex-col gap-2">
