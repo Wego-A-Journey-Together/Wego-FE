@@ -122,6 +122,10 @@ export default function GroupCreateByUser({
                                                 ...selectedTabs,
                                                 [post.id]: idx,
                                             });
+                                            setOpenTabs({
+                                                ...openTabs,
+                                                [post.id]: true,
+                                            });
                                         }}
                                     />
                                     <div
