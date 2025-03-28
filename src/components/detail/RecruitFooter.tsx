@@ -27,8 +27,8 @@ export default function RecruitFooter({ post }: PostContentProps) {
 
                     <div className="flex items-center gap-5">
                         <Button
-                            variant="outline"
-                            className="h-9 w-[100px] border-[#0ac7e4] text-sm font-semibold text-[#0ac7e4]"
+                            variant="skyblueOutline"
+                            className="h-9 w-[100px]"
                             onClick={toggleChat}
                         >
                             <Image
