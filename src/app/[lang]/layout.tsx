@@ -49,7 +49,6 @@ export default async function RootLayout({
 
     //----------------------------------------
     // 헤더 lang 에 경로 매핑하기
-    //----------------------------------------
 
     // 현재 URL 경로 가져오기
     const headersList = await headers();
@@ -67,18 +66,18 @@ export default async function RootLayout({
 
     // 언어 우선순위: URL 경로 > 쿠키 > 기본값(ko)
     const currentLang = pathLocale || localeFromCookie || 'ko';
+    //----------------------------------------
 
     return (
         <html
             lang={currentLang}
-            className={cn(pretendard.variable, orienta.variable)}
+            className={cn(
+                pretendard.variable,
+                orienta.variable,
+                isDarkMode && 'dark',
+            )}
         >
-            <body
-                className={cn(
-                    `font-pretendard bg-custom-light antialiased`,
-                    isDarkMode && 'dark',
-                )}
-            >
+            <body className={cn(`font-pretendard bg-custom-light antialiased`)}>
                 <ReduxProvider>
                     <TanstackProviders>
                         <NavBar
