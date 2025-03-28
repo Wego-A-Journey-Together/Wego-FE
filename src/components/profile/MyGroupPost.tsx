@@ -9,7 +9,7 @@ interface MyGroupPostProps {
 }
 
 // 게시글 삭제 여부 임시
-let isDeleted = true;
+const isDeleted = true;
 
 export default function MyGroupPost({ posts }: MyGroupPostProps) {
     return (

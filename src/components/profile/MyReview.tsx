@@ -40,10 +40,12 @@ export default function MyReview({ user }: MyReviewProps) {
                                 </li>
 
                                 <li className="flex items-center">
-                                    <img
+                                    <Image
                                         className="h-1 w-px"
                                         alt="Line"
                                         src="/line-22.svg"
+                                        width={1}
+                                        height={1}
                                     />
                                 </li>
 
@@ -52,10 +54,12 @@ export default function MyReview({ user }: MyReviewProps) {
                                 </li>
 
                                 <li className="flex items-center">
-                                    <img
+                                    <Image
                                         className="h-1 w-px"
                                         alt="Line"
                                         src="/line-22.svg"
+                                        width={1}
+                                        height={1}
                                     />
                                 </li>
 
@@ -64,10 +68,12 @@ export default function MyReview({ user }: MyReviewProps) {
                                 </li>
 
                                 <li className="flex items-center">
-                                    <img
+                                    <Image
                                         className="h-1 w-px"
                                         alt="Line"
                                         src="/line-22.svg"
+                                        width={1}
+                                        height={1}
                                     />
                                 </li>
 

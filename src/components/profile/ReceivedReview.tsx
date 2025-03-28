@@ -1,6 +1,5 @@
 import ReviewRating from '@/components/detail/ReviewRating';
 import Image from 'next/image';
-import React from 'react';
 
 import { postReviews } from '../../../public/data/review';
 
@@ -47,9 +46,11 @@ export default function ReceivedReview() {
                         <div className="mt-[45px] flex w-full items-center justify-between">
                             <div className="inline-flex items-center gap-1.5">
                                 <div className="h-6 w-6 overflow-hidden rounded-full">
-                                    <img
+                                    <Image
                                         src={review.userIcon}
                                         alt="user profile"
+                                        width={24}
+                                        height={24}
                                         className="h-full w-full object-cover"
                                     />
                                 </div>

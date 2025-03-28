@@ -12,7 +12,7 @@ interface ChatProps {
     };
 }
 
-export default function ({ chat }: ChatProps) {
+export default function ChatPreview({ chat }: ChatProps) {
     return (
         <article className="flex h-[60px] w-full cursor-pointer items-center px-2">
             {/* 좌측 대화 프로필 이미지 */}
