@@ -44,7 +44,7 @@ const TAB_CONTENTS = {
     journey: {
         participating: <MyGroupPost posts={trendingPost} />,
         ended: <div>참여 종료된 동행 리스트</div>,
-        my: <GroupCreateByUser />,
+        my: <GroupCreateByUser posts={trendingPost} />,
         comments: <div>내가 작성한 댓글 목록</div>,
     },
     sogam: {
