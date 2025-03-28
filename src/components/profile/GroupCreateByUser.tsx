@@ -9,10 +9,6 @@ import { useState } from 'react';
 
 import { TrendingPost } from '../../../public/data/trending';
 
-const getTabItems = (post) => [
-    `확정 대기중 ${post.members.filter((member) => !member.isApproved).length}`,
-    `참여 확정 ${post.members.filter((member) => member.isApproved).length}`,
-];
 export default function GroupCreateByUser({
     posts,
 }: {
@@ -46,9 +42,18 @@ export default function GroupCreateByUser({
         location: post.location,
     }));
 
+    const getTabItems = (post: {
+        members: {
+            isApproved: boolean;
+        }[];
+    }) => [
+        `확정 대기중 ${post.members.filter((member) => !member.isApproved).length}`,
+        `참여 확정 ${post.members.filter((member) => member.isApproved).length}`,
+    ];
+
     return (
         <>
-            <div className="flex w-full flex-col gap-5">
+            <div className="mt-12.5 flex w-full flex-col gap-5">
                 {groupPosts.map((post) => {
                     const currentTabIndex = selectedTabs[post.id] ?? 0;
                     const isOpen = openTabs[post.id] || false;
@@ -137,21 +142,22 @@ export default function GroupCreateByUser({
                                     </div>
                                 </section>
                                 {/*승인 완료와 그렇지 않은 멤버 분기*/}
-                                {currentTabIndex === 0 ? (
-                                    <ConfirmMember
-                                        currentTabIndex={currentTabIndex}
-                                        members={post.members.filter(
-                                            (member) => !member.isApproved,
-                                        )}
-                                    />
-                                ) : (
-                                    <ConfirmMember
-                                        currentTabIndex={currentTabIndex}
-                                        members={post.members.filter(
-                                            (member) => member.isApproved,
-                                        )}
-                                    />
-                                )}
+                                {isOpen &&
+                                    (currentTabIndex === 0 ? (
+                                        <ConfirmMember
+                                            currentTabIndex={currentTabIndex}
+                                            members={post.members.filter(
+                                                (member) => !member.isApproved,
+                                            )}
+                                        />
+                                    ) : (
+                                        <ConfirmMember
+                                            currentTabIndex={currentTabIndex}
+                                            members={post.members.filter(
+                                                (member) => member.isApproved,
+                                            )}
+                                        />
+                                    ))}
                             </div>
 
                             {post.isDeleted && (
