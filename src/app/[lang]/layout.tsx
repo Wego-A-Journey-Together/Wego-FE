@@ -4,7 +4,7 @@ import ReduxProvider from '@/redux/ReduxProvider';
 import type { Metadata, Viewport } from 'next';
 import { Orienta } from 'next/font/google';
 import localFont from 'next/font/local';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import React from 'react';
 
 import '../globals.css';
@@ -40,14 +40,36 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const cookieStore = await cookies();
     // 다크모드 -> 서버사이드에서 쿠키 읽어오기
-    const colorTheme = (await cookies()).get('mode');
+    const colorTheme = cookieStore.get('mode');
     // 디폴트 : 라이트모드
     const isDarkMode: boolean = colorTheme?.value === 'dark';
 
+    //----------------------------------------
+    // 헤더 lang 에 경로 매핑하기
+    //----------------------------------------
+
+    // 현재 URL 경로 가져오기
+    const headersList = await headers();
+    const pathname = headersList.get('x-invoke-path') || '';
+
+    // URL 경로에서 언어 감지
+    const pathLocale = pathname.startsWith('/en')
+        ? 'en'
+        : pathname.startsWith('/ko')
+          ? 'ko'
+          : '';
+
+    // 쿠키에서 언어 확인 (fallback)
+    const localeFromCookie = cookieStore.get('NEXT_LOCALE')?.value;
+
+    // 언어 우선순위: URL 경로 > 쿠키 > 기본값(ko)
+    const currentLang = pathLocale || localeFromCookie || 'ko';
+
     return (
         <html
-            lang="en"
+            lang={currentLang}
             className={`${isDarkMode ? 'dark' : ''} ${pretendard.variable} ${orienta.variable}`}
         >
             <body className={`font-pretendard bg-custom-light antialiased`}>
