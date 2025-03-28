@@ -2,7 +2,7 @@
 
 import Tab from '@/components/common/Tab';
 import { Button } from '@/components/ui/button';
-import { XIcon } from 'lucide-react';
+import { ChevronDown, ChevronUp, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -16,6 +16,15 @@ export default function GroupCreateByUser({
     const [selectedTabs, setSelectedTabs] = useState<Record<number, string>>(
         {},
     );
+
+    const [openTabs, setOpenTabs] = useState<Record<number, boolean>>({});
+
+    const toggleTab = (postId: number) => {
+        setOpenTabs((prev) => ({
+            ...prev,
+            [postId]: !prev[postId],
+        }));
+    };
 
     const groupPosts = posts.map((post) => ({
         id: post.id,
@@ -36,6 +45,7 @@ export default function GroupCreateByUser({
             <div className="flex w-full flex-col gap-5">
                 {groupPosts.map((post) => {
                     const currentTab = selectedTabs[post.id] || '확정 대기중';
+                    const isOpen = openTabs[post.id] || false;
                     return (
                         <div
                             key={post.id}
@@ -85,11 +95,11 @@ export default function GroupCreateByUser({
                                     className={`mt-4 h-px w-full bg-[#D9D9D9]`}
                                 />
                                 {/*참여 확정 ui*/}
-                                <section>
+                                <section
+                                    className={`mt-4 flex items-center justify-between gap-5`}
+                                >
                                     <Tab
-                                        className={
-                                            'mt-4 text-base leading-relaxed'
-                                        }
+                                        className={'text-base leading-relaxed'}
                                         tabItems={['확정 대기중', '참여 확정']}
                                         selectedTab={currentTab}
                                         onChange={(idx) => {
@@ -103,6 +113,22 @@ export default function GroupCreateByUser({
                                             });
                                         }}
                                     />
+                                    <div
+                                        className={'cursor-pointer'}
+                                        onClick={() => toggleTab(post.id)}
+                                    >
+                                        {isOpen ? (
+                                            <ChevronUp
+                                                size={24}
+                                                className="text-[#999999]"
+                                            />
+                                        ) : (
+                                            <ChevronDown
+                                                size={24}
+                                                className="text-[#999999]"
+                                            />
+                                        )}
+                                    </div>
                                 </section>
                             </div>
 
