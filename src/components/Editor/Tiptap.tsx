@@ -111,19 +111,15 @@ export default function ContentEditor({
     usePasteImageUpload(editor, setIsUploading);
 
     return (
-        <div className="w-full border-0">
-            <Toolbar editor={editor} />
-            <EditorContent editor={editor} />
-            <p className="text-muted-foreground mt-2 text-xs">
-                이미지는 URL을 입력하거나 복사(Ctrl+C) 후 붙여넣기(Ctrl+V)로
-                추가할 수 있습니다.
-            </p>
-            {/*이미지 업로드시 스피너*/}
+        <div className="relative w-full border-0">
             {isUploading && (
-                <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-                    <div className="border-sky-blue h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />
+                <div className="pointer-events-none absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+                    <div className="border-sky-blue h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" />
                 </div>
             )}
+
+            <Toolbar editor={editor} />
+            <EditorContent editor={editor} />
         </div>
     );
 }
