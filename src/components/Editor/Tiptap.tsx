@@ -1,5 +1,6 @@
 'use client';
 
+import usePasteImageUpload from '@/hooks/usePasteImageUplad';
 import { mergeAttributes } from '@tiptap/core';
 import Heading from '@tiptap/extension-heading';
 import Highlight from '@tiptap/extension-highlight';
@@ -8,6 +9,7 @@ import Link from '@tiptap/extension-link';
 import TextAlign from '@tiptap/extension-text-align';
 import { EditorContent, JSONContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useState } from 'react';
 
 import CustomBulletList from './CustomBulletList';
 import CustomOrderedList from './CustomOrderedList';
@@ -83,7 +85,7 @@ export default function ContentEditor({
             CustomHeading.configure({ levels: [1, 2, 3] }),
             CustomBulletList,
             CustomOrderedList,
-            Image.configure({ allowBase64: true, inline: false }),
+            Image.configure({ allowBase64: false, inline: false }),
             CustomLink.configure({ openOnClick: false }),
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
@@ -103,6 +105,10 @@ export default function ContentEditor({
         },
         immediatelyRender: false,
     });
+    const [isUploading, setIsUploading] = useState(false);
+
+    // 복사 붙여넣기용 s3 컴포넌트
+    usePasteImageUpload(editor, setIsUploading);
 
     return (
         <div className="w-full border-0">
@@ -112,6 +118,12 @@ export default function ContentEditor({
                 이미지는 URL을 입력하거나 복사(Ctrl+C) 후 붙여넣기(Ctrl+V)로
                 추가할 수 있습니다.
             </p>
+            {/*이미지 업로드시 스피너*/}
+            {isUploading && (
+                <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+                    <div className="border-sky-blue h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />
+                </div>
+            )}
         </div>
     );
 }
