@@ -249,9 +249,9 @@ export default function Toolbar({ editor }: ToolbarProps) {
                     <Button
                         onClick={addLink}
                         size="sm"
-                        className="h-8 flex-shrink-0"
+                        className="text-whtie h-8 flex-shrink-0 bg-[#666]"
                     >
-                        추가
+                        <p className={'text-[#fff]'}>추가</p>
                     </Button>
                 </div>
 
@@ -268,9 +268,9 @@ export default function Toolbar({ editor }: ToolbarProps) {
                     <Button
                         onClick={addImage}
                         size="sm"
-                        className="h-8 flex-shrink-0"
+                        className="text-whtie h-8 flex-shrink-0 bg-[#666]"
                     >
-                        추가
+                        <p className={'text-[#fff]'}>추가</p>
                     </Button>
                 </div>
             </section>

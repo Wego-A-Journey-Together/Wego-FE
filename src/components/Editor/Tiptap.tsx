@@ -1,5 +1,6 @@
 'use client';
 
+import usePasteImageUpload from '@/hooks/usePasteImageUplad';
 import { mergeAttributes } from '@tiptap/core';
 import Heading from '@tiptap/extension-heading';
 import Highlight from '@tiptap/extension-highlight';
@@ -8,6 +9,7 @@ import Link from '@tiptap/extension-link';
 import TextAlign from '@tiptap/extension-text-align';
 import { EditorContent, JSONContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useState } from 'react';
 
 import CustomBulletList from './CustomBulletList';
 import CustomOrderedList from './CustomOrderedList';
@@ -83,7 +85,7 @@ export default function ContentEditor({
             CustomHeading.configure({ levels: [1, 2, 3] }),
             CustomBulletList,
             CustomOrderedList,
-            Image.configure({ allowBase64: true, inline: false }),
+            Image.configure({ allowBase64: false, inline: false }),
             CustomLink.configure({ openOnClick: false }),
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
@@ -103,15 +105,21 @@ export default function ContentEditor({
         },
         immediatelyRender: false,
     });
+    const [isUploading, setIsUploading] = useState(false);
+
+    // 복사 붙여넣기용 s3 컴포넌트
+    usePasteImageUpload(editor, setIsUploading);
 
     return (
-        <div className="w-full border-0">
+        <div className="relative w-full border-0">
+            {isUploading && (
+                <div className="pointer-events-none absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+                    <div className="border-sky-blue h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" />
+                </div>
+            )}
+
             <Toolbar editor={editor} />
             <EditorContent editor={editor} />
-            <p className="text-muted-foreground mt-2 text-xs">
-                이미지는 URL을 입력하거나 복사(Ctrl+C) 후 붙여넣기(Ctrl+V)로
-                추가할 수 있습니다.
-            </p>
         </div>
     );
 }
