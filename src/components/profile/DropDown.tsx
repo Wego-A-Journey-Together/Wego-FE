@@ -3,6 +3,8 @@
 import Tab from '@/components/common/Tab';
 import GroupCreateByUser from '@/components/profile/GroupCreateByUser';
 import MyGroupPost from '@/components/profile/MyGroupPost';
+import MyReview from '@/components/profile/MyReview';
+import ReceivedReview from '@/components/profile/ReceivedReview';
 import {
     Popover,
     PopoverContent,
@@ -36,21 +38,18 @@ const CATEGORIES = {
     },
 } as const;
 
-/**
- * 여기 입니다.
- * 코드 더러워서 죄송합니다.
- */
+// 각 탭에서 렌더링할 컴포넌트
 const TAB_CONTENTS = {
     journey: {
         participating: <MyGroupPost posts={trendingPost} />,
-        ended: <div>참여 종료된 동행 리스트</div>,
+        ended: <MyGroupPost posts={trendingPost} />,
         my: <GroupCreateByUser posts={trendingPost} />,
         comments: <div>내가 작성한 댓글 목록</div>,
     },
     sogam: {
-        received: <div>받은 소감 목록</div>,
-        writable: <div>작성 가능한 소감 목록</div>,
-        written: <div>내가 작성한 소감 목록</div>,
+        received: <ReceivedReview />,
+        writable: <MyGroupPost posts={trendingPost} />,
+        written: <MyReview user={trendingPost[0]} />,
     },
 };
 
@@ -159,7 +158,7 @@ export default function DropDown({ name }: { name: string }) {
                 tabItems={currentTabs.map((tab) => tab.label)}
                 selectedTab={currentTab.label}
                 onChange={handleTabChange}
-                className="sticky top-18 z-20 border-b border-b-[#AAAAAAA] leading-relaxed"
+                className="sticky top-18 z-20 mb-[50px] border-b border-b-[#AAAAAAA] leading-relaxed"
             />
 
             {/*탭 아래에 보이는 섹션*/}

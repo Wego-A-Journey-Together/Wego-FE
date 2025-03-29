@@ -36,7 +36,7 @@ export default function MypageProfile({ user }: MypageProfileProps) {
     };
 
     return (
-        <section className="flex w-full flex-col gap-10">
+        <div className="flex w-full flex-col gap-10">
             <div className="flex w-full items-center justify-between">
                 <h1 className="text-2xl font-bold text-black">프로필</h1>
             </div>
@@ -112,6 +112,6 @@ export default function MypageProfile({ user }: MypageProfileProps) {
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     );
 }
