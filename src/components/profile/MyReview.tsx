@@ -3,12 +3,14 @@ import { Button } from '@/components/ui/button';
 import { PostContentProps } from '@/types/PostContent';
 import Image from 'next/image';
 
+import NoContentGuide from './NoContentGuide';
+
 interface MyReviewProps {
     user: PostContentProps['post'];
 }
 
 export default function MyReview({ user }: MyReviewProps) {
-    if (!user) return null;
+    if (!user) return <NoContentGuide />;
 
     return (
         <article className="flex flex-col items-start gap-5 rounded-xl border-none bg-[#f5f6f7] px-[34px] py-[30px]">
@@ -40,12 +42,10 @@ export default function MyReview({ user }: MyReviewProps) {
                                 </li>
 
                                 <li className="flex items-center">
-                                    <Image
+                                    <img
                                         className="h-1 w-px"
                                         alt="Line"
                                         src="/line-22.svg"
-                                        width={1}
-                                        height={1}
                                     />
                                 </li>
 
@@ -54,12 +54,10 @@ export default function MyReview({ user }: MyReviewProps) {
                                 </li>
 
                                 <li className="flex items-center">
-                                    <Image
+                                    <img
                                         className="h-1 w-px"
                                         alt="Line"
                                         src="/line-22.svg"
-                                        width={1}
-                                        height={1}
                                     />
                                 </li>
 
@@ -68,12 +66,10 @@ export default function MyReview({ user }: MyReviewProps) {
                                 </li>
 
                                 <li className="flex items-center">
-                                    <Image
+                                    <img
                                         className="h-1 w-px"
                                         alt="Line"
                                         src="/line-22.svg"
-                                        width={1}
-                                        height={1}
                                     />
                                 </li>
 

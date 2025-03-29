@@ -4,16 +4,19 @@ import { Button } from '@/components/ui/button';
 import { PostContentProps } from '@/types/PostContent';
 import Image from 'next/image';
 
+import NoContentGuide from './NoContentGuide';
+
 interface MyGroupPostProps {
     posts: PostContentProps['post'][];
 }
-
 // 게시글 삭제 여부 임시
-const isDeleted = true;
+const isDeleted = false;
 
 export default function MyGroupPost({ posts }: MyGroupPostProps) {
+    if (posts.length === 0) return <NoContentGuide />;
+
     return (
-        <article className="flex w-full flex-col gap-5">
+        <div className="flex w-full flex-col gap-5">
             {posts.map((post) => (
                 <div
                     key={post.id}
@@ -47,7 +50,8 @@ export default function MyGroupPost({ posts }: MyGroupPostProps) {
 
                             {/* 모임 세부 정보 */}
                             <div className="flex flex-wrap items-center gap-2 text-sm">
-                                {post.startDate} - {post.endDate} ({'n'}일)
+                                {post.startDate} - {post.endDate} ({'n'}
+                                일)
                                 <Divider />
                                 {post.age}
                                 <Divider />
@@ -121,6 +125,6 @@ export default function MyGroupPost({ posts }: MyGroupPostProps) {
                     )}
                 </div>
             ))}
-        </article>
+        </div>
     );
 }
