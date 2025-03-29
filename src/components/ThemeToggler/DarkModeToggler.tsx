@@ -16,10 +16,12 @@ export default function ThemeToggler({
 
     // 현재 테마 상태 확인
     useEffect(() => {
-        // html 태그의 클래스를 확인해서 현재 테마 상태 가져오기
+        // 문서가 로드된 후에만 실행
         const isDarkMode = document.documentElement.classList.contains('dark');
-        setIsDark(isDarkMode);
-    }, []);
+        if (isDarkMode !== isDark) {
+            setIsDark(isDarkMode);
+        }
+    }, []); // 의존성 배열을 비워서 마운트 시에만 실행
 
     const toggleTheme = () => {
         const newMode = !isDark;
@@ -36,11 +38,26 @@ export default function ThemeToggler({
             document.cookie = 'mode=light; path=/; max-age=31536000';
         }
     };
-    // todo: 디자인 결정시 변경 해야함
 
     const [mounted, setMounted] = useState(false);
+
     useEffect(() => {
         setMounted(true);
+
+        // 쿠키가 없을 경우 시스템 설정 확인
+        const hasCookie = document.cookie.includes('mode');
+        if (!hasCookie) {
+            const prefersDark = window.matchMedia(
+                '(prefers-color-scheme: dark)',
+            ).matches;
+            setIsDark(prefersDark);
+            document.documentElement.classList.toggle('dark', prefersDark);
+            document.cookie = `mode=${prefersDark ? 'dark' : 'light'}; path=/; max-age=31536000`;
+        } else {
+            const isDarkMode =
+                document.documentElement.classList.contains('dark');
+            setIsDark(isDarkMode);
+        }
     }, []);
 
     if (!mounted) return null;
