@@ -11,11 +11,15 @@ import ReviewEditor from './ReviewEditor';
 
 interface MyGroupPostProps {
     posts: PostContentProps['post'][];
+    cancelRecruit?: boolean;
 }
 // 게시글 삭제 여부 임시
 const isDeleted = false;
 
-export default function MyGroupPost({ posts }: MyGroupPostProps) {
+export default function MyGroupPost({
+    posts,
+    cancelRecruit,
+}: MyGroupPostProps) {
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [activeChatId, setActiveChatId] = useState<number | null>(null);
 
@@ -121,17 +125,31 @@ export default function MyGroupPost({ posts }: MyGroupPostProps) {
                                 </div>
                             )}
 
+                            {/* 참여 중인 동행 탭에서 보일 내용 */}
+                            {cancelRecruit && (
+                                <Button
+                                    variant={'outline'}
+                                    className="flex w-[130px] text-[#666666]"
+                                >
+                                    취소하기
+                                </Button>
+                            )}
+
                             {/* 소감 남기기 버튼과 소감 작성 모달 */}
-                            <Button
-                                onClick={() => setIsEditorOpen(true)}
-                                className="w-full"
-                            >
-                                소감 남기기
-                            </Button>
-                            <ReviewEditor
-                                open={isEditorOpen}
-                                onOpenChange={setIsEditorOpen}
-                            />
+                            {!cancelRecruit && (
+                                <>
+                                    <Button
+                                        onClick={() => setIsEditorOpen(true)}
+                                        className="w-full"
+                                    >
+                                        소감 남기기
+                                    </Button>
+                                    <ReviewEditor
+                                        open={isEditorOpen}
+                                        onOpenChange={setIsEditorOpen}
+                                    />
+                                </>
+                            )}
                         </div>
                     </div>
 

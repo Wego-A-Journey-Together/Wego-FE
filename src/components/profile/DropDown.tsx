@@ -41,7 +41,9 @@ const CATEGORIES = {
 // 각 탭에서 렌더링할 컴포넌트
 const TAB_CONTENTS = {
     journey: {
-        participating: <MyGroupPost posts={trendingPost} />,
+        participating: (
+            <MyGroupPost posts={trendingPost} cancelRecruit={true} />
+        ),
         ended: <MyGroupPost posts={trendingPost} />,
         my: <GroupCreateByUser posts={trendingPost} />,
         comments: <div>내가 작성한 댓글 목록</div>,
