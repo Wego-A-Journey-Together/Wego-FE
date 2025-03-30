@@ -120,6 +120,10 @@ export default function ContentEditor({
 
             <Toolbar editor={editor} />
             <EditorContent editor={editor} />
+            <p className={'mt-1 text-sm text-neutral-500'}>
+                이미지는 URL을 입력하거나 복사(Ctrl+C) 후 붙여넣기(Ctrl+V)로
+                추가할 수 있습니다.
+            </p>
         </div>
     );
 }
