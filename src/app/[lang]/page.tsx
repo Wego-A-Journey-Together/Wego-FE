@@ -4,7 +4,8 @@ import { TrendingCarousel } from '@/components/home/TrendingCarousel';
 import { Checkbox } from '@/components/ui/checkbox';
 
 export default async function Home() {
-    const res = await fetch('http://localhost:8080/trending', {
+    const NEST_BFF_URL = process.env.NEST_BFF_URL;
+    const res = await fetch(`${NEST_BFF_URL}/api/trending`, {
         cache: 'no-store',
     });
     const trendingPosts = await res.json();
