@@ -5,7 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 export default async function Home() {
     const NEST_BFF_URL = process.env.NEST_BFF_URL;
-    const res = await fetch(`${NEST_BFF_URL}/trending`, {
+    const res = await fetch(`${NEST_BFF_URL}/api/trending`, {
         cache: 'no-store',
     });
     const trendingPosts = await res.json();
