@@ -2,11 +2,11 @@ import ReviewRating from '@/components/detail/ReviewRating';
 import Image from 'next/image';
 
 import { postReviews } from '../../../public/data/review';
+import NoContentGuide from './NoContentGuide';
 
 export default function ReceivedReview() {
-    // 리뷰가 없을 경우 표시할 컴포넌트 추가
     if (postReviews.length === 0) {
-        return <></>;
+        return <NoContentGuide />;
     }
 
     return (

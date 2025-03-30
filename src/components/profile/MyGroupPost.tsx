@@ -1,19 +1,37 @@
 import Divider from '@/components/common/Divider';
+import UserChat from '@/components/common/userChat';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PostContentProps } from '@/types/PostContent';
 import Image from 'next/image';
+import { useState } from 'react';
+
+import NoContentGuide from './NoContentGuide';
+import ReviewEditor from './ReviewEditor';
 
 interface MyGroupPostProps {
     posts: PostContentProps['post'][];
+    cancelRecruit?: boolean;
 }
-
 // 게시글 삭제 여부 임시
-const isDeleted = true;
+const isDeleted = false;
 
-export default function MyGroupPost({ posts }: MyGroupPostProps) {
+export default function MyGroupPost({
+    posts,
+    cancelRecruit,
+}: MyGroupPostProps) {
+    const [isEditorOpen, setIsEditorOpen] = useState(false);
+    const [activeChatId, setActiveChatId] = useState<number | null>(null);
+
+    // 버튼 클릭시 모든 채팅 창이 열리는 버그 수정
+    const toggleChat = (postId: number) => {
+        setActiveChatId((current) => (current === postId ? null : postId));
+    };
+
+    if (posts.length === 0) return <NoContentGuide />;
+
     return (
-        <article className="flex w-full flex-col gap-5">
+        <div className="flex w-full flex-col gap-5">
             {posts.map((post) => (
                 <div
                     key={post.id}
@@ -47,7 +65,8 @@ export default function MyGroupPost({ posts }: MyGroupPostProps) {
 
                             {/* 모임 세부 정보 */}
                             <div className="flex flex-wrap items-center gap-2 text-sm">
-                                {post.startDate} - {post.endDate} ({'n'}일)
+                                {post.startDate} - {post.endDate} ({'n'}
+                                일)
                                 <Divider />
                                 {post.age}
                                 <Divider />
@@ -82,8 +101,10 @@ export default function MyGroupPost({ posts }: MyGroupPostProps) {
                         </div>
 
                         <div className="flex w-[130px] flex-shrink-0 flex-col items-center gap-2">
+                            {/* 문의 버튼과 채팅창 모달 */}
                             <Button
                                 variant={'skyblueOutline'}
+                                onClick={() => toggleChat(post.id)}
                                 className="w-full"
                             >
                                 <Image
@@ -95,7 +116,40 @@ export default function MyGroupPost({ posts }: MyGroupPostProps) {
                                 />
                                 문의하기
                             </Button>
-                            <Button className="w-full">소감 남기기</Button>
+                            {activeChatId === post.id && (
+                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                                    <UserChat
+                                        post={post}
+                                        onClose={() => toggleChat(post.id)}
+                                    />
+                                </div>
+                            )}
+
+                            {/* 참여 중인 동행 탭에서 보일 내용 */}
+                            {cancelRecruit && (
+                                <Button
+                                    variant={'outline'}
+                                    className="flex w-[130px] text-[#666666]"
+                                >
+                                    취소하기
+                                </Button>
+                            )}
+
+                            {/* 소감 남기기 버튼과 소감 작성 모달 */}
+                            {!cancelRecruit && (
+                                <>
+                                    <Button
+                                        onClick={() => setIsEditorOpen(true)}
+                                        className="w-full"
+                                    >
+                                        소감 남기기
+                                    </Button>
+                                    <ReviewEditor
+                                        open={isEditorOpen}
+                                        onOpenChange={setIsEditorOpen}
+                                    />
+                                </>
+                            )}
                         </div>
                     </div>
 
@@ -121,6 +175,6 @@ export default function MyGroupPost({ posts }: MyGroupPostProps) {
                     )}
                 </div>
             ))}
-        </article>
+        </div>
     );
 }

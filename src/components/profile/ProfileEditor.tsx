@@ -63,7 +63,7 @@ export default function ProfileEditor({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
                 variant="noOverlay"
-                className="w-[500px] overflow-visible border border-solid border-[#00000033] p-0"
+                className="w-[500px] overflow-visible border border-[#E0E0E0] p-0 shadow-[0_0_25px_rgba(0,0,0,0.15)]"
             >
                 <DialogHeader className="flex h-[47px] items-center justify-between border-b [border-bottom-style:solid] border-[#e9e9e9] px-[30px] py-2.5">
                     <DialogTitle className="w-full text-center text-base font-bold text-black">
@@ -170,20 +170,22 @@ export default function ProfileEditor({
                         </div>
                         <div className="flex gap-10">
                             <div className="flex items-center gap-1.5">
-                                <input
-                                    type="radio"
-                                    name="gender"
-                                    id="male"
-                                    value="male"
-                                    checked={user.gender === 'male'}
-                                    onChange={() => {
-                                        setUser({
-                                            ...user,
-                                            gender: 'male',
-                                        });
-                                    }}
-                                    className="accent-sky-blue h-5 w-5 cursor-pointer"
-                                />
+                                <div className="relative flex items-center">
+                                    <input
+                                        type="radio"
+                                        name="gender"
+                                        id="male"
+                                        value="male"
+                                        checked={user.gender === 'male'}
+                                        onChange={() => {
+                                            setUser({
+                                                ...user,
+                                                gender: 'male',
+                                            });
+                                        }}
+                                        className="h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#D9D9D9] bg-white checked:border-[5px] checked:border-[#0ac7e4]"
+                                    />
+                                </div>
                                 <Label
                                     htmlFor="male"
                                     className="cursor-pointer text-base font-medium text-black"
@@ -193,20 +195,22 @@ export default function ProfileEditor({
                             </div>
 
                             <div className="flex items-center gap-1.5">
-                                <input
-                                    type="radio"
-                                    name="gender"
-                                    id="female"
-                                    value="female"
-                                    checked={user.gender === 'female'}
-                                    onChange={() => {
-                                        setUser({
-                                            ...user,
-                                            gender: 'female',
-                                        });
-                                    }}
-                                    className="accent-sky-blue h-5 w-5 cursor-pointer"
-                                />
+                                <div className="relative flex items-center">
+                                    <input
+                                        type="radio"
+                                        name="gender"
+                                        id="female"
+                                        value="female"
+                                        checked={user.gender === 'female'}
+                                        onChange={() => {
+                                            setUser({
+                                                ...user,
+                                                gender: 'female',
+                                            });
+                                        }}
+                                        className="h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#D9D9D9] bg-white checked:border-[5px] checked:border-[#0ac7e4]"
+                                    />
+                                </div>
                                 <Label
                                     htmlFor="female"
                                     className="cursor-pointer text-base font-medium text-black"
@@ -308,7 +312,7 @@ export default function ProfileEditor({
                     <div className="mt-[30px]">
                         <Button
                             variant="link"
-                            className="p-0 text-xs font-medium text-[#898989] underline"
+                            className="cursor-pointer p-0 text-xs font-medium text-[#898989] underline"
                         >
                             회원탈퇴
                         </Button>
@@ -320,8 +324,9 @@ export default function ProfileEditor({
 
                     <div className="mb-5 flex w-[440px] gap-2">
                         <Button
+                            onClick={() => onOpenChange(false)}
                             variant="outline"
-                            className="ㅈ h-[52px] flex-1"
+                            className="h-[52px] flex-1"
                         >
                             취소
                         </Button>
