@@ -1,4 +1,5 @@
 import Divider from '@/components/common/Divider';
+import UserChat from '@/components/common/userChat';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PostContentProps } from '@/types/PostContent';
@@ -16,6 +17,12 @@ const isDeleted = false;
 
 export default function MyGroupPost({ posts }: MyGroupPostProps) {
     const [isEditorOpen, setIsEditorOpen] = useState(false);
+    const [activeChatId, setActiveChatId] = useState<number | null>(null);
+
+    // 버튼 클릭시 모든 채팅 창이 열리는 버그 수정
+    const toggleChat = (postId: number) => {
+        setActiveChatId((current) => (current === postId ? null : postId));
+    };
 
     if (posts.length === 0) return <NoContentGuide />;
 
@@ -90,8 +97,10 @@ export default function MyGroupPost({ posts }: MyGroupPostProps) {
                         </div>
 
                         <div className="flex w-[130px] flex-shrink-0 flex-col items-center gap-2">
+                            {/* 문의 버튼과 채팅창 모달 */}
                             <Button
                                 variant={'skyblueOutline'}
+                                onClick={() => toggleChat(post.id)}
                                 className="w-full"
                             >
                                 <Image
@@ -103,7 +112,16 @@ export default function MyGroupPost({ posts }: MyGroupPostProps) {
                                 />
                                 문의하기
                             </Button>
+                            {activeChatId === post.id && (
+                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                                    <UserChat
+                                        post={post}
+                                        onClose={() => toggleChat(post.id)}
+                                    />
+                                </div>
+                            )}
 
+                            {/* 소감 남기기 버튼과 소감 작성 모달 */}
                             <Button
                                 onClick={() => setIsEditorOpen(true)}
                                 className="w-full"
