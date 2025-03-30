@@ -3,8 +3,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PostContentProps } from '@/types/PostContent';
 import Image from 'next/image';
+import { useState } from 'react';
 
 import NoContentGuide from './NoContentGuide';
+import ReviewEditor from './ReviewEditor';
 
 interface MyGroupPostProps {
     posts: PostContentProps['post'][];
@@ -13,6 +15,8 @@ interface MyGroupPostProps {
 const isDeleted = false;
 
 export default function MyGroupPost({ posts }: MyGroupPostProps) {
+    const [isEditorOpen, setIsEditorOpen] = useState(false);
+
     if (posts.length === 0) return <NoContentGuide />;
 
     return (
@@ -99,7 +103,17 @@ export default function MyGroupPost({ posts }: MyGroupPostProps) {
                                 />
                                 문의하기
                             </Button>
-                            <Button className="w-full">소감 남기기</Button>
+
+                            <Button
+                                onClick={() => setIsEditorOpen(true)}
+                                className="w-full"
+                            >
+                                소감 남기기
+                            </Button>
+                            <ReviewEditor
+                                open={isEditorOpen}
+                                onOpenChange={setIsEditorOpen}
+                            />
                         </div>
                     </div>
 
