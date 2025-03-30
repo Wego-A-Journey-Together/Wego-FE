@@ -4,7 +4,8 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-const NEST_BFF_URL = process.env.NEST_BFF_URL || 'http://localhost:8080';
+const NEST_BFF_URL =
+    process.env.NEST_BFF_URL || 'https://gateway.wego-travel.click';
 
 export default function KAKAOLogin() {
     const params = useParams(); // 지원하지 않는 언어인 경우 기본값으로 한국어 사용

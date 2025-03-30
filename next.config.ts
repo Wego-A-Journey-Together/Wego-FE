@@ -11,8 +11,21 @@ const nextConfig: NextConfig = {
             {
                 protocol: 'http',
                 hostname: 'localhost',
-                port: '8080', // 포트도 필요하다면 추가합니다. 예: 8080 포트
-                pathname: '/static/**', // 경로 패턴
+                port: '8080',
+                pathname: '/static/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'gateway.wego-travel.click',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname:
+                    'wegotiptaparticleimageuploadersuperultraggorgeousbucket.s3.ap-northeast-2.amazonaws.com',
+                port: '',
+                pathname: '/**',
             },
         ], // 외부 이미지 도메인 허용 목록 -> domains -> remotePatterns 로 수정 하였습니다.
         formats: ['image/webp', 'image/avif'], // 최신 이미지 포맷 지원
