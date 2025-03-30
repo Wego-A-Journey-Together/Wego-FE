@@ -13,13 +13,23 @@ import { cn } from '@/lib';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import trendingPost from '../../../public/data/trending';
-
 interface TrendingCarouselProps {
     className?: string;
+    posts: {
+        id: number;
+        title: string;
+        imageSrc: string;
+        profileImage: string;
+        userName: string;
+        age: string;
+        gender: string;
+        startDate: string;
+        endDate: string;
+        userId: string;
+    }[];
 }
 
-export function TrendingCarousel({ className }: TrendingCarouselProps) {
+export function TrendingCarousel({ posts, className }: TrendingCarouselProps) {
     const isMobile = useMediaQuery('(max-width: 630px)');
 
     return (
@@ -71,7 +81,7 @@ export function TrendingCarousel({ className }: TrendingCarouselProps) {
                 </section>
 
                 <CarouselContent className="gap-1 px-1">
-                    {trendingPost.map((trend, index) => (
+                    {posts.map((trend, index) => (
                         <CarouselItem
                             key={index}
                             className="min-w-[264px] basis-auto sm:min-w-[400px]"
