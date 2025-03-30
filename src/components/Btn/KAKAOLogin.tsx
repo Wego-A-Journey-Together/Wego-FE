@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+const NEST_BFF_URL = process.env.NEST_BFF_URL || 'http://localhost:8080';
+
 export default function KAKAOLogin() {
     const params = useParams(); // 지원하지 않는 언어인 경우 기본값으로 한국어 사용
     const [selectedLang, setSelectedLang] = useState('ko');
@@ -33,7 +35,7 @@ export default function KAKAOLogin() {
 
     const handleClick = () => {
         // 유저를 서버로 이동
-        window.location.href = '/api/auth/kakao/login';
+        window.location.href = `${NEST_BFF_URL}/api/user/kakao/authorize`;
     };
 
     //lang 이 "ko"나 "en"이 아닐 경우에도 fallback "ko"를 기준으로 번역합니다
