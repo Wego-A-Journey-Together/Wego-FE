@@ -71,15 +71,27 @@ export default async function RootLayout({
 
     //-------------------유저 정보 SSR ----------------------------
     const NEST_BFF_URL = process.env.NEXT_BFF_URL;
-    const cookieHeader = headersList.get('cookie') ?? '';
+    let user = null;
 
-    const userRes = await fetch(`${NEST_BFF_URL}/api/user/me`, {
-        headers: {
-            cookie: cookieHeader,
-        },
-        cache: 'no-store',
-    });
-    const user = userRes.ok ? await userRes.json() : null;
+    try {
+        const res = await fetch(`${NEST_BFF_URL}/api/user/me`, {
+            headers: {
+                cookie: (await headers()).get('cookie') || '',
+            },
+            cache: 'no-store',
+        });
+
+        if (res.ok) {
+            user = await res.json();
+        } else {
+            // 로그인 안된 상태로 처리
+
+            console.warn(`user/me 응답 상태: ${res.status}`);
+        }
+    } catch (err) {
+        // 서버가 죽었거나 네트워크 문제일 경우 ( fetch 는 !res.ok 를 throw 하지 않는다!! )
+        console.error('user/me 네트워크 오류:', err);
+    }
 
     return (
         <html
