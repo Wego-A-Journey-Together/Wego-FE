@@ -1,18 +1,23 @@
 import { z } from 'zod';
 
-
-
-
-
 export const PostSchema = z.object({
     // 제목 스키마 ( UI 안깨질 정도의 길이 )
     title: z
         .string()
         .min(4, '동행 제목은 5글자 이상 입력해 주세요')
-        .max(15, '제목은 18자 이하로 작성해 주세요'),
+        .max(32, '제목은 32자 이하로 작성해 주세요'),
 
-    //필터 스키마 ( todo: 당장 알 수 없어서 비워두었습니다 에러방지용 )
-    filter: z.any().optional(),
+    //필터 스키마
+    filter: z.object({
+        startDate: z.date(),
+        endDate: z.date(),
+        deadlineDate: z.date(),
+        deadlineTime: z.string(),
+        groupTheme: z.string(),
+        groupSize: z.string(),
+        gender: z.string().nullable(),
+        age: z.array(z.string()),
+    }),
 
     // 카카오 로컬 api 스펙에 따르면 기본 제공은 세 가지 필드 입니다. ( 사용자가 검색어 입력 후 선택시 따라오는 필드들 )
     location: z.object({
@@ -20,10 +25,10 @@ export const PostSchema = z.object({
         lat: z.number(),
         lng: z.number(),
     }),
-    // json 직렬화 과정에서 텍스트가 늘어날 수 있습니다.
+    // json 직렬화 과정에서 텍스트가 늘어날 수 있습니다. 115는 ㅈㄱㄴ 부터 허용 범위 입니다. (세 글자)
     content: z
         .string()
-        .min(100, { message: '조금 더 작성해 주세요' })
+        .min(115, { message: '조금 더 작성해 주세요' })
         .max(20000, { message: '죄송합니다. 본문 길이가 너무 깁니다.' }),
     // S3 업로드 후 검증할 생각이라 스트링, url 형식으로 처리 했습니다 + nullish
     thumbnailUrl: z
@@ -42,3 +47,5 @@ export const PostSchema = z.object({
         .max(5, { message: '해시태그는 5개까지 가능합니다.' })
         .optional(),
 });
+
+export type PostFormValues = z.infer<typeof PostSchema>;

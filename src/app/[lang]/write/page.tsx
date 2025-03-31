@@ -1,6 +1,6 @@
 'use client';
 
-import { PostSchema } from '@/app/[lang]/write/postSchema';
+import { PostFormValues, PostSchema } from '@/app/[lang]/write/postSchema';
 import PostSetupPanel from '@/components/Editor/PostSetupPanel';
 import ContentEditor from '@/components/Editor/Tiptap';
 import { Button } from '@/components/ui/button';
@@ -20,9 +20,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
-
-type PostFormValues = z.infer<typeof PostSchema>;
 
 export default function WritePage() {
     const router = useRouter();
@@ -31,12 +28,30 @@ export default function WritePage() {
         resolver: zodResolver(PostSchema),
         mode: 'onBlur', // onChange 는 UX에 안좋아 보여서 포커스 기준 파라미터로 변경했습니다.
         reValidateMode: 'onChange', // 에러시 검증은 변화마다 검증
+        defaultValues: {
+            title: '',
+            filter: {
+                startDate: undefined,
+                endDate: undefined,
+                deadlineDate: undefined,
+                deadlineTime: '',
+                groupTheme: '',
+                groupSize: '',
+                gender: null,
+                age: [],
+            },
+        },
     });
 
     const onSubmit = async (data: PostFormValues) => {
         // 직렬화된 JSON 문자열 확인
         //todo: BE 팀과 이야기 후 json 직렬화하여 본문 부분 전송하기로 했습니다.
         // 여기서 API 요청 처리
+
+        // 개발용 처리
+        if (process.env.NODE_ENV === 'development')
+            alert(JSON.stringify(data, null, 2));
+
         const res = await fetch('/api/posts', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -53,8 +68,6 @@ export default function WritePage() {
             });
             return;
         }
-        // 개발용 처리
-        if (process.env.NODE_ENV === 'development') alert(data);
 
         toast('글 발행 완료 !', {
             description: '참여 신청을 받으면 알려드릴게요',
@@ -65,6 +78,20 @@ export default function WritePage() {
         });
         form.reset();
         router.push('/'); //todo: 지금은 홈으로 밀지만 be 연동 이후 포스트아이디가 넘어 온다면 해당 상세 페이지로 이동하는 것이 좋을 듯 합니다.
+    };
+
+    /**
+     * 취소 누르면 이전 페이지로 사용자 밀어주기
+     */
+    const handleCancel = () => {
+        toast('작성 취소됨', {
+            description: '이전 페이지로 돌아갑니다',
+            action: {
+                label: '닫기',
+                onClick: () => {},
+            },
+        });
+        router.back();
     };
 
     return (
@@ -97,7 +124,7 @@ export default function WritePage() {
                                 </FormItem>
                             )}
                         />
-                        {/*todo:필터 기능 추가는 도움 요청 드립니다. */}
+                        {/* 필터 섹션 */}
                         <section>
                             <PostSetupPanel />
                         </section>
@@ -217,6 +244,7 @@ export default function WritePage() {
                                 className={
                                     'h-13 w-54 border border-neutral-300 bg-white text-sm font-semibold text-neutral-600'
                                 }
+                                onClick={handleCancel}
                             >
                                 취소
                             </Button>
@@ -224,9 +252,18 @@ export default function WritePage() {
                                 className={
                                     'bg-sky-blue h-13 w-54 text-sm font-semibold text-neutral-50'
                                 }
+                                disabled={form.formState.isSubmitting}
                                 type="submit"
                             >
-                                등록
+                                {form.formState.isSubmitting ? (
+                                    <div
+                                        className={
+                                            'border-t-none animate-spin border-2 border-white'
+                                        }
+                                    />
+                                ) : (
+                                    '등록'
+                                )}
                             </Button>
                         </section>
                     </form>

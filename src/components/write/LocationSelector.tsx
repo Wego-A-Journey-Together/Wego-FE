@@ -52,7 +52,7 @@ export default function LocationSelector({ field }: Props) {
     };
 
     return (
-        <div className="mt-2.5 w-full">
+        <div className="mt-6 w-full">
             <FormLabel htmlFor={'location'}>
                 <h2 className={'text-base font-bold'}>장소</h2>
             </FormLabel>
