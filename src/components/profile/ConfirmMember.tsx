@@ -35,9 +35,7 @@ export default function ConfirmMember({
                                     <div className="flex items-center justify-between gap-3">
                                         <div className="flex items-center justify-between gap-3">
                                             <Checkbox
-                                                className={
-                                                    'h-7 w-7 border-2 border-[#d9d9d9]'
-                                                }
+                                                className={'h-6 w-6'}
                                                 iconSize={
                                                     'size-5.5 stroke-[4px]'
                                                 }
@@ -102,10 +100,7 @@ export default function ConfirmMember({
             {/* 하단 체크박스 및 버튼 그룹 */}
             <div className="mt-11 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <Checkbox
-                        className={'h-7 w-7 border-2 border-[#d9d9d9]'}
-                        iconSize={'size-5.5 stroke-[4px]'}
-                    />
+                    <Checkbox className={'h-6 w-6'} />
                     <p className={'text-base text-black'}>전체 선택</p>
                 </div>
                 {currentTabIndex === 0 ? (
