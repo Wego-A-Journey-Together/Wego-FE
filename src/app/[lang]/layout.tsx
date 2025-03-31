@@ -69,6 +69,18 @@ export default async function RootLayout({
     const currentLang = pathLocale || localeFromCookie || 'ko';
     //----------------------------------------
 
+    //-------------------유저 정보 SSR ----------------------------
+    const NEST_BFF_URL = process.env.NEXT_BFF_URL;
+    const cookieHeader = headersList.get('cookie') ?? '';
+
+    const userRes = await fetch(`${NEST_BFF_URL}/api/user/me`, {
+        headers: {
+            cookie: cookieHeader,
+        },
+        cache: 'no-store',
+    });
+    const user = userRes.ok ? await userRes.json() : null;
+
     return (
         <html
             lang={currentLang}
@@ -79,7 +91,7 @@ export default async function RootLayout({
             )}
         >
             <body className={cn(`font-pretendard bg-custom-light antialiased`)}>
-                <ReduxProvider>
+                <ReduxProvider user={user}>
                     <TanstackProviders>
                         <NavBar
                             isDarkMode={isDarkMode}
