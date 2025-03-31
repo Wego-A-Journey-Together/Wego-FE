@@ -1,0 +1,11 @@
+<svg width="40" height="60" viewBox="0 0 40 60" xmlns="http://www.w3.org/2000/svg">
+    <path
+            d="M20 0C9 0 0 9 0 20C0 30.5 20 60 20 60C20 60 40 30.5 40 20C40 9 31 0 20 0Z"
+            fill="#0AC7E4"
+    />
+    <circle cx="20" cy="20" r="15" fill="white"/>
+    <text x="20" y="21" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold"
+          font-family="Arial, sans-serif" fill="#0AC7E4">
+        wego
+    </text>
+</svg>

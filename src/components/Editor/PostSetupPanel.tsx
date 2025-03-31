@@ -1,5 +1,6 @@
 'use client';
 
+import { PostFormValues } from '@/app/[lang]/write/postSchema';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
@@ -18,20 +19,18 @@ import {
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 export default function PostSetupPanel() {
-    const [title, setTitle] = useState<string>('');
-
-    const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-    const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-    const [deadlineDate, setDeadlineDate] = useState<Date | undefined>(
-        undefined,
-    );
-    const [deadlineTime, setDeadlineTime] = useState<string>('');
-
-    const [groupTheme, setGroupTheme] = useState<string>('');
-    const [groupSize, setGroupSize] = useState<string>('');
+    const { setValue, watch } = useFormContext<PostFormValues>();
+    const startDate = watch('filter.startDate') ?? undefined;
+    const endDate = watch('filter.endDate') ?? undefined;
+    const deadlineDate = watch('filter.deadlineDate') ?? undefined;
+    const deadlineTime = watch('filter.deadlineTime') ?? '';
+    const groupTheme = watch('filter.groupTheme') ?? '';
+    const groupSize = watch('filter.groupSize') ?? '';
+    const selectedGender = watch('filter.gender') ?? null;
+    const selectedAges = watch('filter.age') ?? [];
 
     const ageGroups = [
         { id: 'notCare', label: '무관' },
@@ -50,83 +49,36 @@ export default function PostSetupPanel() {
         { id: 'male', label: '남성' },
     ];
 
-    const [selectedGender, setSelectedGender] = useState<string | null>(null);
-    const [selectedAges, setSelectedAges] = useState<string[]>([]);
-
     const handleGenderToggle = (id: string) => {
-        setSelectedGender(selectedGender === id ? null : id);
+        const newValue = selectedGender === id ? '' : id;
+        setValue('filter.gender', newValue);
     };
 
     const handleAgeToggle = (id: string) => {
         if (id === 'notCare') {
-            setSelectedAges(
-                selectedAges.includes('notCare') ? [] : ['notCare'],
-            );
+            const newValue = selectedAges.includes('notCare')
+                ? []
+                : ['notCare'];
+            setValue('filter.age', newValue);
         } else {
-            setSelectedAges((prev) => {
-                const ageGroupsWithoutNotCare = ageGroups
-                    .filter((age) => age.id !== 'notCare')
-                    .map((age) => age.id);
+            const ageGroupsWithoutNotCare = ageGroups
+                .filter((age) => age.id !== 'notCare')
+                .map((age) => age.id);
 
-                const newSelection = prev.includes(id)
-                    ? prev.filter((item) => item !== id)
-                    : [...prev.filter((item) => item !== 'notCare'), id];
+            const newSelection = selectedAges.includes(id)
+                ? selectedAges.filter((item) => item !== id)
+                : [...selectedAges.filter((item) => item !== 'notCare'), id];
 
-                if (newSelection.length === ageGroupsWithoutNotCare.length) {
-                    return ['notCare'];
-                }
-
-                return newSelection;
-            });
+            if (newSelection.length === ageGroupsWithoutNotCare.length) {
+                setValue('filter.age', ['notCare']);
+            } else {
+                setValue('filter.age', newSelection);
+            }
         }
     };
 
-    const handleSubmit = () => {
-        // "yyyy. MM. dd." 형식으로 날짜 출력
-        const formatDateString = (date: Date | undefined) => {
-            if (!date) return '';
-            return format(date, 'yyyy. MM. dd.', { locale: ko });
-        };
-
-        const formData = {
-            title,
-            date: {
-                from: formatDateString(startDate),
-                to: formatDateString(endDate),
-            },
-            recruitmentDeadline: {
-                date: formatDateString(deadlineDate),
-                time: deadlineTime,
-            },
-            groupTheme,
-            groupSize,
-            gender: selectedGender,
-            age: selectedAges,
-        };
-
-        alert(JSON.stringify(formData));
-    };
-
     return (
-        <div className="flex w-full flex-col items-start gap-8">
-            <section className="flex w-full flex-col items-start gap-2.5">
-                <h1 className="mt-10 mb-[70px] text-2xl font-bold">
-                    동행 작성하기
-                </h1>
-                <h2 className="text-base leading-6 font-bold text-black">
-                    제목
-                </h2>
-                <div className="w-full rounded-lg border border-[#e9e9e9] p-4">
-                    <input
-                        type="text"
-                        placeholder="제목을 입력 해주세요."
-                        className="w-full text-xl font-bold outline-none placeholder:font-normal placeholder:text-[#999999]"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
-                </div>
-            </section>
-
+        <div className="mt-6 flex w-full flex-col items-start gap-8">
             <section className="flex w-full flex-wrap items-start gap-6">
                 <div className="flex flex-col items-start gap-2.5">
                     <h2 className="text-base leading-6 font-bold text-black">
@@ -159,7 +111,10 @@ export default function PostSetupPanel() {
                                 <Calendar
                                     mode="single"
                                     selected={startDate}
-                                    onSelect={setStartDate}
+                                    onSelect={(date) =>
+                                        date &&
+                                        setValue('filter.startDate', date)
+                                    }
                                     initialFocus
                                 />
                             </PopoverContent>
@@ -193,7 +148,9 @@ export default function PostSetupPanel() {
                                 <Calendar
                                     mode="single"
                                     selected={endDate}
-                                    onSelect={setEndDate}
+                                    onSelect={(date) =>
+                                        date && setValue('filter.endDate', date)
+                                    }
                                     initialFocus
                                     disabled={(date) =>
                                         startDate ? date < startDate : false
@@ -235,7 +192,10 @@ export default function PostSetupPanel() {
                                 <Calendar
                                     mode="single"
                                     selected={deadlineDate}
-                                    onSelect={setDeadlineDate}
+                                    onSelect={(date) =>
+                                        date &&
+                                        setValue('filter.deadlineDate', date)
+                                    }
                                     initialFocus
                                     disabled={(date) =>
                                         endDate ? date < endDate : false
@@ -264,7 +224,10 @@ export default function PostSetupPanel() {
                                     id="time"
                                     value={deadlineTime}
                                     onChange={(e) =>
-                                        setDeadlineTime(e.target.value)
+                                        setValue(
+                                            'filter.deadlineTime',
+                                            e.target.value,
+                                        )
                                     }
                                     className="w-full"
                                 />
@@ -277,7 +240,12 @@ export default function PostSetupPanel() {
                     <h2 className="text-base leading-6 font-bold text-black">
                         동행 테마
                     </h2>
-                    <Select value={groupTheme} onValueChange={setGroupTheme}>
+                    <Select
+                        value={groupTheme}
+                        onValueChange={(value) =>
+                            setValue('filter.groupTheme', value)
+                        }
+                    >
                         <SelectTrigger className="h-11 w-[280px] rounded-lg border border-solid border-[#e9e9e9] px-4 py-2.5">
                             <SelectValue placeholder="동행 테마 선택" />
                         </SelectTrigger>
@@ -300,7 +268,12 @@ export default function PostSetupPanel() {
                     <h2 className="text-base leading-6 font-bold text-black">
                         동행 인원
                     </h2>
-                    <Select value={groupSize} onValueChange={setGroupSize}>
+                    <Select
+                        value={groupSize}
+                        onValueChange={(value) =>
+                            setValue('filter.groupSize', value)
+                        }
+                    >
                         <SelectTrigger className="h-11 w-[280px] rounded-lg border border-solid border-[#e9e9e9] px-4 py-2.5">
                             <SelectValue placeholder="동행 인원 선택" />
                         </SelectTrigger>
@@ -356,11 +329,6 @@ export default function PostSetupPanel() {
                     </div>
                 </div>
             </section>
-
-            {/* 확인용 임시 버튼 */}
-            <Button className="mb-9 ml-auto" onClick={handleSubmit}>
-                저장된 데이터 확인
-            </Button>
         </div>
     );
 }

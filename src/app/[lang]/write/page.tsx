@@ -1,5 +1,6 @@
 'use client';
 
+import { PostFormValues, PostSchema } from '@/app/[lang]/write/postSchema';
 import PostSetupPanel from '@/components/Editor/PostSetupPanel';
 import ContentEditor from '@/components/Editor/Tiptap';
 import { Button } from '@/components/ui/button';
@@ -12,71 +13,145 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import HashtagInput from '@/components/write/HashtagInput';
+import LocationSelector from '@/components/write/LocationSelector';
+import ThumbnailUploader from '@/components/write/ThumbnailUploader';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-// JSONContent 타입을 zod에서 사용할 수 있도록 설정
-const jsonContentSchema = z.any(); // 복잡한 JSON 객체를 허용
+import { toast } from 'sonner';
 
 export default function WritePage() {
-    const postSchema = z.object({
-        title: z.string().min(4, { message: '제목은 네글자 이상' }),
-        // JSON 형식 또는 문자열 둘 다 허용
-        description: z.union([z.string().min(5), jsonContentSchema]),
-    });
+    const router = useRouter();
 
-    const form = useForm<z.infer<typeof postSchema>>({
-        resolver: zodResolver(postSchema),
-        mode: 'onChange',
+    const form = useForm<PostFormValues>({
+        resolver: zodResolver(PostSchema),
+        mode: 'onBlur', // onChange 는 UX에 안좋아 보여서 포커스 기준 파라미터로 변경했습니다.
+        reValidateMode: 'onChange', // 에러시 검증은 변화마다 검증
         defaultValues: {
             title: '',
-            description: '',
+            filter: {
+                startDate: undefined,
+                endDate: undefined,
+                deadlineDate: undefined,
+                deadlineTime: '',
+                groupTheme: '',
+                groupSize: '',
+                gender: null,
+                age: [],
+            },
         },
     });
 
-    const onSubmit = async (values: z.infer<typeof postSchema>) => {
+    const onSubmit = async (data: PostFormValues) => {
         // 직렬화된 JSON 문자열 확인
-        console.log('Serialized description:', values.description);
         //todo: BE 팀과 이야기 후 json 직렬화하여 본문 부분 전송하기로 했습니다.
         // 여기서 API 요청 처리
-        // fetch('/api/posts', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(values)
-        // })
+
+        // 개발용 처리
+        if (process.env.NODE_ENV === 'development')
+            alert(JSON.stringify(data, null, 2));
+
+        const res = await fetch('/api/posts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+            toast('글 발행 실패', {
+                description: '잠시 후 다시 시도해 주세요',
+                action: {
+                    label: '닫기',
+                    onClick: () => {}, // 라벨 누르면 닫히는건 디폴트 동작 이라고 합니다.
+                },
+            });
+            return;
+        }
+
+        toast('글 발행 완료 !', {
+            description: '참여 신청을 받으면 알려드릴게요',
+            action: {
+                label: '닫기',
+                onClick: () => {},
+            },
+        });
+        form.reset();
+        router.push('/'); //todo: 지금은 홈으로 밀지만 be 연동 이후 포스트아이디가 넘어 온다면 해당 상세 페이지로 이동하는 것이 좋을 듯 합니다.
+    };
+
+    /**
+     * 취소 누르면 이전 페이지로 사용자 밀어주기
+     */
+    const handleCancel = () => {
+        toast('작성 취소됨', {
+            description: '이전 페이지로 돌아갑니다',
+            action: {
+                label: '닫기',
+                onClick: () => {},
+            },
+        });
+        router.back();
     };
 
     return (
         <div className="mx-auto w-full">
-            <main className="mx-auto w-full flex-col">
-                <PostSetupPanel />
-
+            <h1 className={'mt-10 text-2xl font-bold'}>동행 작성하기</h1>
+            {/*글쓰기 폼 섹션*/}
+            <section className="mx-auto mt-17.5 w-full flex-col">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
+                        {/*제목 섹션*/}
                         <FormField
                             control={form.control}
                             name="title"
                             render={({ field }) => (
                                 <FormItem className={'w-full'}>
-                                    <FormLabel>Title</FormLabel>
+                                    <FormLabel htmlFor={'title'}>
+                                        <h2 className={'text-base font-bold'}>
+                                            제목
+                                        </h2>
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder="Main title for your article"
+                                            placeholder="동행 제목을 입력해 보세요"
                                             {...field}
-                                            className={`w-full`}
+                                            className={`mt-2.5 h-15 w-full rounded-lg p-4 text-xl font-bold`}
+                                            id={'title'}
                                         />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+                        {/* 필터 섹션 */}
+                        <section>
+                            <PostSetupPanel />
+                        </section>
+
+                        {/*지도 및 장소 검색 섹션*/}
+                        <section>
+                            <FormField
+                                name="location"
+                                render={({ field }) => (
+                                    <LocationSelector field={field} />
+                                )}
+                            />
+                        </section>
+
+                        {/*본문 에디터 섹션*/}
                         <FormField
                             control={form.control}
-                            name="description"
+                            name="content"
                             render={({ field }) => (
                                 <FormItem className={'w-full'}>
-                                    <FormLabel>본문 내용</FormLabel>
+                                    <h2
+                                        className={
+                                            'mt-6 mb-2.5 text-base font-bold'
+                                        }
+                                    >
+                                        본문
+                                    </h2>
                                     <FormControl>
                                         {/*Tiptap 에디터 부분*/}
                                         <ContentEditor
@@ -103,12 +178,97 @@ export default function WritePage() {
                                 </FormItem>
                             )}
                         />
-                        <Button className={'my-4'} type="submit">
-                            Submit
-                        </Button>
+                        {/*썸네일 업로드 섹션*/}
+                        <FormField
+                            control={form.control}
+                            name="thumbnailUrl"
+                            render={({ field }) => (
+                                <FormItem className="mt-6 w-full">
+                                    <FormLabel>
+                                        <h2 className={'text-base font-bold'}>
+                                            썸네일
+                                            <span
+                                                className={
+                                                    'font-normal text-neutral-400'
+                                                }
+                                            >
+                                                (선택)
+                                            </span>
+                                        </h2>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <ThumbnailUploader
+                                            value={field.value}
+                                            onChange={(file) =>
+                                                field.onChange(file)
+                                            }
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        {/*태그 섹션*/}
+                        <FormField
+                            control={form.control}
+                            name="tags"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel htmlFor="tags">
+                                        <h2 className="mt-6 text-base font-bold">
+                                            태그
+                                            <span className="font-normal text-neutral-400">
+                                                (선택)
+                                            </span>
+                                        </h2>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <HashtagInput
+                                            value={field.value || []}
+                                            onChange={field.onChange}
+                                            id="tags"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/*버튼그룹 섹션*/}
+                        <section
+                            className={
+                                'mt-24 mb-10 flex w-full items-center justify-center gap-2'
+                            }
+                        >
+                            <Button
+                                className={
+                                    'h-13 w-54 border border-neutral-300 bg-white text-sm font-semibold text-neutral-600'
+                                }
+                                onClick={handleCancel}
+                            >
+                                취소
+                            </Button>
+                            <Button
+                                className={
+                                    'bg-sky-blue h-13 w-54 text-sm font-semibold text-neutral-50'
+                                }
+                                disabled={form.formState.isSubmitting}
+                                type="submit"
+                            >
+                                {form.formState.isSubmitting ? (
+                                    <div
+                                        className={
+                                            'border-t-none animate-spin border-2 border-white'
+                                        }
+                                    />
+                                ) : (
+                                    '등록'
+                                )}
+                            </Button>
+                        </section>
                     </form>
                 </Form>
-            </main>
+            </section>
         </div>
     );
 }
