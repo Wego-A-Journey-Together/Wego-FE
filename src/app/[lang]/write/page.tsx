@@ -12,9 +12,11 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import HashtagInput from '@/components/write/HashtagInput';
 import LocationSelector from '@/components/write/LocationSelector';
 import ThumbnailUploader from '@/components/write/ThumbnailUploader';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -22,6 +24,8 @@ import { z } from 'zod';
 type PostFormValues = z.infer<typeof PostSchema>;
 
 export default function WritePage() {
+    const router = useRouter();
+
     const form = useForm<PostFormValues>({
         resolver: zodResolver(PostSchema),
         mode: 'onBlur', // onChange 는 UX에 안좋아 보여서 포커스 기준 파라미터로 변경했습니다.
@@ -46,6 +50,7 @@ export default function WritePage() {
                     onClick: () => {}, // 라벨 누르면 닫히는건 디폴트 동작 이라고 합니다.
                 },
             });
+            return;
         }
         // 개발용 처리
         if (process.env.NODE_ENV === 'development') alert(data);
@@ -57,6 +62,8 @@ export default function WritePage() {
                 onClick: () => {},
             },
         });
+        form.reset();
+        router.push('/'); //todo: 지금은 홈으로 밀지만 be 연동 이후 포스트아이디가 넘어 온다면 해당 상세 페이지로 이동하는 것이 좋을 듯 합니다.
     };
 
     return (
@@ -189,37 +196,29 @@ export default function WritePage() {
                         {/*태그 섹션*/}
                         <FormField
                             control={form.control}
-                            name="title"
+                            name="tags"
                             render={({ field }) => (
-                                <FormItem className={'w-full'}>
-                                    <FormLabel htmlFor={'title'}>
-                                        <h2
-                                            className={
-                                                'mt-6 text-base font-bold'
-                                            }
-                                        >
+                                <FormItem className="w-full">
+                                    <FormLabel htmlFor="tags">
+                                        <h2 className="mt-6 text-base font-bold">
                                             태그
-                                            <span
-                                                className={
-                                                    'font-normal text-neutral-400'
-                                                }
-                                            >
+                                            <span className="font-normal text-neutral-400">
                                                 (선택)
                                             </span>
                                         </h2>
                                     </FormLabel>
                                     <FormControl>
-                                        <Input
-                                            placeholder="동행 제목을 입력해 보세요"
-                                            {...field}
-                                            className={`mt-2.5 h-15 w-full rounded-lg p-4 text-xl font-bold`}
-                                            id={'title'}
+                                        <HashtagInput
+                                            value={field.value || []}
+                                            onChange={field.onChange}
+                                            id="tags"
                                         />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+
                         {/*버튼그룹 섹션*/}
                         <section
                             className={
