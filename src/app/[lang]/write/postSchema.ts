@@ -39,5 +39,6 @@ export const PostSchema = z.object({
                 message: '태그는 #으로 시작하고 공백 없이 1~19자여야 합니다.',
             }),
         )
-        .max(5, { message: '해시태그는 5개까지 가능합니다.' }),
+        .max(5, { message: '해시태그는 5개까지 가능합니다.' })
+        .optional(),
 });

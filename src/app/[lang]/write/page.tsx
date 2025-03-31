@@ -1,5 +1,6 @@
 'use client';
 
+import { PostSchema } from '@/app/[lang]/write/postSchema';
 import ContentEditor from '@/components/Editor/Tiptap';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,42 +12,51 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import KakaoMap from '@/components/write/KakaoMap';
-import { ThumbnailBtn } from '@/components/write/ThumbnailBtn';
+import LocationSelector from '@/components/write/LocationSelector';
+import ThumbnailUploader from '@/components/write/ThumbnailUploader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
-// JSONContent 타입을 zod에서 사용할 수 있도록 설정
-const jsonContentSchema = z.any(); // 복잡한 JSON 객체를 허용
+type PostFormValues = z.infer<typeof PostSchema>;
 
 export default function WritePage() {
-    const postSchema = z.object({
-        title: z.string().min(4, { message: '제목은 네글자 이상' }),
-        // JSON 형식 또는 문자열 둘 다 허용
-        description: z.union([z.string().min(5), jsonContentSchema]),
-        location: z.string().min(5),
+    const form = useForm<PostFormValues>({
+        resolver: zodResolver(PostSchema),
+        mode: 'onBlur', // onChange 는 UX에 안좋아 보여서 포커스 기준 파라미터로 변경했습니다.
+        reValidateMode: 'onChange', // 에러시 검증은 변화마다 검증
     });
 
-    const form = useForm<z.infer<typeof postSchema>>({
-        resolver: zodResolver(postSchema),
-        mode: 'onChange',
-        defaultValues: {
-            title: '',
-            description: '',
-        },
-    });
-
-    const onSubmit = async (values: z.infer<typeof postSchema>) => {
+    const onSubmit = async (data: PostFormValues) => {
         // 직렬화된 JSON 문자열 확인
-        console.log('Serialized description:', values.description);
         //todo: BE 팀과 이야기 후 json 직렬화하여 본문 부분 전송하기로 했습니다.
         // 여기서 API 요청 처리
-        // fetch('/api/posts', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(values)
-        // })
+        const res = await fetch('/api/posts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+            toast('글 발행 실패', {
+                description: '잠시 후 다시 시도해 주세요',
+                action: {
+                    label: '닫기',
+                    onClick: () => {}, // 라벨 누르면 닫히는건 디폴트 동작 이라고 합니다.
+                },
+            });
+        }
+        // 개발용 처리
+        if (process.env.NODE_ENV === 'development') alert(data);
+
+        toast('글 발행 완료 !', {
+            description: '참여 신청을 받으면 알려드릴게요',
+            action: {
+                label: '닫기',
+                onClick: () => {},
+            },
+        });
     };
 
     return (
@@ -100,53 +110,17 @@ export default function WritePage() {
                         {/*지도 및 장소 검색 섹션*/}
                         <section>
                             <FormField
-                                control={form.control}
                                 name="location"
                                 render={({ field }) => (
-                                    <FormItem className={'w-full'}>
-                                        <FormLabel htmlFor={'location'}>
-                                            <h2
-                                                className={
-                                                    'mt-6 text-base font-bold'
-                                                }
-                                            >
-                                                장소
-                                            </h2>
-                                        </FormLabel>
-                                        <div
-                                            className={
-                                                'mt-2.5 flex items-center gap-2.5'
-                                            }
-                                        >
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="여행지를 입력해 주세요"
-                                                    {...field}
-                                                    className={`h-11 w-full rounded-lg bg-neutral-100 p-4 text-base text-[#666666]`}
-                                                    id={'location'}
-                                                />
-                                            </FormControl>
-                                            <Button
-                                                variant={'outline'}
-                                                className={
-                                                    'border-sky-blue font-semibild text-sky-blue h-11 border-2 px-7.5 py-2 text-sm'
-                                                }
-                                            >
-                                                위치 찾기
-                                            </Button>
-                                        </div>
-                                        <FormMessage />
-                                    </FormItem>
+                                    <LocationSelector field={field} />
                                 )}
                             />
-                            {/*실제 지도 랜더 섹션*/}
-                            <section>
-                                <KakaoMap />
-                            </section>
                         </section>
+
+                        {/*본문 에디터 섹션*/}
                         <FormField
                             control={form.control}
-                            name="description"
+                            name="content"
                             render={({ field }) => (
                                 <FormItem className={'w-full'}>
                                     <h2
@@ -182,18 +156,14 @@ export default function WritePage() {
                                 </FormItem>
                             )}
                         />
-                        {/*썸네일 섹션*/}
+                        {/*썸네일 업로드 섹션*/}
                         <FormField
                             control={form.control}
-                            name="title"
+                            name="thumbnailUrl"
                             render={({ field }) => (
-                                <FormItem className={'w-full'}>
-                                    <FormLabel htmlFor={'title'}>
-                                        <h2
-                                            className={
-                                                'mt-6 text-base font-bold'
-                                            }
-                                        >
+                                <FormItem className="mt-6 w-full">
+                                    <FormLabel>
+                                        <h2 className={'text-base font-bold'}>
                                             썸네일
                                             <span
                                                 className={
@@ -205,20 +175,17 @@ export default function WritePage() {
                                         </h2>
                                     </FormLabel>
                                     <FormControl>
-                                        <Input
-                                            placeholder="동행 제목을 입력해 보세요"
-                                            {...field}
-                                            className={`mt-2.5 h-15 w-full rounded-lg p-4 text-xl font-bold`}
-                                            id={'title'}
+                                        <ThumbnailUploader
+                                            value={field.value}
+                                            onChange={(file) =>
+                                                field.onChange(file)
+                                            }
                                         />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        <div className={'flex gap-1.5'}>
-                            <ThumbnailBtn /> <ThumbnailBtn />
-                        </div>
                         {/*태그 섹션*/}
                         <FormField
                             control={form.control}

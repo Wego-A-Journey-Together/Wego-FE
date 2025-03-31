@@ -7,6 +7,7 @@ import { Orienta } from 'next/font/google';
 import localFont from 'next/font/local';
 import { cookies, headers } from 'next/headers';
 import React from 'react';
+import { Toaster } from 'sonner';
 
 import '../globals.css';
 
@@ -88,6 +89,7 @@ export default async function RootLayout({
                             className={`mx-auto max-w-[1240px] px-4 sm:px-6 md:px-5`}
                         >
                             {children}
+                            <Toaster />
                         </main>
                     </TanstackProviders>
                 </ReduxProvider>
