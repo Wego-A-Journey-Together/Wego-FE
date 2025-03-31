@@ -5,10 +5,18 @@ import { FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import KakaoKeywordSearch from '@/components/write/KakaoKeywordSearch';
 import { useState } from 'react';
-import { ControllerRenderProps } from 'react-hook-form';
+
+export type SelectedPlace = {
+    placeName: string;
+    lat: number;
+    lng: number;
+};
 
 type Props = {
-    field: ControllerRenderProps<any, 'location'>;
+    field: {
+        value: SelectedPlace;
+        onChange: (value: SelectedPlace) => void;
+    };
 };
 
 export default function LocationSelector({ field }: Props) {

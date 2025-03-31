@@ -5,12 +5,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 const KAKAO_REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY!;
 
-declare global {
-    interface Window {
-        kakao: any;
-    }
-}
-
 export type Place = {
     id: string;
     place_name: string;
@@ -41,8 +35,8 @@ export default function KakaoKeywordSearch({
     const [selected, setSelected] = useState<Place | null>(null);
     const [hasSearched, setHasSearched] = useState(false);
     const mapRef = useRef<HTMLDivElement>(null);
-    const mapInstance = useRef<any>(null);
-    const markerRef = useRef<any>(null);
+    const mapInstance = useRef<kakao.maps.Map | null>(null);
+    const markerRef = useRef<kakao.maps.Marker | null>(null);
 
     // 지도 초기화 함수
     const initializeMap = useCallback(() => {

@@ -1,6 +1,7 @@
 'use client';
 
 import { PostSchema } from '@/app/[lang]/write/postSchema';
+import PostSetupPanel from '@/components/Editor/PostSetupPanel';
 import ContentEditor from '@/components/Editor/Tiptap';
 import { Button } from '@/components/ui/button';
 import {
@@ -97,21 +98,8 @@ export default function WritePage() {
                             )}
                         />
                         {/*todo:필터 기능 추가는 도움 요청 드립니다. */}
-                        <section
-                            className={
-                                'flex w-full flex-col items-center justify-center text-center'
-                            }
-                        >
-                            <div
-                                className={'bg-sky-blue/30 mt-6 h-19.5 w-full'}
-                            >
-                                윗필터
-                            </div>
-                            <div
-                                className={'bg-sky-blue/30 mt-6 h-19.5 w-full'}
-                            >
-                                아래필터
-                            </div>
+                        <section>
+                            <PostSetupPanel />
                         </section>
 
                         {/*지도 및 장소 검색 섹션*/}
