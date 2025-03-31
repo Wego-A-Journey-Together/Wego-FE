@@ -64,7 +64,7 @@ export const GroupThemeFilter = () => {
             value={groupTheme}
             onValueChange={(value) => dispatch(setGroupTheme(value))}
         >
-            <SelectTrigger className="h-auto w-[176px] gap-9 py-4 pr-[18px] pl-7">
+            <SelectTrigger className="h-auto w-[176px] gap-9 overflow-hidden py-4 pr-[18px] pl-7">
                 <div className="flex gap-5">
                     <Image
                         src="/icon/home/openedBookIcon.svg"

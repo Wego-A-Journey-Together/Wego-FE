@@ -98,8 +98,19 @@ export default function GroupCreateByUser({
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="flex flex-shrink-0 items-center gap-2">
-                                        <Button>임시버튼</Button>
+                                    <div className="flex flex-shrink-0 flex-col items-center gap-2">
+                                        <Button
+                                            variant={'outline'}
+                                            className="h-10 w-[130px]"
+                                        >
+                                            수정하기
+                                        </Button>
+                                        <Button
+                                            variant={'ghost'}
+                                            className="text-sm text-[#999999]"
+                                        >
+                                            게시글 숨기기
+                                        </Button>
                                     </div>
                                 </div>
                                 <div
@@ -111,7 +122,7 @@ export default function GroupCreateByUser({
                                 >
                                     <Tab
                                         className={
-                                            'z-10 text-base leading-relaxed'
+                                            'z-10 bg-transparent text-base leading-relaxed'
                                         }
                                         tabItems={getTabItems(post)}
                                         selectedTab={

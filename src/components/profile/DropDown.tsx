@@ -2,6 +2,7 @@
 
 import Tab from '@/components/common/Tab';
 import GroupCreateByUser from '@/components/profile/GroupCreateByUser';
+import Comments from '@/components/profile/MyComments';
 import MyGroupPost from '@/components/profile/MyGroupPost';
 import MyReview from '@/components/profile/MyReview';
 import ReceivedReview from '@/components/profile/ReceivedReview';
@@ -46,7 +47,7 @@ const TAB_CONTENTS = {
         ),
         ended: <MyGroupPost posts={trendingPost} />,
         my: <GroupCreateByUser posts={trendingPost} />,
-        comments: <div>내가 작성한 댓글 목록</div>,
+        comments: <Comments />,
     },
     sogam: {
         received: <ReceivedReview />,

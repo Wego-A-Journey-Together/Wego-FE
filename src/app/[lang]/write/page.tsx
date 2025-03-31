@@ -1,5 +1,6 @@
 'use client';
 
+import PostSetupPanel from '@/components/Editor/PostSetupPanel';
 import ContentEditor from '@/components/Editor/Tiptap';
 import { Button } from '@/components/ui/button';
 import {
@@ -49,6 +50,8 @@ export default function WritePage() {
     return (
         <div className="mx-auto w-full">
             <main className="mx-auto w-full flex-col">
+                <PostSetupPanel />
+
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <FormField

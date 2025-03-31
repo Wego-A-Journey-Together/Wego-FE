@@ -10,7 +10,7 @@ export default async function Home() {
     });
     const trendingPosts = await res.json();
     return (
-        <main>
+        <div>
             {/* 인기 모임 캐러셀 영역 */}
             <TrendingCarousel
                 className="mt-5 sm:mt-7.5"
@@ -34,7 +34,7 @@ export default async function Home() {
             <section className="m-auto">
                 <InfiniteScroll />
             </section>
-        </main>
+        </div>
     );
 }
 
