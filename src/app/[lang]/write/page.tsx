@@ -11,6 +11,8 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import KakaoMap from '@/components/write/KakaoMap';
+import { ThumbnailBtn } from '@/components/write/ThumbnailBtn';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -137,6 +139,10 @@ export default function WritePage() {
                                     </FormItem>
                                 )}
                             />
+                            {/*실제 지도 랜더 섹션*/}
+                            <section>
+                                <KakaoMap />
+                            </section>
                         </section>
                         <FormField
                             control={form.control}
@@ -210,6 +216,9 @@ export default function WritePage() {
                                 </FormItem>
                             )}
                         />
+                        <div className={'flex gap-1.5'}>
+                            <ThumbnailBtn /> <ThumbnailBtn />
+                        </div>
                         {/*태그 섹션*/}
                         <FormField
                             control={form.control}
