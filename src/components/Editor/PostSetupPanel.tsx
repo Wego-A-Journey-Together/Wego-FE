@@ -116,6 +116,12 @@ export default function PostSetupPanel() {
                                         setValue('filter.startDate', date)
                                     }
                                     initialFocus
+                                    disabled={(date) =>
+                                        date <
+                                        new Date(
+                                            new Date().setHours(0, 0, 0, 0),
+                                        )
+                                    }
                                 />
                             </PopoverContent>
                         </Popover>
@@ -152,9 +158,6 @@ export default function PostSetupPanel() {
                                         date && setValue('filter.endDate', date)
                                     }
                                     initialFocus
-                                    disabled={(date) =>
-                                        startDate ? date < startDate : false
-                                    }
                                 />
                             </PopoverContent>
                         </Popover>
@@ -198,7 +201,10 @@ export default function PostSetupPanel() {
                                     }
                                     initialFocus
                                     disabled={(date) =>
-                                        endDate ? date < endDate : false
+                                        date <
+                                        new Date(
+                                            new Date().setHours(0, 0, 0, 0),
+                                        )
                                     }
                                 />
                             </PopoverContent>
