@@ -2,10 +2,12 @@
 
 import LoginBtn from '@/components/Btn/LoginBtn';
 import MultiLingualToggler from '@/components/MultiLingual/MultiLingualToggler';
+import AuthNav from '@/components/Nav/AuthNav';
 import Hamburger from '@/components/Nav/Hamburger';
 import Logo from '@/components/Nav/Logo';
 import { SearchBar } from '@/components/Nav/SearchBar';
 import ThemeToggler from '@/components/ThemeToggler/DarkModeToggler';
+import { useSession } from '@/hooks/useSession';
 import { cn } from '@/lib';
 
 interface NavProps {
@@ -14,6 +16,8 @@ interface NavProps {
 }
 
 export default function NavBar({ className, isDarkMode }: NavProps) {
+    const { isAuthenticated, kakaoId } = useSession();
+
     return (
         <header
             className={cn(
@@ -31,7 +35,12 @@ export default function NavBar({ className, isDarkMode }: NavProps) {
                 <section className="flex items-center">
                     <ThemeToggler colorTheme={isDarkMode} />
 
-                    <LoginBtn />
+                    {isAuthenticated ? (
+                        <AuthNav kakaoId={kakaoId} />
+                    ) : (
+                        <LoginBtn />
+                    )}
+
                     <div className="w-[20px]" />
                     <MultiLingualToggler />
                 </section>
@@ -39,7 +48,11 @@ export default function NavBar({ className, isDarkMode }: NavProps) {
 
             {/* 모바일 레이아웃 */}
             <div className="flex w-full items-center justify-between md:hidden">
-                <Hamburger isDarkMode={isDarkMode} />
+                <Hamburger
+                    isDarkMode={isDarkMode}
+                    isAuthenticated={isAuthenticated}
+                    kakaoId={kakaoId}
+                />
 
                 <section className="absolute left-1/2 -translate-x-1/2 transform">
                     <Logo />

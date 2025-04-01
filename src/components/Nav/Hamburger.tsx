@@ -1,18 +1,26 @@
 'use client';
 
 import LoginBtn from '@/components/Btn/LoginBtn';
+import AuthNav from '@/components/Nav/AuthNav';
 import ThemeToggler from '@/components/ThemeToggler/DarkModeToggler';
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib';
 import { Menu, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 
-export default function Hamburger({ isDarkMode }: { isDarkMode: boolean }) {
+export default function Hamburger({
+    isDarkMode,
+    isAuthenticated,
+    kakaoId,
+}: {
+    isDarkMode: boolean;
+    isAuthenticated: boolean;
+    kakaoId?: string;
+}) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef(null);
 
@@ -46,16 +54,17 @@ export default function Hamburger({ isDarkMode }: { isDarkMode: boolean }) {
                     />
                 </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="w-auto">
-                <DropdownMenuItem>
+            <DropdownMenuContent align="center" className="w-auto px-2 py-1">
+                {isAuthenticated ? (
+                    <div className="flex justify-center">
+                        <AuthNav kakaoId={kakaoId} />
+                    </div>
+                ) : (
                     <LoginBtn />
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    <ThemeToggler
-                        colorTheme={isDarkMode}
-                        className={'mx-auto'}
-                    />
-                </DropdownMenuItem>
+                )}
+                <div className="flex justify-center">
+                    <ThemeToggler colorTheme={isDarkMode} className="mx-auto" />
+                </div>
             </DropdownMenuContent>
         </DropdownMenu>
     );
