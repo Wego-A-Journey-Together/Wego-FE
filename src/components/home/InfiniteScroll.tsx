@@ -8,7 +8,7 @@ import { useEffect, useRef } from 'react';
 // api 생기면 삭제
 import trendingPost from '../../../public/data/trending';
 import LoadingThreeDots from '../common/LoadingThreeDots';
-import { Button } from '../ui/button';
+import CreatePost from './CreatePost';
 import CreatePostWindow from './CreatePostWindow';
 
 export default function InfiniteScroll() {
@@ -50,16 +50,8 @@ export default function InfiniteScroll() {
     }, [isInView, fetchNextPage, isFetchingNextPage, hasNextPage]);
 
     if (isError) {
-        return (
-            <div className="col-span-full mx-auto mt-40 flex flex-col items-center gap-5">
-                <p className="text-base font-medium text-gray-500">
-                    일시적인 오류가 발생했어요
-                </p>
-                <Button onClick={() => window.location.reload()}>
-                    새로고침
-                </Button>
-            </div>
-        );
+        console.error('Error fetching posts data');
+        return <CreatePost />;
     }
 
     const hasNoData = data?.pages[0]?.length === 0;
@@ -84,24 +76,9 @@ export default function InfiniteScroll() {
                 </motion.div>
             ))}
 
-            {/* api 생기면 다시 활성화, 글이 없는 경우 띄울 Ui */}
-            {hasNoData && (
-                <div className="col-span-full mx-auto w-full max-w-[380px]">
-                    <div className="mt-40 mb-[329px] flex flex-col items-center gap-[30px]">
-                        <p className="text-center text-base font-medium text-gray-500">
-                            조건에 부합하는 동행이 없어요.
-                            <br />
-                            내가 원하는 동행을 만들어보세요!
-                        </p>
+            {/* 글이 없는 경우 띄울 Ui */}
+            {hasNoData && <CreatePost />}
 
-                        <Button className="h-[59px] w-full">
-                            <span className="text-lg font-bold">
-                                내가 원하는 동행글 작성하기
-                            </span>
-                        </Button>
-                    </div>
-                </div>
-            )}
             {/* 첫 로딩을 끝낸 이후 데이터가 있으면 게시글 작성 버튼을 fixed로 띄웁니다. */}
             {!isLoading && !hasNoData && <CreatePostWindow />}
 

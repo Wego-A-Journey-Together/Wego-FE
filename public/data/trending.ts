@@ -197,13 +197,7 @@ const trendingPost = [
         preferredGender: '무관',
         maxMembers: 5,
         currentMembers: 1,
-        hashtags: [
-            '#해운대',
-            '#광안리',
-            '#감천문화마을',
-            '#자갈치시장',
-            '#부산여행',
-        ],
+        hashtags: ['#광안리', '#감천문화마을', '#자갈치시장', '#부산여행'],
         isDeleted: false,
         participants: [
             {
