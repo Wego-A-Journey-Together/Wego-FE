@@ -15,18 +15,20 @@ import { setDateAction } from '@/redux/slices/filterSlice';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Image from 'next/image';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 export const DateFilter = () => {
     const date = useAppSelector((state) => state.filter.date);
     const dispatch = useAppDispatch();
     const isMobile = useMediaQuery('(max-width: 1200px)');
+    const [open, setOpen] = useState(false);
 
     const fromDate = date?.from ? new Date(date.from) : null;
     const toDate = date?.to ? new Date(date.to) : null;
 
     const resetSelection = useCallback(() => {
         dispatch(setDateAction(undefined));
+        setOpen(false);
     }, [dispatch]);
 
     if (isMobile) {
@@ -41,7 +43,7 @@ export const DateFilter = () => {
     }
 
     return (
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
                     variant={'outline'}
@@ -99,13 +101,20 @@ export const DateFilter = () => {
                     />
 
                     {/* 초기화 버튼 */}
-                    <div className="mb-2 w-[250px]">
+                    <div className="mb-2 flex w-[250px] gap-3">
                         <Button
                             variant={'reset'}
                             onClick={resetSelection}
-                            className="h-10 w-full rounded-lg border-1 text-sm"
+                            className="h-10 w-1/2 rounded-lg border-1 text-sm"
                         >
                             초기화
+                        </Button>
+                        <Button
+                            variant={'default'}
+                            onClick={() => setOpen(false)}
+                            className="h-10 w-1/2 rounded-lg text-sm"
+                        >
+                            적용
                         </Button>
                     </div>
                 </div>
