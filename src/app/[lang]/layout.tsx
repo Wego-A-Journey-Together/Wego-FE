@@ -69,6 +69,32 @@ export default async function RootLayout({
     const currentLang = pathLocale || localeFromCookie || 'ko';
     //----------------------------------------
 
+    //-------------------유저 정보 SSR ----------------------------
+    const NEST_BFF_URL =
+        process.env.NEXT_BFF_URL || 'https://gateway.wego-travel.click';
+    let user = null;
+
+    try {
+        const res = await fetch(`${NEST_BFF_URL}/api/user/me`, {
+            headers: {
+                cookie: (await headers()).get('cookie') || '',
+            },
+            cache: 'no-store',
+        });
+
+        if (res.ok) {
+            user = await res.json();
+            console.log(user);
+        } else {
+            // 로그인 안된 상태로 처리
+            user = null;
+            console.log(res);
+        }
+    } catch (err) {
+        // 서버가 죽었거나 네트워크 문제일 경우 ( fetch 는 !res.ok 를 throw 하지 않는다!! ) -> 로그인상태 x
+        console.error('user/me 네트워크 오류:', err);
+    }
+
     return (
         <html
             lang={currentLang}
@@ -79,7 +105,7 @@ export default async function RootLayout({
             )}
         >
             <body className={cn(`font-pretendard bg-custom-light antialiased`)}>
-                <ReduxProvider>
+                <ReduxProvider user={user}>
                     <TanstackProviders>
                         <NavBar
                             isDarkMode={isDarkMode}

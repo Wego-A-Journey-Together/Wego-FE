@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import filterReducer from './slices/filterSlice';
+import userReducer from './slices/userSlice';
 
 /**
  * 팩토리 패턴으로 변경 -> 사용자마다 스토어 격리 보장
@@ -8,7 +9,7 @@ import filterReducer from './slices/filterSlice';
  */
 export function initializeStore(initialState = {}) {
     return configureStore({
-        reducer: { filter: filterReducer }, // '나와 함께 할 동행 찾기' 필터링 슬라이스
+        reducer: { filter: filterReducer, user: userReducer }, // '나와 함께 할 동행 찾기' 필터링 슬라이스
         preloadedState: initialState,
     });
 }
