@@ -47,7 +47,7 @@ export default function NavBar({ className, isDarkMode }: NavProps) {
             </div>
 
             {/* 모바일 레이아웃 */}
-            <div className="flex w-full items-center justify-between md:hidden">
+            <div className="flex w-full items-center justify-between px-[20px] md:hidden">
                 <Hamburger
                     isDarkMode={isDarkMode}
                     isAuthenticated={isAuthenticated}
