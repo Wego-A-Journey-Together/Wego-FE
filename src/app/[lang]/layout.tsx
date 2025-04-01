@@ -85,8 +85,7 @@ export default async function RootLayout({
             user = await res.json();
         } else {
             // 로그인 안된 상태로 처리
-
-            console.warn(`user/me 응답 상태: ${res.status}`);
+            user = null;
         }
     } catch (err) {
         // 서버가 죽었거나 네트워크 문제일 경우 ( fetch 는 !res.ok 를 throw 하지 않는다!! ) -> 로그인상태 x
