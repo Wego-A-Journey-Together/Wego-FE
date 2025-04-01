@@ -181,4 +181,10 @@
         appearance: none;
         margin: 0;
     }
+
+    /* layout shift 버그 수정용 */
+    html body[data-scroll-locked] {
+        overflow: visible !important;
+        margin-right: 0 !important;
+    }
 }
