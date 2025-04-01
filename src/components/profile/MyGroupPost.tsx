@@ -2,6 +2,7 @@ import Divider from '@/components/common/Divider';
 import UserChat from '@/components/common/userChat';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { PostContentProps } from '@/types/PostContent';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -116,14 +117,21 @@ export default function MyGroupPost({
                                 />
                                 문의하기
                             </Button>
-                            {activeChatId === post.id && (
-                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+
+                            <Sheet
+                                open={activeChatId === post.id}
+                                onOpenChange={() => toggleChat(post.id)}
+                            >
+                                <SheetContent
+                                    side="right"
+                                    className="p-0 sm:max-w-[580px]"
+                                >
                                     <UserChat
                                         post={post}
                                         onClose={() => toggleChat(post.id)}
                                     />
-                                </div>
-                            )}
+                                </SheetContent>
+                            </Sheet>
 
                             {/* 참여 중인 동행 탭에서 보일 내용 */}
                             {cancelRecruit && (
