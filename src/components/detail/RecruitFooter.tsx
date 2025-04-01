@@ -3,6 +3,7 @@
 import UserChat from '@/components/common/userChat';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { PostContentProps } from '@/types/PostContent';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -45,11 +46,11 @@ export default function RecruitFooter({ post }: PostContentProps) {
                 </div>
             </footer>
 
-            {showChat && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <Sheet open={showChat} onOpenChange={setShowChat}>
+                <SheetContent side="right" className="p-0 sm:max-w-[580px]">
                     <UserChat post={post} onClose={toggleChat} />
-                </div>
-            )}
+                </SheetContent>
+            </Sheet>
         </>
     );
 }
