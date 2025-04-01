@@ -51,7 +51,7 @@ export default function InfiniteScroll() {
 
     if (isError) {
         return (
-            <div className="col-span-full mx-auto mt-40 flex flex-col items-center gap-5">
+            <div className="col-span-full mx-auto mt-40 mb-[329px] flex flex-col items-center gap-5">
                 <p className="text-base font-medium text-gray-500">
                     일시적인 오류가 발생했어요
                 </p>
@@ -102,6 +102,7 @@ export default function InfiniteScroll() {
                     </div>
                 </div>
             )}
+
             {/* 첫 로딩을 끝낸 이후 데이터가 있으면 게시글 작성 버튼을 fixed로 띄웁니다. */}
             {!isLoading && !hasNoData && <CreatePostWindow />}
 
