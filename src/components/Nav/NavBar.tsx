@@ -21,7 +21,7 @@ export default function NavBar({ className, isDarkMode }: NavProps) {
     return (
         <header
             className={cn(
-                'm-auto flex h-18 w-full items-center justify-between',
+                'justify-between] m-auto flex h-18 w-full items-center',
                 className,
             )}
         >
