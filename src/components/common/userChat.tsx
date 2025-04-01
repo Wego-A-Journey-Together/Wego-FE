@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-    SheetClose,
     SheetDescription,
     SheetFooter,
     SheetHeader,
@@ -27,13 +26,13 @@ export default function UserChat({
         <div className="bg-background-light flex h-full flex-col">
             {/* 채팅창 헤더 */}
             <SheetHeader className="flex h-[72px] w-full flex-row items-center justify-between px-5 py-2.5">
-                <SheetClose
+                <button
                     className="flex h-6 w-6 cursor-pointer items-center justify-center"
                     onClick={onClose}
                     aria-label="창 닫기"
                 >
                     <X className="h-4 w-4" />
-                </SheetClose>
+                </button>
 
                 <div className="inline-flex items-center gap-1">
                     {/* 유저 아이디 */}
