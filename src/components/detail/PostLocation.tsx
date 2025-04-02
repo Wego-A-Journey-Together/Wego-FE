@@ -1,10 +1,7 @@
+import KakaoMapViewer from '@/components/detail/KakaoMapViewer';
 import Image from 'next/image';
 
-interface PostLocationProps {
-    location: string;
-}
-
-export default function PostLocation({ location }: PostLocationProps) {
+export default function PostLocation() {
     return (
         <>
             <div className="flex flex-col items-start gap-5">
@@ -12,9 +9,7 @@ export default function PostLocation({ location }: PostLocationProps) {
                     동행지 위치
                 </h2>
 
-                <div className="relative flex h-[450px] w-full items-center justify-center overflow-hidden rounded-md bg-gray-100">
-                    <span className="text-gray-500">지도 영역</span>
-                </div>
+                <KakaoMapViewer lat={35.1004} lng={129.0359} />
 
                 <div className="flex w-full items-center gap-3">
                     <Image
@@ -25,7 +20,7 @@ export default function PostLocation({ location }: PostLocationProps) {
                         className="text-gray-700"
                     />
                     <p className="text-base leading-5 font-medium text-[#333333]">
-                        {location}
+                        {'부산 광역시 중구'}
                     </p>
                 </div>
             </div>

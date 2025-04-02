@@ -40,7 +40,7 @@ export default function TabSection({ post }: { post: TrendingPost }) {
             </section>
             {/*지도 섹션*/}
             <section ref={locationAreaRef} className="scroll-mt-40">
-                <PostLocation location={post.location} />
+                <PostLocation />
             </section>
             {/*todo: 멤버 소개 섹션*/}
             <section ref={memberAreaRef} className="scroll-mt-40">
