@@ -52,7 +52,14 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
 
             <Sheet open={showChat} onOpenChange={setShowChat}>
                 <SheetContent side="right" className="p-0 sm:max-w-[580px]">
-                    <UserChat post={post} onClose={toggleChat} />
+                    <UserChat
+                        userName={post.userName}
+                        userRating={post.userRating}
+                        title={post.title}
+                        startDate={post.filter.startDate}
+                        endDate={post.filter.endDate}
+                        onClose={toggleChat}
+                    />
                 </SheetContent>
             </Sheet>
         </>

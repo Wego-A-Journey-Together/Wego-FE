@@ -14,6 +14,7 @@ interface MyGroupPostProps {
     posts: PostContentProps['post'][];
     cancelRecruit?: boolean;
 }
+
 // 게시글 삭제 여부 임시
 const isDeleted = false;
 
@@ -127,7 +128,11 @@ export default function MyGroupPost({
                                     className="p-0 sm:max-w-[580px]"
                                 >
                                     <UserChat
-                                        post={post}
+                                        userName={post.userName}
+                                        userRating={post.rating}
+                                        title={post.title}
+                                        startDate={post.startDate}
+                                        endDate={post.endDate}
                                         onClose={() => toggleChat(post.id)}
                                     />
                                 </SheetContent>
