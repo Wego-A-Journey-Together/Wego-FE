@@ -39,7 +39,11 @@ export default function TabSection({ post }: { post: DetailPost }) {
             </section>
             {/*지도 섹션*/}
             <section ref={locationAreaRef} className="scroll-mt-40">
-                <PostLocation />
+                <PostLocation
+                    placeName={post.location.placeName}
+                    lat={post.location.lat}
+                    lng={post.location.lng}
+                />
             </section>
             {/*todo: 멤버 소개 섹션*/}
             <section ref={memberAreaRef} className="scroll-mt-40">
