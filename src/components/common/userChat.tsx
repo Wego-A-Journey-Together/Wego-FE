@@ -6,13 +6,14 @@ import {
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet';
-import { PostContentProps } from '@/types/PostContent';
+import { DetailPost } from '@/types/DetailPost';
 import { Calendar, MoreHorizontal, Star, X } from 'lucide-react';
 
 import ChatList from './ChatList';
 import ChatNotice from './ChatNotice';
 
-interface UserChatProps extends PostContentProps {
+interface UserChatProps {
+    post: DetailPost;
     onClose?: () => void;
     onParticipate?: () => void;
 }
@@ -45,7 +46,7 @@ export default function UserChat({
 
                         {/* 유저 평점 */}
                         <span className="text-xs font-medium">
-                            {post.rating}
+                            {post.userRating}
                         </span>
                     </div>
                 </div>
@@ -68,7 +69,7 @@ export default function UserChat({
                         <div className="flex items-center gap-[3px]">
                             <Calendar className="h-4 w-4 text-[#666666]" />
                             <SheetDescription className="m-0 text-sm font-normal whitespace-nowrap text-[#666666]">
-                                {`${post.startDate} - ${post.endDate}`}
+                                {`${post.filter.startDate} - ${post.filter.endDate}`}
                             </SheetDescription>
                         </div>
                     </div>
