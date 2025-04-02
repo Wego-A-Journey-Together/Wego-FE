@@ -10,21 +10,33 @@ import {
 } from '@/components/ui/carousel';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { cn } from '@/lib';
+import { convertAgeRange } from '@/lib/convertAgeRange';
 import Image from 'next/image';
 import Link from 'next/link';
+
+import dateFormat from '../../lib/dateFormat';
 
 interface TrendingCarouselProps {
     className?: string;
     posts: {
         id: number;
         title: string;
-        imageSrc: string;
+        filter: {
+            startDate: string;
+            endDate: string;
+            gender: string;
+            age: string[];
+        };
+        location: {
+            placeName: string;
+            lat: number;
+            lng: number;
+        };
+        thumbnailUrl: string;
         profileImage: string;
         userName: string;
-        age: string;
-        gender: string;
-        startDate: string;
-        endDate: string;
+        userAge: number;
+        userGender: string;
         userId: string;
     }[];
 }
@@ -92,7 +104,7 @@ export function TrendingCarousel({ posts, className }: TrendingCarouselProps) {
                                     className="relative h-full w-full"
                                 >
                                     <Image
-                                        src={trend.imageSrc}
+                                        src={trend.thumbnailUrl}
                                         alt="제주소녀"
                                         fill
                                         className="object-cover"
@@ -121,7 +133,8 @@ export function TrendingCarousel({ posts, className }: TrendingCarouselProps) {
                                                 {trend.userName}
                                             </span>
                                             <span className="text-sm">
-                                                {trend.age} · {trend.gender}
+                                                {convertAgeRange(trend.userAge)}{' '}
+                                                · {trend.userGender}
                                             </span>
                                         </Link>
                                         <div className="flex-grow"></div>
@@ -141,8 +154,15 @@ export function TrendingCarousel({ posts, className }: TrendingCarouselProps) {
                                                 height={14}
                                             />
                                             <span>
-                                                {trend.startDate} -{' '}
-                                                {trend.endDate}
+                                                {dateFormat(
+                                                    trend.filter.startDate,
+                                                    false,
+                                                )}{' '}
+                                                -{' '}
+                                                {dateFormat(
+                                                    trend.filter.endDate,
+                                                    false,
+                                                )}
                                             </span>
                                         </div>
                                     </div>
