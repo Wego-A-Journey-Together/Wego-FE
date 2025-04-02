@@ -27,6 +27,26 @@ const nextConfig: NextConfig = {
                 port: '',
                 pathname: '/**',
             },
+            {
+                //picsum.photos
+                protocol: 'https',
+                hostname: 'picsum.photos',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                //picsum.photos
+                protocol: 'https',
+                hostname: 'avatars.githubusercontent.com',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'cdn.jsdelivr.net',
+                port: '',
+                pathname: '/**',
+            },
         ], // 외부 이미지 도메인 허용 목록 -> domains -> remotePatterns 로 수정 하였습니다.
         formats: ['image/webp', 'image/avif'], // 최신 이미지 포맷 지원
     },
