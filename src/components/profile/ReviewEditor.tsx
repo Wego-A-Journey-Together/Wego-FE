@@ -56,10 +56,7 @@ export default function ReviewEditor({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent
-                variant="noOverlay"
-                className="h-[714px] w-[500px] border border-[#E0E0E0] p-0 shadow-[0_0_15px_rgba(0,0,0,0.06)]"
-            >
+            <DialogContent className="h-[714px] w-[500px] border border-[#E0E0E0] p-0 shadow-[0_0_15px_rgba(0,0,0,0.06)]">
                 <DialogHeader className="flex h-[47px] items-center justify-between border-b [border-bottom-style:solid] border-[#e9e9e9] px-[30px] py-2.5">
                     <DialogTitle className="w-full text-center text-base font-bold">
                         동행 소감 남기기

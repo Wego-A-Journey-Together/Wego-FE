@@ -159,6 +159,7 @@ export default function ProfileEditor({
         formValues.birthYear,
         formValues.birthMonth,
         formValues.birthDay,
+        formValues,
         setValue,
     ]);
 
