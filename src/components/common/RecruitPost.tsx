@@ -1,6 +1,8 @@
 import Like from '@/components/Btn/Like';
-import { extractPreview } from '@/lib';
-import { PostContentProps } from '@/types/PostContent';
+import { dateFormat, extractPreview } from '@/lib';
+import { calculateDays } from '@/lib/calculateDays';
+import { convertAgeRange } from '@/lib/convertAgeRange';
+import { HomePost } from '@/types/HomePost';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -8,7 +10,13 @@ import { Badge } from '../ui/badge';
 
 //todo : 현재는 낙관적 업데이트를 위한 단순한 id 만 정의 (데이터 바인딩 x )
 
+export interface PostContentProps {
+    post: HomePost;
+}
+
 export default function RecruitPost({ post }: PostContentProps) {
+    const isGroupOpen = new Date(post.filter.endDate) > new Date();
+
     return (
         <article className="flex flex-col gap-2.5 rounded-xl bg-[#f5f6f7] px-[34px] py-[30px]">
             {/* 헤더 섹션 */}
@@ -17,11 +25,9 @@ export default function RecruitPost({ post }: PostContentProps) {
                     <div className="relative">
                         <div className="mb-1.5 flex w-full items-center gap-2">
                             <Badge
-                                variant={
-                                    post.isGroupOpen ? 'default' : 'disable'
-                                }
+                                variant={isGroupOpen ? 'default' : 'disable'}
                             >
-                                {post.isGroupOpen ? '동행 구함' : '모집 마감'}
+                                {isGroupOpen ? '동행 구함' : '모집 마감'}
                             </Badge>
 
                             {/* 글제목  */}
@@ -31,10 +37,10 @@ export default function RecruitPost({ post }: PostContentProps) {
                         </div>
 
                         {/* 썸네일 이미지 */}
-                        {post.imageSrc && (
+                        {post.thumbnailUrl && (
                             <div className="absolute top-0 right-0 h-[98px] w-[98px] overflow-hidden rounded-xl">
                                 <Image
-                                    src={post.imageSrc}
+                                    src={post.thumbnailUrl}
                                     alt="게시글 썸네일"
                                     fill
                                     className="object-cover"
@@ -46,16 +52,17 @@ export default function RecruitPost({ post }: PostContentProps) {
                     {/* 모집 정보 */}
                     <div className="mb-3 flex items-center gap-2.5">
                         <span className="text-sm text-[#333333]">
-                            {/* 날짜 빼서 며칠 일정인지 계산 로직 필요 */}
-                            {`${post.startDate} - ${post.endDate} (${'n'}일)`}
+                            {post.filter?.startDate && post.filter?.endDate
+                                ? `${dateFormat(post.filter.startDate, false)} - ${dateFormat(post.filter.endDate, false)} (${calculateDays(post.filter.startDate, post.filter.endDate)}일)`
+                                : '날짜 미정'}
                         </span>
                         <div className="h-1.5 w-px bg-gray-300" />
                         <span className="text-sm text-[#333333]">
-                            {post.ageRange}
+                            {post.filter.age}
                         </span>
                         <div className="h-1.5 w-px bg-gray-300" />
                         <span className="text-sm text-[#333333]">
-                            {post.gender}
+                            {post.filter.gender}
                         </span>
                         <div className="h-1.5 w-px bg-gray-300" />
                         <span>
@@ -70,7 +77,7 @@ export default function RecruitPost({ post }: PostContentProps) {
 
                     {/* 해시태그 리스트 */}
                     <ul className="mb-[22px] flex items-center gap-2">
-                        {post.hashtags.map((hashtag, index) => (
+                        {post.tags.map((hashtag, index) => (
                             <li
                                 key={index}
                                 className="relative rounded px-1.5 py-1"
@@ -118,7 +125,7 @@ export default function RecruitPost({ post }: PostContentProps) {
                                 </span>
                                 <div className="h-1.5 w-px bg-gray-300" />
                                 <span className="text-xs text-[#666666]">
-                                    {post.age}
+                                    {convertAgeRange(post.userAge)}
                                 </span>
                                 <div className="h-1.5 w-px bg-gray-300" />
                                 <span className="text-xs text-[#666666]">
@@ -129,7 +136,7 @@ export default function RecruitPost({ post }: PostContentProps) {
                     </div>
                 </Link>
 
-                {/*낙관적 업데이트 찜 버튼*/}
+                {/*todo : 낙관적 업데이트 찜 버튼*/}
                 <div className="flex w-full items-center gap-2 md:w-auto">
                     <Like id={post.id} className={`px-0`} />
                 </div>

@@ -1,12 +1,12 @@
 'use client';
 
 import RecruitPost from '@/components/common/RecruitPost';
+import { HomePost } from '@/types/HomePost';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { motion, useInView } from 'motion/react';
 import { useEffect, useRef } from 'react';
 
 // api 생기면 삭제
-import trendingPost from '../../../public/data/trending';
 import LoadingThreeDots from '../common/LoadingThreeDots';
 import CreatePost from './CreatePost';
 import CreatePostWindow from './CreatePostWindow';
@@ -14,7 +14,7 @@ import CreatePostWindow from './CreatePostWindow';
 export default function InfiniteScroll() {
     const ref = useRef(null);
     const isInView = useInView(ref);
-
+    const NEST_BFF_URL = process.env.NEST_BFF_URL;
     const {
         data,
         fetchNextPage,
@@ -27,7 +27,7 @@ export default function InfiniteScroll() {
         queryFn: async ({ pageParam = 1 }) => {
             const response = await fetch(
                 // 임시 링크입니다.
-                `https://test.typicode.com/posts?_page=${pageParam}&_limit=12`,
+                `${NEST_BFF_URL}/api/posts?_page=${pageParam}&_limit=12`,
             );
             return response.json();
         },
@@ -65,16 +65,22 @@ export default function InfiniteScroll() {
             )}
 
             {/* 임시 데이터 */}
-            {trendingPost.map((post) => (
-                <motion.div
-                    key={post.id}
-                    initial={{ y: 30, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                >
-                    <RecruitPost post={post} />
-                </motion.div>
-            ))}
+            {!isLoading &&
+                data?.pages.map((page, pageIndex) =>
+                    page.map((post: HomePost, postIndex: number) => (
+                        <motion.div
+                            key={`${pageIndex}-${post.id}`}
+                            initial={{ y: 30, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{
+                                duration: 0.3,
+                                delay: postIndex * 0.05,
+                            }}
+                        >
+                            <RecruitPost post={post} />
+                        </motion.div>
+                    )),
+                )}
 
             {/* 글이 없는 경우 띄울 Ui */}
             {hasNoData && <CreatePost />}

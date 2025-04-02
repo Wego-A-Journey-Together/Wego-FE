@@ -113,11 +113,12 @@ export default function Like({ id, className }: LikeProps) {
     };
 
     return (
-        <div
+        <button
             className={cn(
                 'flex flex-1 cursor-pointer items-center gap-1.5 rounded-lg px-[30px] py-2 md:flex-none',
                 className,
             )}
+            type="button"
             onClick={handleClick}
         >
             <Bookmark
@@ -126,6 +127,6 @@ export default function Like({ id, className }: LikeProps) {
                     isLike && 'fill-neutral-500',
                 )}
             />
-        </div>
+        </button>
     );
 }
