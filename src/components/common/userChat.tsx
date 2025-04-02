@@ -6,19 +6,27 @@ import {
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet';
-import { PostContentProps } from '@/types/PostContent';
 import { Calendar, MoreHorizontal, Star, X } from 'lucide-react';
 
 import ChatList from './ChatList';
 import ChatNotice from './ChatNotice';
 
-interface UserChatProps extends PostContentProps {
+interface UserChatProps {
+    userName: string;
+    userRating: number;
+    title: string;
+    startDate: string;
+    endDate: string;
     onClose?: () => void;
     onParticipate?: () => void;
 }
 
 export default function UserChat({
-    post,
+    userName,
+    userRating,
+    title,
+    startDate,
+    endDate,
     onClose,
     onParticipate,
 }: UserChatProps) {
@@ -37,7 +45,7 @@ export default function UserChat({
                 <div className="inline-flex items-center gap-1">
                     {/* 유저 아이디 */}
                     <SheetTitle className="m-0 text-[15px] font-semibold text-black">
-                        {post.userName}
+                        {userName}
                     </SheetTitle>
 
                     <div className="inline-flex items-center gap-1 rounded-[50px] bg-[#ffd8001a] px-2 py-1 text-[#614e03]">
@@ -45,7 +53,7 @@ export default function UserChat({
 
                         {/* 유저 평점 */}
                         <span className="text-xs font-medium">
-                            {post.rating}
+                            {userRating}
                         </span>
                     </div>
                 </div>
@@ -62,13 +70,11 @@ export default function UserChat({
             <section className="flex w-full flex-col gap-2.5 border-b px-5 py-4">
                 <div className="flex w-full items-center justify-between">
                     <div className="flex w-[365px] flex-col gap-[3px]">
-                        <h2 className="text-base font-semibold">
-                            {post.title}
-                        </h2>
+                        <h2 className="text-base font-semibold">{title}</h2>
                         <div className="flex items-center gap-[3px]">
                             <Calendar className="h-4 w-4 text-[#666666]" />
                             <SheetDescription className="m-0 text-sm font-normal whitespace-nowrap text-[#666666]">
-                                {`${post.startDate} - ${post.endDate}`}
+                                {`${startDate} - ${endDate}`}
                             </SheetDescription>
                         </div>
                     </div>

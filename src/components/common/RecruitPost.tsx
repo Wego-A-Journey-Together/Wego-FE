@@ -15,7 +15,7 @@ export interface PostContentProps {
 }
 
 export default function RecruitPost({ post }: PostContentProps) {
-    const isGroupOpen = new Date(post.filter.endDate) > new Date();
+    const isGroupOpen = new Date(post.filter.deadlineDate) > new Date();
 
     return (
         <article className="flex flex-col gap-2.5 rounded-xl bg-[#f5f6f7] px-[34px] py-[30px]">

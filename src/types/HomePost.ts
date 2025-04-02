@@ -1,13 +1,13 @@
+//todo : gender쪽 필드명이 달라서 이후에 지울 타입 입니다.
 export interface HomePost {
     id: number;
     title: string;
     content: string;
     thumbnailUrl: string | null;
     filter: {
-        startDate: Date;
-        endDate: Date;
-        deadlineDate: Date;
-        deadlineTime: Date;
+        startDate: string;
+        endDate: string;
+        deadlineDate: string;
         groupTheme: string;
         groupSize: string;
         gender: string | null;
