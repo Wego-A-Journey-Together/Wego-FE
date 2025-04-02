@@ -1,3 +1,4 @@
+// api와 일치하는 타입 입니다.
 export interface DetailPost {
     id: number;
     title: string;
@@ -5,7 +6,6 @@ export interface DetailPost {
         startDate: string; // ISO 형식
         endDate: string;
         deadlineDate: string;
-        deadlineTime: string; // '18:00' 같은 문자열
         groupTheme: string;
         groupSize: string;
         gender: string;
