@@ -43,7 +43,7 @@ export default function PostComment() {
                     <div className={`mt-2.5 flex justify-start gap-[27px]`}>
                         {/*날짜 섹션*/}
                         <p className={`text-xs font-normal text-[#666666]`}>
-                            {dateFormat({ date: comment.updatedAt })}
+                            {dateFormat(comment.updatedAt)}
                         </p>
                         {/*todo: 답글달기 클릭시 답글 입력 (디자이너 분들께 질문하기 )*/}
                         <p

@@ -46,7 +46,7 @@ export default function PostReview() {
                             <div className="h-2.5 w-px bg-[#a0a0a0]" />
                             {/*날짜 섹션*/}
                             <p className={`text-xs font-normal text-[#666666]`}>
-                                {dateFormat({ date: review.updatedAt })}
+                                {dateFormat(review.updatedAt)}
                             </p>
                         </div>
                     </div>
