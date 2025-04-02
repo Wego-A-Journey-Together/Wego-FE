@@ -1,6 +1,7 @@
 import Like from '@/components/Btn/Like';
-import { extractPreview } from '@/lib';
+import { dateFormat, extractPreview } from '@/lib';
 import { calculateDays } from '@/lib/calculateDays';
+import { convertAgeRange } from '@/lib/convertAgeRange';
 import { HomePost } from '@/types/HomePost';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -51,8 +52,9 @@ export default function RecruitPost({ post }: PostContentProps) {
                     {/* 모집 정보 */}
                     <div className="mb-3 flex items-center gap-2.5">
                         <span className="text-sm text-[#333333]">
-                            {/* 날짜 빼서 며칠 일정인지 계산 로직 필요 */}
-                            {`${post.filter.startDate} - ${post.filter.endDate} (${calculateDays(post.filter.startDate, post.filter.endDate)}일)`}
+                            {post.filter?.startDate && post.filter?.endDate
+                                ? `${dateFormat(post.filter.startDate, false)} - ${dateFormat(post.filter.endDate, false)} (${calculateDays(post.filter.startDate, post.filter.endDate)}일)`
+                                : '날짜 미정'}
                         </span>
                         <div className="h-1.5 w-px bg-gray-300" />
                         <span className="text-sm text-[#333333]">
@@ -60,7 +62,7 @@ export default function RecruitPost({ post }: PostContentProps) {
                         </span>
                         <div className="h-1.5 w-px bg-gray-300" />
                         <span className="text-sm text-[#333333]">
-                            {post.gender}
+                            {post.filter.gender}
                         </span>
                         <div className="h-1.5 w-px bg-gray-300" />
                         <span>
@@ -123,7 +125,7 @@ export default function RecruitPost({ post }: PostContentProps) {
                                 </span>
                                 <div className="h-1.5 w-px bg-gray-300" />
                                 <span className="text-xs text-[#666666]">
-                                    {post.userAge}
+                                    {convertAgeRange(post.userAge)}
                                 </span>
                                 <div className="h-1.5 w-px bg-gray-300" />
                                 <span className="text-xs text-[#666666]">
@@ -134,7 +136,7 @@ export default function RecruitPost({ post }: PostContentProps) {
                     </div>
                 </Link>
 
-                {/*낙관적 업데이트 찜 버튼*/}
+                {/*todo : 낙관적 업데이트 찜 버튼*/}
                 <div className="flex w-full items-center gap-2 md:w-auto">
                     <Like id={post.id} className={`px-0`} />
                 </div>

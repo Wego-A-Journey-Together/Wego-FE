@@ -4,10 +4,10 @@ export interface HomePost {
     content: string;
     thumbnailUrl: string | null;
     filter: {
-        startDate: string;
-        endDate: string;
-        deadlineDate: string;
-        deadlineTime: string;
+        startDate: Date;
+        endDate: Date;
+        deadlineDate: Date;
+        deadlineTime: Date;
         groupTheme: string;
         groupSize: string;
         gender: string | null;
