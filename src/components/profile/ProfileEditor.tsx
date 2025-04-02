@@ -164,10 +164,7 @@ export default function ProfileEditor({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent
-                variant="noOverlay"
-                className="w-[500px] overflow-visible border border-[#E0E0E0] p-0 shadow-[0_0_25px_rgba(0,0,0,0.15)]"
-            >
+            <DialogContent className="w-[500px] overflow-visible border border-[#E0E0E0] p-0 shadow-[0_0_25px_rgba(0,0,0,0.15)]">
                 <DialogHeader className="flex h-[47px] items-center justify-between border-b [border-bottom-style:solid] border-[#e9e9e9] px-[30px] py-2.5">
                     <DialogTitle className="w-full text-center text-base font-bold text-black">
                         프로필 수정하기
