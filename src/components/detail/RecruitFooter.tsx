@@ -20,7 +20,11 @@ export default function RecruitFooter({ post }: PostContentProps) {
             <footer className="fixed right-0 bottom-0 left-0 z-40 w-full bg-white py-5 drop-shadow-2xl">
                 <div className="mx-auto flex max-w-[1240px] items-center justify-between px-4">
                     <div className="flex items-center gap-1.5">
-                        <Badge>동행구함</Badge>
+                        {new Date() < new Date(post.endDate) ? (
+                            <Badge>동행구함</Badge>
+                        ) : (
+                            <Badge variant={'disable'}>동행마감</Badge>
+                        )}
                         <p className="text-base font-semibold text-black">
                             {post.title}
                         </p>

@@ -1,7 +1,18 @@
-import { PostContentProps } from '@/types/PostContent';
+import { convertAgeRange } from '@/lib/convertAgeRange';
 import Image from 'next/image';
 
-export default function UserProfile({ post }: PostContentProps) {
+interface UserProfileProps {
+    post: {
+        userName: string;
+        profileImage: string;
+        statusMessage: string;
+        userAge: number;
+        userGender: string;
+        userRating: number;
+    };
+}
+
+export default function UserProfile({ post }: UserProfileProps) {
     return (
         <>
             {/* 유저 프로필 영역 */}
@@ -27,10 +38,12 @@ export default function UserProfile({ post }: PostContentProps) {
                                 {post.statusMessage}
                             </p>
                             <div className="h-1.5 w-px bg-gray-300" />
-                            <p className="text-xs text-[#666666]">{post.age}</p>
+                            <p className="text-xs text-[#666666]">
+                                {convertAgeRange(post.userAge)}
+                            </p>
                             <div className="h-1.5 w-px bg-gray-300" />
                             <p className="text-xs text-[#666666]">
-                                {post.gender}
+                                {post.userGender}
                             </p>
                         </div>
                     </div>
@@ -46,7 +59,8 @@ export default function UserProfile({ post }: PostContentProps) {
                             height={16}
                         />
                         <p className="text-base font-semibold">
-                            {`${post.rating.toFixed(1)}(${post.reviewCount})`}
+                            {/*todo:레이팅총개수 */}
+                            {`${post.userRating.toFixed(1)}(10)`}
                         </p>
                     </div>
 
