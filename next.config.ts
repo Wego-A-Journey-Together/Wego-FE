@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     compress: true, // 응답 압축으로 성능 향상
     poweredByHeader: false, // 보안을 위해 X-Powered-By 헤더 제거
     images: {
+        unoptimized: true,
         remotePatterns: [
             {
                 protocol: 'http',
