@@ -239,17 +239,29 @@ export default function ProfileEditor({
                             <input
                                 type="number"
                                 placeholder="YYYY"
-                                value={user.birthYear ?? ''} // Add null coalescing operator
+                                value={user.birthYear ?? ''}
                                 onChange={(e) => {
+                                    // 출생 연도
+                                    const userInput = e.target.value;
+                                    const YEAR_START = 0;
+                                    const YEAR_END = 2025;
+                                    if (
+                                        userInput &&
+                                        (parseInt(userInput) < YEAR_START ||
+                                            parseInt(userInput) > YEAR_END ||
+                                            userInput.length > 4)
+                                    )
+                                        return;
                                     setUser({
                                         ...user,
-                                        birthYear: e.target.value
-                                            ? parseInt(e.target.value)
+                                        birthYear: userInput
+                                            ? parseInt(userInput)
                                             : null,
                                     });
                                 }}
                                 // 넘버 인풋의 기본 화살표 버튼을 제거
                                 className="number-arrow-hide w-12 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
+                                maxLength={4}
                             />
                             <span className="text-base font-extralight text-[#999999]">
                                 /
@@ -259,14 +271,28 @@ export default function ProfileEditor({
                                 placeholder="MM"
                                 value={user.birthMonth ?? ''}
                                 onChange={(e) => {
+                                    // 출생 월
+                                    const userInput = e.target.value;
+                                    const MONTH_START = 1;
+                                    const MONTH_END = 12;
+                                    if (parseInt(userInput) < 9) {
+                                    }
+                                    if (
+                                        userInput &&
+                                        (parseInt(userInput) < MONTH_START ||
+                                            parseInt(userInput) > MONTH_END ||
+                                            userInput.length > 2)
+                                    )
+                                        return;
                                     setUser({
                                         ...user,
-                                        birthMonth: e.target.value
-                                            ? parseInt(e.target.value)
+                                        birthMonth: userInput
+                                            ? parseInt(userInput)
                                             : null,
                                     });
                                 }}
                                 className="number-arrow-hide w-8 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
+                                maxLength={2}
                             />
                             <span className="text-base font-extralight text-[#999999]">
                                 /
@@ -276,14 +302,26 @@ export default function ProfileEditor({
                                 placeholder="DD"
                                 value={user.birthDay ?? ''}
                                 onChange={(e) => {
+                                    // 출생 일
+                                    const userInput = e.target.value;
+                                    const DAY_START = 1;
+                                    const DAY_END = 31;
+                                    if (
+                                        userInput &&
+                                        (parseInt(userInput) < DAY_START ||
+                                            parseInt(userInput) > DAY_END ||
+                                            userInput.length > 2)
+                                    )
+                                        return;
                                     setUser({
                                         ...user,
-                                        birthDay: e.target.value
-                                            ? parseInt(e.target.value)
+                                        birthDay: userInput
+                                            ? parseInt(userInput)
                                             : null,
                                     });
                                 }}
                                 className="number-arrow-hide w-8 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
+                                maxLength={2}
                             />
                         </div>
                     </div>
