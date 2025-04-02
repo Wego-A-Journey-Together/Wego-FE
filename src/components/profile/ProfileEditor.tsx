@@ -1,28 +1,102 @@
 'use client';
 
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-
-import { Button } from '../../components/ui/button';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
-} from '../../components/ui/dialog';
-import { Label } from '../../components/ui/label';
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Image from 'next/image';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
-interface User {
-    id: string;
-    nickname: string;
-    email: string;
-    gender: 'male' | 'female' | undefined;
-    birthYear: number | null;
-    birthMonth: number | null;
-    birthDay: number | null;
-    userIntroduce: string;
-    profileImage: string;
-}
+const userSchema = z.object({
+    id: z.string(),
+    nickname: z
+        .string()
+        .min(1, { message: '별명을 작성해주세요.' })
+        .refine((value) => !value.includes(' '), {
+            message: '공백은 사용할 수 없습니다.',
+        })
+        .refine(
+            (value) => {
+                const koreanRegex = /[가-힣]/;
+                const englishRegex = /[a-zA-Z]/;
+                const mixedRegex = /^[가-힣a-zA-Z]+$/;
+
+                if (!mixedRegex.test(value)) return false;
+
+                const hasKorean = koreanRegex.test(value);
+                const englishMatches = value.match(englishRegex)?.length || 0;
+
+                return hasKorean || englishMatches >= 2;
+            },
+            {
+                message:
+                    '한글 완성형 또는 2글자 이상의 영문을 포함해야 합니다.',
+            },
+        ),
+    email: z.string().email(),
+    gender: z
+        .enum(['male', 'female'])
+        .nullable()
+        .refine((value) => value !== null, {
+            message: '내 프로필을 완성하면 동행원을 찾을 수 있어요.',
+        }),
+    birthYear: z
+        .number({
+            required_error: '내 프로필을 완성하면 동행원을 찾을 수 있어요.',
+            invalid_type_error: '숫자만 입력해주세요.',
+        })
+        .nullable()
+        .refine((value) => value !== undefined, {
+            message: '내 프로필을 완성하면 동행원을 찾을 수 있어요.',
+        })
+        .refine((value) => !value || (value >= 1900 && value <= 2025), {
+            message: '올바른 연도를 입력해주세요',
+        }),
+    birthMonth: z
+        .number({
+            required_error: '내 프로필을 완성하면 동행원을 찾을 수 있어요.',
+            invalid_type_error: '숫자만 입력해주세요.',
+        })
+        .nullable()
+        .refine((value) => value !== undefined, {
+            message: '내 프로필을 완성하면 동행원을 찾을 수 있어요.',
+        })
+        .refine(
+            (value) =>
+                value === undefined ||
+                (value !== null && value >= 1 && value <= 12),
+            {
+                message: '올바른 월을 입력해주세요',
+            },
+        ),
+    birthDay: z
+        .number({
+            invalid_type_error: '숫자만 입력해주세요.',
+        })
+        .nullable()
+        .refine((value) => value !== undefined, {
+            message: '내 프로필을 완성하면 동행원을 찾을 수 있어요.',
+        })
+        .refine(
+            (value) =>
+                value === undefined ||
+                (value !== null && value >= 1 && value <= 31),
+            {
+                message: '올바른 일을 입력해주세요',
+            },
+        ),
+    userIntroduce: z.string(),
+    profileImage: z.string(),
+});
+
+type UserSchema = z.infer<typeof userSchema>;
 
 interface ProfileEditorProps {
     open: boolean;
@@ -33,38 +107,65 @@ export default function ProfileEditor({
     open,
     onOpenChange,
 }: ProfileEditorProps) {
-    const [user, setUser] = useState<User>({
-        id: 'user123',
-        nickname: '귀여운 동행자',
-        email: 'cute@kakao.com',
-        gender: undefined,
-        birthYear: null,
-        birthMonth: null,
-        birthDay: null,
-        userIntroduce: '제주도 여행중',
-        profileImage: '/image/dogProfile.png',
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isValid },
+        setValue,
+        watch,
+    } = useForm<UserSchema>({
+        resolver: zodResolver(userSchema),
+        defaultValues: {
+            id: 'user123',
+            nickname: '귀여운 동행자',
+            email: 'cute@kakao.com',
+            gender: undefined,
+            birthYear: undefined,
+            birthMonth: undefined,
+            birthDay: undefined,
+            userIntroduce: '제주도 여행중',
+            profileImage: '/image/dogProfile.png',
+        },
+        mode: 'onChange',
     });
 
-    // 에러 상태 추가
-    const [errors, setErrors] = useState({
-        gender: false,
-        birth: false,
-    });
+    const formValues = watch();
 
-    // 유효성 검사
+    const onSubmit = (data: UserSchema) => {
+        alert(JSON.stringify(data));
+    };
+
+    const removeImage = () => {
+        setValue('profileImage', '/icon/profile/defaultProfile.svg');
+    };
+
     useEffect(() => {
-        setErrors({
-            gender: !user.gender,
-            birth: !user.birthYear || !user.birthMonth || !user.birthDay,
-        });
-    }, [user]);
+        const { birthYear, birthMonth, birthDay } = formValues;
+
+        if (birthYear && birthMonth && birthDay) {
+            const date = new Date(birthYear, birthMonth - 1, birthDay);
+            const isValidDate =
+                date.getFullYear() === birthYear &&
+                date.getMonth() === birthMonth - 1 &&
+                date.getDate() === birthDay;
+
+            if (!isValidDate) {
+                setValue('birthYear', null);
+                setValue('birthMonth', null);
+                setValue('birthDay', null);
+            }
+        }
+    }, [
+        formValues.birthYear,
+        formValues.birthMonth,
+        formValues.birthDay,
+        formValues,
+        setValue,
+    ]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent
-                variant="noOverlay"
-                className="w-[500px] overflow-visible border border-[#E0E0E0] p-0 shadow-[0_0_25px_rgba(0,0,0,0.15)]"
-            >
+            <DialogContent className="w-[500px] overflow-visible border border-[#E0E0E0] p-0 shadow-[0_0_25px_rgba(0,0,0,0.15)]">
                 <DialogHeader className="flex h-[47px] items-center justify-between border-b [border-bottom-style:solid] border-[#e9e9e9] px-[30px] py-2.5">
                     <DialogTitle className="w-full text-center text-base font-bold text-black">
                         프로필 수정하기
@@ -79,7 +180,7 @@ export default function ProfileEditor({
                                 <Image
                                     className="rounded-full bg-gray-100 object-cover"
                                     alt="Profile"
-                                    src={user.profileImage}
+                                    src={formValues.profileImage}
                                     fill
                                 />
                             </div>
@@ -98,13 +199,7 @@ export default function ProfileEditor({
                                 <Button
                                     variant="ghost"
                                     className="h-auto p-0"
-                                    onClick={() => {
-                                        setUser({
-                                            ...user,
-                                            profileImage:
-                                                '/icon/profile/defaultProfile.svg',
-                                        });
-                                    }}
+                                    onClick={removeImage}
                                 >
                                     <span className="text-xs font-medium text-[#999999]">
                                         사진 제거
@@ -116,19 +211,20 @@ export default function ProfileEditor({
                         {/* 별명 설정 */}
                         <div className="flex w-[314px] flex-col gap-5">
                             <div className="flex flex-col gap-2.5">
-                                <Label className="text-base font-bold text-black">
-                                    별명
-                                </Label>
+                                <div className="flex items-center gap-2">
+                                    <Label className="text-base font-bold text-black">
+                                        별명
+                                    </Label>
+                                    {errors.nickname && (
+                                        <span className="ml-auto text-xs text-[#FF0000]">
+                                            {errors.nickname.message}
+                                        </span>
+                                    )}
+                                </div>
                                 <div className="flex items-center gap-2.5 rounded-xl bg-[#f5f6f7] px-4 py-2.5">
                                     <input
                                         type="text"
-                                        value={user.nickname}
-                                        onChange={(e) =>
-                                            setUser({
-                                                ...user,
-                                                nickname: e.target.value,
-                                            })
-                                        }
+                                        {...register('nickname')}
                                         className="w-full bg-transparent text-base font-medium text-black outline-none"
                                     />
                                 </div>
@@ -141,14 +237,12 @@ export default function ProfileEditor({
                                     이메일
                                 </Label>
                                 <div className="flex h-11 items-center gap-2.5 rounded-xl bg-[#f5f6f7] px-4 py-2.5">
-                                    <div className="flex items-center gap-2.5 rounded-xl bg-[#f5f6f7] py-2.5">
-                                        <input
-                                            type="email"
-                                            value={user.email}
-                                            readOnly
-                                            className="w-full bg-transparent text-base font-normal text-[#999999] outline-none"
-                                        />
-                                    </div>
+                                    <input
+                                        type="email"
+                                        {...register('email')}
+                                        readOnly
+                                        className="w-full bg-transparent text-base font-normal text-[#999999] outline-none"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -163,60 +257,30 @@ export default function ProfileEditor({
                             </Label>
                             {errors.gender && (
                                 <span className="ml-auto text-xs text-[#FF0000]">
-                                    내 프로필을 완성하면 동행원을 찾을 수
-                                    있어요.
+                                    {errors.gender.message}
                                 </span>
                             )}
                         </div>
                         <div className="flex gap-10">
                             <div className="flex items-center gap-1.5">
-                                <div className="relative flex items-center">
-                                    <input
-                                        type="radio"
-                                        name="gender"
-                                        id="male"
-                                        value="male"
-                                        checked={user.gender === 'male'}
-                                        onChange={() => {
-                                            setUser({
-                                                ...user,
-                                                gender: 'male',
-                                            });
-                                        }}
-                                        className="h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#D9D9D9] bg-white checked:border-[5px] checked:border-[#0ac7e4]"
-                                    />
-                                </div>
-                                <Label
-                                    htmlFor="male"
-                                    className="cursor-pointer text-base font-medium text-black"
-                                >
-                                    남자
-                                </Label>
+                                <input
+                                    type="radio"
+                                    {...register('gender')}
+                                    value="male"
+                                    id="male"
+                                    className="h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#D9D9D9] bg-white checked:border-[5px] checked:border-[#0ac7e4]"
+                                />
+                                <Label htmlFor="male">남자</Label>
                             </div>
-
                             <div className="flex items-center gap-1.5">
-                                <div className="relative flex items-center">
-                                    <input
-                                        type="radio"
-                                        name="gender"
-                                        id="female"
-                                        value="female"
-                                        checked={user.gender === 'female'}
-                                        onChange={() => {
-                                            setUser({
-                                                ...user,
-                                                gender: 'female',
-                                            });
-                                        }}
-                                        className="h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#D9D9D9] bg-white checked:border-[5px] checked:border-[#0ac7e4]"
-                                    />
-                                </div>
-                                <Label
-                                    htmlFor="female"
-                                    className="cursor-pointer text-base font-medium text-black"
-                                >
-                                    여자
-                                </Label>
+                                <input
+                                    type="radio"
+                                    {...register('gender')}
+                                    value="female"
+                                    id="female"
+                                    className="h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#D9D9D9] bg-white checked:border-[5px] checked:border-[#0ac7e4]"
+                                />
+                                <Label htmlFor="female">여자</Label>
                             </div>
                         </div>
                     </div>
@@ -228,62 +292,58 @@ export default function ProfileEditor({
                                 생년월일
                                 <span className="text-[#0ac7e4]">*</span>
                             </Label>
-                            {errors.birth && (
+                            {(errors.birthYear ||
+                                errors.birthMonth ||
+                                errors.birthDay) && (
                                 <span className="ml-auto text-xs text-[#FF0000]">
-                                    내 프로필을 완성하면 동행원을 찾을 수
-                                    있어요.
+                                    {errors.birthYear?.message ||
+                                        errors.birthMonth?.message ||
+                                        errors.birthDay?.message}
                                 </span>
                             )}
                         </div>
                         <div className="flex items-center justify-center gap-[30px] rounded-xl bg-[#f5f6f7] px-4 py-2.5">
                             <input
-                                type="number"
+                                type="text"
                                 placeholder="YYYY"
-                                value={user.birthYear ?? ''} // Add null coalescing operator
-                                onChange={(e) => {
-                                    setUser({
-                                        ...user,
-                                        birthYear: e.target.value
-                                            ? parseInt(e.target.value)
-                                            : null,
-                                    });
-                                }}
-                                // 넘버 인풋의 기본 화살표 버튼을 제거
-                                className="number-arrow-hide w-12 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
+                                maxLength={4}
+                                {...register('birthYear', {
+                                    setValueAs: (value) =>
+                                        value === ''
+                                            ? undefined
+                                            : parseInt(value, 10),
+                                })}
+                                className="w-12 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
                             />
                             <span className="text-base font-extralight text-[#999999]">
                                 /
                             </span>
                             <input
-                                type="number"
+                                type="text"
                                 placeholder="MM"
-                                value={user.birthMonth ?? ''}
-                                onChange={(e) => {
-                                    setUser({
-                                        ...user,
-                                        birthMonth: e.target.value
-                                            ? parseInt(e.target.value)
-                                            : null,
-                                    });
-                                }}
-                                className="number-arrow-hide w-8 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
+                                maxLength={2}
+                                {...register('birthMonth', {
+                                    setValueAs: (value) =>
+                                        value === ''
+                                            ? undefined
+                                            : parseInt(value, 10),
+                                })}
+                                className="w-8 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
                             />
                             <span className="text-base font-extralight text-[#999999]">
                                 /
                             </span>
                             <input
-                                type="number"
+                                type="text"
                                 placeholder="DD"
-                                value={user.birthDay ?? ''}
-                                onChange={(e) => {
-                                    setUser({
-                                        ...user,
-                                        birthDay: e.target.value
-                                            ? parseInt(e.target.value)
-                                            : null,
-                                    });
-                                }}
-                                className="number-arrow-hide w-8 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
+                                maxLength={2}
+                                {...register('birthDay', {
+                                    setValueAs: (value) =>
+                                        value === ''
+                                            ? undefined
+                                            : parseInt(value, 10),
+                                })}
+                                className="w-8 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
                             />
                         </div>
                     </div>
@@ -297,13 +357,7 @@ export default function ProfileEditor({
                             <input
                                 type="text"
                                 placeholder="간단하게 나를 소개해 보세요."
-                                value={user.userIntroduce}
-                                onChange={(e) => {
-                                    setUser({
-                                        ...user,
-                                        userIntroduce: e.target.value,
-                                    });
-                                }}
+                                {...register('userIntroduce')}
                                 className="w-full bg-transparent text-base font-medium text-black outline-none placeholder:text-[#999999]"
                             />
                         </div>
@@ -330,7 +384,14 @@ export default function ProfileEditor({
                         >
                             취소
                         </Button>
-                        <Button className="h-[52px] flex-1">수정하기</Button>
+
+                        <Button
+                            onClick={handleSubmit(onSubmit)}
+                            variant={isValid ? 'default' : 'darkGray'}
+                            className="h-[52px] flex-1"
+                        >
+                            수정하기
+                        </Button>
                     </div>
                 </div>
             </DialogContent>
