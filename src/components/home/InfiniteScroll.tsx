@@ -14,7 +14,7 @@ import CreatePostWindow from './CreatePostWindow';
 export default function InfiniteScroll() {
     const ref = useRef(null);
     const isInView = useInView(ref);
-    const NEST_BFF_URL = process.env.NEST_BFF_URL;
+    const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
     const {
         data,
         fetchNextPage,
@@ -27,7 +27,7 @@ export default function InfiniteScroll() {
         queryFn: async ({ pageParam = 1 }) => {
             const response = await fetch(
                 // 임시 링크입니다.
-                `${NEST_BFF_URL}/api/posts?_page=${pageParam}&_limit=12`,
+                `${NEXT_PUBLIC_NEST_BFF_URL}/api/posts?_page=${pageParam}&_limit=12`,
             );
             return response.json();
         },
