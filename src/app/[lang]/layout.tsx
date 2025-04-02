@@ -88,6 +88,7 @@ export default async function RootLayout({
             //컨트롤러 등록
             signal: controller.signal,
         });
+        console.log('레이아웃 마운트 user/me 응답:', res);
 
         if (res.ok) {
             user = await res.json();
