@@ -1,8 +1,11 @@
-import JsonToHtml from '@/components/detail/JsonToHtml';
-import { PostContentProps } from '@/types/PostContent';
+import { dateFormat } from '@/lib';
+import { calculateDays } from '@/lib/calculateDays';
+import { DetailPost } from '@/types/DetailPost';
 import Image from 'next/image';
 
-export default function PostContent({ post }: PostContentProps) {
+import JsonToHtmlWrapper from './JsonToHtmlWrapper';
+
+export default function PostContent({ post }: { post: DetailPost }) {
     return (
         <>
             <div className="mt-12.5 mb-[60px] flex flex-col items-start gap-[30px]">
@@ -28,7 +31,7 @@ export default function PostContent({ post }: PostContentProps) {
                                     </h3>
                                 </div>
                                 <p className="text-base font-medium">
-                                    {post.location}
+                                    {post.location.placeName}
                                 </p>
                             </div>
 
@@ -47,8 +50,14 @@ export default function PostContent({ post }: PostContentProps) {
                                     </h3>
                                 </div>
                                 <div className="text-base font-medium">
-                                    {/* TODO 날짜 계산해서 n일 로직은 아직 못 넣었어요,,🥲 */}
-                                    {post.startDate} - {post.endDate} ({'n'}일)
+                                    {dateFormat(post.filter.startDate, false)} -{' '}
+                                    {dateFormat(post.filter.endDate, false)} (
+                                    {calculateDays(
+                                        post.filter.startDate,
+
+                                        post.filter.endDate,
+                                    )}
+                                    일)
                                 </div>
                             </div>
 
@@ -67,7 +76,7 @@ export default function PostContent({ post }: PostContentProps) {
                                     </h3>
                                 </div>
                                 <div className="text-base font-medium">
-                                    {post.category}
+                                    {post.filter.groupTheme}
                                 </div>
                             </div>
 
@@ -112,11 +121,11 @@ export default function PostContent({ post }: PostContentProps) {
                                 <div className="text-base font-medium">
                                     <div className="inline-flex items-center gap-[18px]">
                                         <span className="text-[#333333]">
-                                            {post.ageRange}
+                                            {post.filter.age[0]}
                                         </span>
                                         <div className="h-2.5 w-px bg-gray-300" />
                                         <span className="text-[#333333]">
-                                            {post.preferredGender}
+                                            {post.filter.gender}
                                         </span>
                                     </div>
                                 </div>
@@ -126,7 +135,7 @@ export default function PostContent({ post }: PostContentProps) {
 
                     <div className="mt-5 flex flex-col gap-5">
                         <div className="flex flex-wrap gap-2">
-                            {post.hashtags.map((tag, index) => (
+                            {post.tags.map((tag, index) => (
                                 <span
                                     key={index}
                                     className="rounded bg-[#00afc9]/[0.08] px-1.5 py-1 text-[15px] text-[#00afc9]"
@@ -137,7 +146,7 @@ export default function PostContent({ post }: PostContentProps) {
                         </div>
 
                         <article className="text-lg leading-[130%] font-medium text-[#333333]">
-                            <JsonToHtml content={post.content} />
+                            <JsonToHtmlWrapper content={post.content} />
                         </article>
                     </div>
                 </div>

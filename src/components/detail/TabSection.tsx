@@ -6,11 +6,10 @@ import PostInput from '@/components/detail/PostInput';
 import PostLocation from '@/components/detail/PostLocation';
 import PostReview from '@/components/detail/PostReview';
 import ScrollSpy from '@/components/detail/ScrollSpy';
+import { DetailPost } from '@/types/DetailPost';
 import { useRef } from 'react';
 
-import { TrendingPost } from '../../../public/data/trending';
-
-export default function TabSection({ post }: { post: TrendingPost }) {
+export default function TabSection({ post }: { post: DetailPost }) {
     // 스크롤 할 ref 위치 기록
     const contentAreaRef = useRef<HTMLDivElement>(null);
     const locationAreaRef = useRef<HTMLDivElement>(null);
@@ -51,6 +50,7 @@ export default function TabSection({ post }: { post: TrendingPost }) {
                     <p className={`animate-spin`}> 요</p>
                 </div>
             </section>
+            {/*todo: 댓글과 리뷰도 ajax요청으로 변경 해야 할 것 같습니다.*/}
             {/*댓글 섹션*/}
             <section ref={commentAreaRef} className={`mt-15 scroll-mt-40`}>
                 <PostComment />

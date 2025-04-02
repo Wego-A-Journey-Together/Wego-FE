@@ -1,3 +1,5 @@
+'use client';
+
 import CustomBulletList from '@/components/Editor/CustomBulletList';
 import CustomOrderedList from '@/components/Editor/CustomOrderedList';
 import { CustomHeading, CustomLink } from '@/components/Editor/Tiptap';

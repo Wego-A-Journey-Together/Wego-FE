@@ -4,7 +4,10 @@
  * @param endDate 여행 종료일 (Date 객체)
  * @returns 여행 일수 (시작일과 종료일 포함)
  */
-export const calculateDays = (startDate: Date, endDate: Date): number => {
+export const calculateDays = (
+    startDate: string | Date,
+    endDate: string | Date,
+): number => {
     // 입력값 유효성 검사
     if (!startDate || !endDate) return 0;
 

@@ -5,19 +5,33 @@ import UserProfile from '@/components/detail/UserProfile';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
-import trendingPost from '../../../../../public/data/trending';
-
 type Params = { id: string };
 
-interface TestPageProps {
+interface DetailPageProps {
     params: Promise<Params>;
 }
 
-export default async function DetailPage({ params }: TestPageProps) {
+export default async function DetailPage({ params }: DetailPageProps) {
     const { id } = await params;
-    const post = trendingPost.find((post) => post.id === +id);
-    if (!post) {
-        notFound();
+    const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
+    let post = null;
+
+    try {
+        const res = await fetch(
+            `${NEXT_PUBLIC_NEST_BFF_URL}/api/detail/${id}`,
+            {
+                cache: 'no-cache',
+            },
+        );
+
+        if (!res.ok) {
+            if (res.status === 404) notFound();
+        }
+
+        post = await res.json();
+    } catch (error) {
+        console.error('네트워크 끊김 fetch 실패', error);
+        throw new Error('데이터 로딩 실패');
     }
 
     return (
@@ -26,7 +40,7 @@ export default async function DetailPage({ params }: TestPageProps) {
             <section>
                 <div className="relative rounded-xl md:h-75 md:w-full">
                     <Image
-                        src={post.imageSrc}
+                        src={post.thumbnailUrl}
                         fill
                         className={`object-cover`}
                         alt={`배경사진`}
@@ -38,11 +52,11 @@ export default async function DetailPage({ params }: TestPageProps) {
                 <div>
                     <h1 className={`mb-1 text-2xl font-bold`}>{post.title} </h1>
                     <div className="flex items-center text-sm text-[#666666]">
-                        <span>조회수 {post.view}</span>
+                        <span>조회수 5</span>
                         <div className="mx-2.5 h-2.5 w-px bg-neutral-400"></div>
-                        <span>찜 {post.bookMark}</span>
+                        <span>찜 2</span>
                         <div className="mx-2.5 h-2.5 w-px bg-neutral-400"></div>
-                        <span>댓글 {post.commentCount}</span>
+                        <span>댓글 3</span>
                     </div>
                 </div>
                 <Like className={`my-auto px-0`} id={post.id} />
