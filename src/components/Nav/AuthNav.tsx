@@ -1,11 +1,19 @@
+import LogoutBtn from '@/components/Btn/LogoutBtn';
+import { Button } from '@/components/ui/button';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
 import Image from 'next/image';
 import Link from 'next/link';
 
 interface AuthNavProps {
     kakaoId?: string;
+    nickname?: string;
 }
 
-export default function AuthNav({ kakaoId }: AuthNavProps) {
+export default function AuthNav({ kakaoId, nickname }: AuthNavProps) {
     return (
         <div
             className={
@@ -21,17 +29,37 @@ export default function AuthNav({ kakaoId }: AuthNavProps) {
             <Link href={'#'} className={'cursor-pointer'}>
                 알림
             </Link>
-            <Link
-                href={`/profile/${kakaoId}`}
-                className="border-sky-blue h-8 w-8 cursor-pointer rounded-full border"
-            >
-                <Image
-                    src={'/icon/profile/defaultProfile.svg'}
-                    alt={'user'}
-                    width={32}
-                    height={32}
-                />
-            </Link>
+            <Popover>
+                <PopoverTrigger
+                    asChild
+                    className="border-sky-blue h-8 w-8 cursor-pointer rounded-full border"
+                >
+                    <Button variant="ghost" aria-label="프로필 메뉴">
+                        <Image
+                            src={'/icon/profile/defaultProfile.svg'}
+                            alt={'프로필 이미지'}
+                            width={32}
+                            height={32}
+                        />
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48">
+                    <div className="flex flex-col space-y-2">
+                        <p className="font-semibold">{`${nickname}님`}</p>
+                        <div className="h-px bg-gray-200"></div>
+                        <Link
+                            href={`/profile/${kakaoId}`}
+                            className="hover:text-sky-blue py-2"
+                        >
+                            마이 페이지
+                        </Link>
+                        <div className="h-px bg-gray-200"></div>
+                        <div className="pt-1">
+                            <LogoutBtn />
+                        </div>
+                    </div>
+                </PopoverContent>
+            </Popover>
         </div>
     );
 }
