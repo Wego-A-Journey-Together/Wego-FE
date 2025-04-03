@@ -1,7 +1,7 @@
 import FilterSelector from '@/components/home/FilterSelector';
 import InfiniteScroll from '@/components/home/InfiniteScroll';
 import { TrendingCarousel } from '@/components/home/TrendingCarousel';
-import { Checkbox } from '@/components/ui/checkbox';
+import { RecruitingCheckbox } from '@/components/home/filter/RecruitingCheckbox';
 
 export default async function Home() {
     const NEST_BFF_URL = process.env.NEST_BFF_URL;
@@ -26,8 +26,7 @@ export default async function Home() {
                 <h2>
                     검색된 동행 <span className="font-bold">{'90'}</span>개
                 </h2>
-                <Checkbox id="showRecruiting" className="mr-1.5 ml-auto" />
-                <label htmlFor="showRecruiting">동행구함만 보기</label>
+                <RecruitingCheckbox />
             </section>
 
             {/* 동행 모집글 리스트 */}
