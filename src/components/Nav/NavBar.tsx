@@ -16,7 +16,7 @@ interface NavProps {
 }
 
 export default function NavBar({ className, isDarkMode }: NavProps) {
-    const { isAuthenticated, kakaoId } = useSession();
+    const { isAuthenticated, kakaoId, nickname } = useSession();
 
     return (
         <header
@@ -36,7 +36,7 @@ export default function NavBar({ className, isDarkMode }: NavProps) {
                     <ThemeToggler colorTheme={isDarkMode} />
 
                     {isAuthenticated ? (
-                        <AuthNav kakaoId={kakaoId} />
+                        <AuthNav kakaoId={kakaoId} nickname={nickname} />
                     ) : (
                         <LoginBtn />
                     )}
@@ -52,6 +52,7 @@ export default function NavBar({ className, isDarkMode }: NavProps) {
                     isDarkMode={isDarkMode}
                     isAuthenticated={isAuthenticated}
                     kakaoId={kakaoId}
+                    nickname={nickname}
                 />
 
                 <section className="absolute left-1/2 -translate-x-1/2 transform">

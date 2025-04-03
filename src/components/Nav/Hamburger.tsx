@@ -16,10 +16,12 @@ export default function Hamburger({
     isDarkMode,
     isAuthenticated,
     kakaoId,
+    nickname,
 }: {
     isDarkMode: boolean;
     isAuthenticated: boolean;
     kakaoId?: string;
+    nickname?: string;
 }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef(null);
@@ -57,7 +59,7 @@ export default function Hamburger({
             <DropdownMenuContent align="center" className="w-auto px-2 py-1">
                 {isAuthenticated ? (
                     <div className="flex justify-center">
-                        <AuthNav kakaoId={kakaoId} />
+                        <AuthNav kakaoId={kakaoId} nickname={nickname} />
                     </div>
                 ) : (
                     <LoginBtn />
