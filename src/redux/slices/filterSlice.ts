@@ -1,61 +1,52 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DateRange } from 'react-day-picker';
 
-export interface dateRange {
-    from: string | null;
-    to: string | null;
-}
-
 export interface FilterState {
     location: string;
-    date: dateRange | null;
+    startDate: string | null;
+    endDate: string | null;
     groupTheme: string;
     groupSize: string;
     gender: string;
     age: string;
-    isOpen: boolean;
-    isClosing: boolean;
+    isModalOpen: boolean;
+    isModalClose: boolean;
+    isGroupOpen: boolean;
 }
 
 const initialState: FilterState = {
     location: '',
-    date: null,
+    startDate: null,
+    endDate: null,
     groupTheme: '',
     groupSize: '',
     gender: '',
     age: '',
-    isOpen: false,
-    isClosing: false,
+    isModalOpen: false,
+    isModalClose: false,
+    isGroupOpen: false,
 };
 
-// Date 객체를 직렬화 형태로 변환하는 함수 (렌더링 오류 수정)
+// UTC 형식으로 변환
 const serializeDateRange = (
     dateRange: DateRange | undefined,
-): dateRange | null => {
-    if (!dateRange) return null;
+): { startDate: string | null; endDate: string | null } => {
+    if (!dateRange) return { startDate: null, endDate: null };
 
     try {
         return {
-            from:
+            startDate:
                 dateRange.from instanceof Date
-                    ? dateRange.from.toLocaleDateString('ko-KR', {
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit',
-                      })
+                    ? dateRange.from.toISOString()
                     : null,
-            to:
+            endDate:
                 dateRange.to instanceof Date
-                    ? dateRange.to.toLocaleDateString('ko-KR', {
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit',
-                      })
+                    ? dateRange.to.toISOString()
                     : null,
         };
     } catch (error) {
         console.error('Error serializing date range:', error);
-        return null;
+        return { startDate: null, endDate: null };
     }
 };
 
@@ -66,13 +57,16 @@ export const filterSlice = createSlice({
         setLocation: (state, action: PayloadAction<string>) => {
             state.location = action.payload;
         },
-        setDate: (state, action: PayloadAction<dateRange | null>) => {
-            state.date = action.payload;
+        setStartDate: (state, action: PayloadAction<string>) => {
+            state.startDate = action.payload;
+        },
+        setEndDate: (state, action: PayloadAction<string>) => {
+            state.endDate = action.payload;
         },
         setGroupTheme: (state, action: PayloadAction<string>) => {
             state.groupTheme = action.payload;
         },
-        setPeople: (state, action: PayloadAction<string>) => {
+        setGroupSize: (state, action: PayloadAction<string>) => {
             state.groupSize = action.payload;
         },
         setGender: (state, action: PayloadAction<string>) => {
@@ -81,35 +75,45 @@ export const filterSlice = createSlice({
         setAge: (state, action: PayloadAction<string>) => {
             state.age = action.payload;
         },
+        setIsGroupOpen: (state, action: PayloadAction<boolean>) => {
+            state.isGroupOpen = action.payload;
+        },
         openModal: (state) => {
-            state.isOpen = true;
-            state.isClosing = false;
+            state.isModalOpen = true;
+            state.isModalClose = false;
         },
         startClosingModal: (state) => {
-            state.isClosing = true;
+            state.isModalClose = true;
         },
         closeModal: (state) => {
-            state.isOpen = false;
-            state.isClosing = false;
+            state.isModalOpen = false;
+            state.isModalClose = false;
         },
     },
 });
 
 export const {
     setLocation,
-    setDate,
+    setStartDate,
+    setEndDate,
     setGroupTheme,
-    setPeople,
+    setGroupSize,
     setGender,
     setAge,
     openModal,
     startClosingModal,
     closeModal,
+    setIsGroupOpen,
 } = filterSlice.actions;
 
-// DateRange 객체를 받아 직렬화하여 액션을 디스패치하는 함수
-export const setDateAction = (dateRange: DateRange | undefined) => {
-    return setDate(serializeDateRange(dateRange));
+export const setStartDateAction = (dateRange: DateRange | undefined) => {
+    const serialized = serializeDateRange(dateRange);
+    return setStartDate(serialized.startDate || '');
+};
+
+export const setEndDateAction = (dateRange: DateRange | undefined) => {
+    const serialized = serializeDateRange(dateRange);
+    return setEndDate(serialized.endDate || '');
 };
 
 export default filterSlice.reducer;
