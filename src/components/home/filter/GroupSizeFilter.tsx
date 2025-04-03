@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/select';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { setPeople } from '@/redux/slices/filterSlice';
+import { setGroupSize } from '@/redux/slices/filterSlice';
 import Image from 'next/image';
 
 const groupSizeOptions = ['2인', '10인 이하', '10인 이상'];
@@ -37,7 +37,7 @@ export const GroupSizeFilter = () => {
                                 }
                                 onClick={() =>
                                     dispatch(
-                                        setPeople(
+                                        setGroupSize(
                                             groupSize === option ? '' : option,
                                         ),
                                     )
@@ -55,7 +55,7 @@ export const GroupSizeFilter = () => {
     return (
         <Select
             value={groupSize}
-            onValueChange={(value) => dispatch(setPeople(value))}
+            onValueChange={(value) => dispatch(setGroupSize(value))}
         >
             <SelectTrigger className="h-auto w-[176px] gap-6 py-4 pr-[18px] pl-7">
                 <div className="flex gap-5">
