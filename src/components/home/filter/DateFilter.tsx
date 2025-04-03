@@ -11,23 +11,45 @@ import {
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { setDateAction } from '@/redux/slices/filterSlice';
+import {
+    setEndDate,
+    setEndDateAction,
+    setStartDate,
+    setStartDateAction,
+} from '@/redux/slices/filterSlice';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Image from 'next/image';
 import { useCallback, useState } from 'react';
+import { DateRange } from 'react-day-picker';
 
 export const DateFilter = () => {
-    const date = useAppSelector((state) => state.filter.date);
+    const startDate = useAppSelector((state) => state.filter.startDate);
+    const endDate = useAppSelector((state) => state.filter.endDate);
     const dispatch = useAppDispatch();
     const isMobile = useMediaQuery('(max-width: 1200px)');
     const [open, setOpen] = useState(false);
 
-    const fromDate = date?.from ? new Date(date.from) : null;
-    const toDate = date?.to ? new Date(date.to) : null;
+    const fromDate = startDate ? new Date(startDate) : null;
+    const toDate = endDate ? new Date(endDate) : null;
+
+    const handleDateSelect = (dateRange: DateRange | undefined) => {
+        if (dateRange?.from) {
+            dispatch(setStartDateAction(dateRange));
+        } else {
+            dispatch(setStartDate(''));
+        }
+
+        if (dateRange?.to) {
+            dispatch(setEndDateAction(dateRange));
+        } else {
+            dispatch(setEndDate(''));
+        }
+    };
 
     const resetSelection = useCallback(() => {
-        dispatch(setDateAction(undefined));
+        dispatch(setStartDate(''));
+        dispatch(setEndDate(''));
         setOpen(false);
     }, [dispatch]);
 
@@ -49,7 +71,7 @@ export const DateFilter = () => {
                     variant={'outline'}
                     className={cn(
                         'h-auto w-[271px] gap-6 pr-[18px] pl-7',
-                        !date && 'text-[#999999]',
+                        !startDate && !endDate && 'text-[#999999]',
                     )}
                 >
                     <Image
@@ -94,7 +116,7 @@ export const DateFilter = () => {
                                 ? { from: fromDate, to: toDate || undefined }
                                 : undefined
                         }
-                        onSelect={(newDate) => dispatch(setDateAction(newDate))}
+                        onSelect={handleDateSelect}
                         numberOfMonths={1}
                         locale={ko}
                         className="flex justify-center"

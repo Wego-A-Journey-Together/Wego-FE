@@ -2,7 +2,12 @@
 
 import { cn } from '@/lib/utils';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { setDateAction } from '@/redux/slices/filterSlice';
+import {
+    setEndDate,
+    setEndDateAction,
+    setStartDate,
+    setStartDateAction,
+} from '@/redux/slices/filterSlice';
 import {
     addDays,
     addMonths,
@@ -16,6 +21,7 @@ import {
     subMonths,
 } from 'date-fns';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { DateRange } from 'react-day-picker';
 
 import { Button } from '../../ui/button';
 
@@ -161,17 +167,19 @@ const RenderCells = ({
 export const ScrollCalender = () => {
     const currentDate = useMemo(() => new Date(), []);
     const dispatch = useAppDispatch();
-    const serializedDate = useAppSelector((state) => state.filter.date);
+
+    const startDateStr = useAppSelector((state) => state.filter.startDate);
+    const endDateStr = useAppSelector((state) => state.filter.endDate);
 
     // Redux 상태에서 날짜 정보 가져오기
     const selectedStartDate = useMemo(
-        () => (serializedDate?.from ? new Date(serializedDate.from) : null),
-        [serializedDate?.from],
+        () => (startDateStr ? new Date(startDateStr) : null),
+        [startDateStr],
     );
 
     const selectedEndDate = useMemo(
-        () => (serializedDate?.to ? new Date(serializedDate.to) : null),
-        [serializedDate?.to],
+        () => (endDateStr ? new Date(endDateStr) : null),
+        [endDateStr],
     );
 
     // 날짜 범위 제한 설정
@@ -212,35 +220,27 @@ export const ScrollCalender = () => {
     const handleDateClick = useCallback(
         (day: Date) => {
             if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
-                dispatch(setDateAction({ from: day, to: undefined }));
+                // 시작일 지정
+                const dateRange: DateRange = { from: day, to: undefined };
+                dispatch(setStartDateAction(dateRange));
+                dispatch(setEndDate(''));
             } else {
-                dispatch(
-                    setDateAction({
-                        from: day < selectedStartDate ? day : selectedStartDate,
-                        to: day < selectedStartDate ? selectedStartDate : day,
-                    }),
-                );
+                // 끝 날짜 지정
+                const dateRange: DateRange = {
+                    from: day < selectedStartDate ? day : selectedStartDate,
+                    to: day < selectedStartDate ? selectedStartDate : day,
+                };
+                dispatch(setStartDateAction(dateRange));
+                dispatch(setEndDateAction(dateRange));
             }
         },
         [selectedStartDate, selectedEndDate, dispatch],
     );
 
-    // 선택한 날짜 범위를 적용
-    const applyDateRange = useCallback(() => {
-        if (selectedStartDate) {
-            const startDateStr = format(selectedStartDate, 'yyyy-MM-dd');
-            const message = selectedEndDate
-                ? `선택한 날짜 범위: ${startDateStr} ~ ${format(selectedEndDate, 'yyyy-MM-dd')}`
-                : `선택한 날짜: ${startDateStr}`;
-            alert(message);
-        } else {
-            alert('날짜를 선택해주세요.');
-        }
-    }, [selectedStartDate, selectedEndDate]);
-
     // 선택 초기화 함수
     const resetSelection = useCallback(() => {
-        dispatch(setDateAction(undefined));
+        dispatch(setStartDate(''));
+        dispatch(setEndDate(''));
     }, [dispatch]);
 
     // 이전 월 로드 함수
@@ -394,13 +394,7 @@ export const ScrollCalender = () => {
                 >
                     초기화
                 </Button>
-                <Button
-                    variant={selectedStartDate ? 'default' : 'darkGray'}
-                    onClick={applyDateRange}
-                    className="w-[118px]"
-                >
-                    적용
-                </Button>
+                <Button>적용</Button>
             </div>
         </div>
     );

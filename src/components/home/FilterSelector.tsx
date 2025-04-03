@@ -8,20 +8,24 @@ import { MobileFilterModal } from './filter/MobileFilterModal';
 
 export default function FilterSelector() {
     const location = useAppSelector((state) => state.filter.location);
-    const date = useAppSelector((state) => state.filter.date);
+    const startDate = useAppSelector((state) => state.filter.startDate);
+    const endDate = useAppSelector((state) => state.filter.endDate);
     const groupTheme = useAppSelector((state) => state.filter.groupTheme);
     const groupSize = useAppSelector((state) => state.filter.groupSize);
     const gender = useAppSelector((state) => state.filter.gender);
     const age = useAppSelector((state) => state.filter.age);
+    const isGroupOpen = useAppSelector((state) => state.filter.isGroupOpen);
 
     const handleSearch = () => {
         const filterData = {
             location,
-            date,
+            startDate,
+            endDate,
             groupTheme,
             groupSize,
             gender,
             age,
+            isGroupOpen,
         };
 
         // 확인용 메세지
