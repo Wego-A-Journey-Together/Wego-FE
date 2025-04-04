@@ -30,7 +30,7 @@ export default function PostSetupPanel() {
     const groupTheme = watch('filter.groupTheme') ?? '';
     const groupSize = watch('filter.groupSize') ?? '';
     const selectedGender = watch('filter.gender') ?? null;
-    const selectedAges = watch('filter.age') ?? [];
+    const selectedAge = watch('filter.age') ?? null;
 
     const ageGroups = [
         { id: 'notCare', label: '무관' },
@@ -55,26 +55,8 @@ export default function PostSetupPanel() {
     };
 
     const handleAgeToggle = (id: string) => {
-        if (id === 'notCare') {
-            const newValue = selectedAges.includes('notCare')
-                ? []
-                : ['notCare'];
-            setValue('filter.age', newValue);
-        } else {
-            const ageGroupsWithoutNotCare = ageGroups
-                .filter((age) => age.id !== 'notCare')
-                .map((age) => age.id);
-
-            const newSelection = selectedAges.includes(id)
-                ? selectedAges.filter((item) => item !== id)
-                : [...selectedAges.filter((item) => item !== 'notCare'), id];
-
-            if (newSelection.length === ageGroupsWithoutNotCare.length) {
-                setValue('filter.age', ['notCare']);
-            } else {
-                setValue('filter.age', newSelection);
-            }
-        }
+        const newValue = selectedAge === id ? null : id;
+        setValue('filter.age', newValue);
     };
 
     return (
@@ -111,10 +93,30 @@ export default function PostSetupPanel() {
                                 <Calendar
                                     mode="single"
                                     selected={startDate}
-                                    onSelect={(date) =>
-                                        date &&
-                                        setValue('filter.startDate', date)
-                                    }
+                                    onSelect={(date) => {
+                                        if (date) {
+                                            setValue('filter.startDate', date);
+
+                                            // 시작일이 종료일보다 이후라면 종료일을 시작일로 업데이트
+                                            if (endDate && date > endDate) {
+                                                setValue(
+                                                    'filter.endDate',
+                                                    date,
+                                                );
+                                            }
+
+                                            // 시작일이 마감일보다 이후라면 마감일을 시작일로 업데이트
+                                            if (
+                                                deadlineDate &&
+                                                date > deadlineDate
+                                            ) {
+                                                setValue(
+                                                    'filter.deadlineDate',
+                                                    date,
+                                                );
+                                            }
+                                        }
+                                    }}
                                     initialFocus
                                     disabled={(date) =>
                                         date <
@@ -158,6 +160,15 @@ export default function PostSetupPanel() {
                                         date && setValue('filter.endDate', date)
                                     }
                                     initialFocus
+                                    disabled={(date) => {
+                                        const today = new Date(
+                                            new Date().setHours(0, 0, 0, 0),
+                                        );
+                                        return (
+                                            date < today ||
+                                            (startDate && date < startDate)
+                                        );
+                                    }}
                                 />
                             </PopoverContent>
                         </Popover>
@@ -323,7 +334,7 @@ export default function PostSetupPanel() {
                                 key={age.id}
                                 className="h-[44px]"
                                 variant={
-                                    selectedAges.includes(age.id)
+                                    selectedAge === age.id
                                         ? 'selected'
                                         : 'outline'
                                 }

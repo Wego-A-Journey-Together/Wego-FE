@@ -43,6 +43,7 @@ export default function LoginModal() {
     };
 
     return (
+
         <Dialog open={open} onOpenChange={handleOpenChange} modal={true}>
             <DialogContent className="flex flex-col items-center justify-start py-5 sm:max-w-md">
                 <DialogClose className="absolute top-4 right-4 rounded-sm opacity-70 hover:opacity-100" />
