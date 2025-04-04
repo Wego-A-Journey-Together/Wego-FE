@@ -49,14 +49,30 @@ export default function WritePage() {
         //todo: BE 팀과 이야기 후 json 직렬화하여 본문 부분 전송하기로 했습니다.
         // 여기서 API 요청 처리
 
+        const submissionData = { ...data };
+
+        // 데이터를 복사해 마감시간을 UTC 형식으로 변환
+        if (data.filter.deadlineDate && data.filter.deadlineTime) {
+            // 사용자가 설정한 마감일을
+            const partOfDeadLine = data.filter.deadlineDate
+                .toISOString()
+                .split('T')[0];
+
+            // 사용자가 설정한 마감 시간과 결합
+            const partOfTime = data.filter.deadlineTime;
+
+            submissionData.filter.deadlineTime = `${partOfDeadLine}T${partOfTime}:00.000Z`;
+        }
+
         // 개발용 처리
-        if (process.env.NODE_ENV === 'development')
-            alert(JSON.stringify(data, null, 2));
+        if (process.env.NODE_ENV === 'development') {
+            console.log(JSON.stringify(submissionData, null, 2));
+        }
 
         const res = await fetch(`${NEXT_PUBLIC_NEST_BFF_URL}/api/posts`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
+            body: JSON.stringify(submissionData),
         });
 
         if (!res.ok) {
