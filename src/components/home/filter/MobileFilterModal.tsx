@@ -17,7 +17,9 @@ interface MobileFilterModalProps {
 
 export const MobileFilterModal = ({ onSearch }: MobileFilterModalProps) => {
     const dispatch = useAppDispatch();
-    const { isOpen, isClosing } = useAppSelector((state) => state.filter);
+    const { isModalOpen, isModalClose } = useAppSelector(
+        (state) => state.filter,
+    );
 
     // 모달 닫기 함수
     const handleClose = () => {
@@ -28,13 +30,13 @@ export const MobileFilterModal = ({ onSearch }: MobileFilterModalProps) => {
     };
 
     // 모달 열려있지 않으면 렌더링하지 않음
-    if (!isOpen) return null;
+    if (!isModalOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50" onClick={handleClose}>
             <div
                 className={`fixed right-0 bottom-0 left-0 z-50 h-screen w-full overflow-y-auto bg-white p-6 transition-all duration-300 ${
-                    isClosing
+                    isModalClose
                         ? 'translate-y-full'
                         : 'animate-in slide-in-from-bottom translate-y-0'
                 }`}
