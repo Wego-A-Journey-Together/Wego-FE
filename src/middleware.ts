@@ -46,8 +46,8 @@ export function middleware(request: NextRequest) {
             pathWithoutLocale.startsWith(`${path}/`),
     );
 
-    // 로그인 검증이 필요한 경로이고, 로그인되지 않은 경우 로그인 페이지로 리다이렉트
-    if (isProtectedPath) {
+    //  DEV 모드에서 비활성화 해서 UI 접근 가능하게 설정 ( 스토리북 쓰기엔 시간이 없어서.. )
+    if (isProtectedPath && process.env.NODE_ENV !== 'development') {
         // 쿠키나 세션에서 로그인 상태 확인
         const isLoggedIn =
             request.cookies.has('accessToken') &&
