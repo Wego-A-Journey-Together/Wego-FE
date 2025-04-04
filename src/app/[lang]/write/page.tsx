@@ -22,6 +22,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 export default function WritePage() {
+    const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
     const router = useRouter();
 
     const form = useForm<PostFormValues>({
@@ -52,7 +53,7 @@ export default function WritePage() {
         if (process.env.NODE_ENV === 'development')
             alert(JSON.stringify(data, null, 2));
 
-        const res = await fetch('NEXT_PUBLIC_/api/posts', {
+        const res = await fetch(`${NEXT_PUBLIC_NEST_BFF_URL}/api/posts`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
