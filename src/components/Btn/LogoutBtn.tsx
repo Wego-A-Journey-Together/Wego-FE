@@ -11,7 +11,7 @@ export default function LogoutBtn() {
         try {
             const NEXT_PUBLIC_NEST_BFF_URL =
                 process.env.NEXT_PUBLIC_NEST_BFF_URL;
-            await fetch(`${NEXT_PUBLIC_NEST_BFF_URL}/api/auth/logout`, {
+            await fetch(`${NEXT_PUBLIC_NEST_BFF_URL}/api/user/logout`, {
                 method: 'POST',
                 credentials: 'include',
             });
@@ -31,7 +31,7 @@ export default function LogoutBtn() {
                 disabled={isClicked}
             >
                 {isClicked ? (
-                    <Loader2 className="bg-sky-blue mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin text-rose-600" />
                 ) : (
                     '로그 아웃'
                 )}
