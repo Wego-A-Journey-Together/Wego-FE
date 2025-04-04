@@ -31,7 +31,7 @@ export default function RecruitPost({ post }: PostContentProps) {
                             </Badge>
 
                             {/* 글제목  */}
-                            <h1 className="flex-1 truncate text-xl font-bold text-black">
+                            <h1 className="flex-1 truncate overflow-hidden text-xl font-bold text-black">
                                 {post.title}
                             </h1>
                         </div>
@@ -100,7 +100,7 @@ export default function RecruitPost({ post }: PostContentProps) {
             <hr className="mb-3.5 h-px w-full border-0 bg-gray-200" />
 
             {/* 유저 프로필 */}
-            <div className="flex w-full flex-col items-start justify-between gap-4 md:flex-row md:items-center md:gap-2">
+            <div className="flex w-full flex-row items-start justify-between md:items-center">
                 <Link href={`/profile/${post.userId}`}>
                     {/* 아이콘 */}
                     <div className="flex items-center gap-3">
@@ -137,7 +137,7 @@ export default function RecruitPost({ post }: PostContentProps) {
                 </Link>
 
                 {/*todo : 낙관적 업데이트 찜 버튼*/}
-                <div className="flex w-full items-center gap-2 md:w-auto">
+                <div className="flex items-center gap-2 md:w-auto">
                     <Like id={post.id} className={`px-0`} />
                 </div>
             </div>
