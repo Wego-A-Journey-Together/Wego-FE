@@ -48,7 +48,7 @@ export default function KAKAOLogin() {
             alt={'카카오 로그인'}
             width={300}
             height={45}
-            className={`h-9 w-60 object-contain`}
+            className={`h-9 w-60 cursor-pointer object-contain`}
             onClick={handleClick}
         />
     );

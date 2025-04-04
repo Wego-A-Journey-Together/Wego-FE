@@ -1,4 +1,5 @@
 import NavBar from '@/components/Nav/NavBar';
+import LoginModal from '@/components/common/LoginModal';
 import { cn } from '@/lib';
 import TanstackProviders from '@/query/TanstackProvider';
 import ReduxProvider from '@/redux/ReduxProvider';
@@ -138,6 +139,7 @@ export default async function RootLayout({
                         >
                             {children}
                             <Toaster />
+                            <LoginModal />
                         </main>
                     </TanstackProviders>
                 </ReduxProvider>

@@ -8,6 +8,9 @@ import { NextRequest, NextResponse } from 'next/server';
 const locales = ['ko', 'en'];
 const defaultLocale = 'ko'; // 기본값은 한국어
 
+// 로그인 필요한 경로
+const protectedPaths = ['/write', '/profile'];
+
 export function middleware(request: NextRequest) {
     // 경로 가져오기
     const pathname = request.nextUrl.pathname;
@@ -28,6 +31,46 @@ export function middleware(request: NextRequest) {
         (locale) =>
             pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
     );
+
+    // 언어코드 뺀 실제 경로
+    let pathWithoutLocale = pathname;
+    if (pathnameHasLocale) {
+        const segments = pathname.split('/');
+        pathWithoutLocale = '/' + segments.slice(2).join('/');
+    }
+
+    // 로그인 검증이 필요한 경로인지 확인
+    const isProtectedPath = protectedPaths.some(
+        (path) =>
+            pathWithoutLocale === path ||
+            pathWithoutLocale.startsWith(`${path}/`),
+    );
+
+    // 로그인 검증이 필요한 경로이고, 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+    if (isProtectedPath) {
+        // 쿠키나 세션에서 로그인 상태 확인
+        const isLoggedIn =
+            request.cookies.has('accessToken') &&
+            request.cookies.has('refreshToken');
+
+        if (!isLoggedIn) {
+            // 현재 사용 중인 언어 확인
+            let currentLocale = defaultLocale;
+            if (pathnameHasLocale) {
+                currentLocale = pathname.split('/')[1];
+            } else {
+                currentLocale =
+                    request.cookies.get('NEXT_LOCALE')?.value || defaultLocale;
+            }
+
+            // 로그인 필요 알림을 위한 상태 값 추가
+            const url = new URL(request.url);
+            url.pathname = `/${currentLocale}`;
+            url.searchParams.set('loginRequired', 'true');
+
+            return NextResponse.redirect(url);
+        }
+    }
 
     // 경로에 이미 언어 코드가 포함되어 있으면 해당 언어를 쿠키에 저장하고 통과
     if (pathnameHasLocale) {
