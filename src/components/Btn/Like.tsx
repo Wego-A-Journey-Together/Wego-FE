@@ -115,7 +115,7 @@ export default function Like({ id, className }: LikeProps) {
     return (
         <button
             className={cn(
-                'flex flex-1 cursor-pointer items-center gap-1.5 rounded-lg px-[30px] py-2 md:flex-none',
+                'flex h-full cursor-pointer items-center gap-1.5 rounded-lg px-[30px] py-2 md:px-0',
                 className,
             )}
             type="button"

@@ -115,8 +115,8 @@ export default function RecruitPost({ post }: PostContentProps) {
                         </div>
 
                         {/* 유저 정보 */}
-                        <div className="flex w-[187px] flex-col items-start gap-1.5">
-                            <div className="w-full text-[15px] font-semibold text-black">
+                        <div className="flex flex-col items-start gap-2 md:flex-row md:items-center">
+                            <div className="text-base font-semibold text-black">
                                 {post.userName}
                             </div>
                             <div className="flex items-center gap-2 rounded-[24.53px] bg-[#e5e8ea] px-3 py-1.5">

@@ -45,7 +45,7 @@ export default function LoginModal() {
         <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogContent className="flex flex-col items-center justify-start py-5 sm:max-w-md">
                 <DialogHeader className="relative">
-                    <>
+                    <div>
                         <svg
                             width="89"
                             height="34"
@@ -75,15 +75,15 @@ export default function LoginModal() {
                                 mask="url(#path-1-outside-1_531_25578)"
                             />
                         </svg>
-                    </>
-                    <div>
+                    </div>
+                    <div className={'pt-4'}>
                         <DialogTitle>로그인이 필요합니다</DialogTitle>
                         <DialogDescription>
                             이 기능을 사용하려면 먼저 로그인해주세요.
                         </DialogDescription>
                     </div>
                 </DialogHeader>
-                <div className="py-4">
+                <div className="pb-4">
                     <KAKAOLogin />
                 </div>
             </DialogContent>

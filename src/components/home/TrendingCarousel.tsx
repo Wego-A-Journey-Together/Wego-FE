@@ -74,7 +74,7 @@ export function TrendingCarousel({ posts, className }: TrendingCarouselProps) {
                             />
                         )}
                         <h2
-                            className={`flex items-end text-base font-semibold sm:text-xl`}
+                            className={`flex items-end text-base font-semibold sm:text-2xl`}
                         >
                             이번 주 Hot한 동행
                         </h2>
