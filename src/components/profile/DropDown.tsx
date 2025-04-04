@@ -58,7 +58,13 @@ const TAB_CONTENTS = {
 
 type CategoryId = keyof typeof CATEGORIES;
 
-export default function DropDown({ name }: { name: string }) {
+export default function DropDown({
+    name,
+    isVisitor,
+}: {
+    name: string;
+    isVisitor: boolean;
+}) {
     const [categoryId, setCategoryId] = useState<CategoryId>('journey');
     const [tabIndex, setTabIndex] = useState(0);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);

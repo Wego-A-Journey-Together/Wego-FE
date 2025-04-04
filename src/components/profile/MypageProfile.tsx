@@ -19,20 +19,21 @@ interface User {
 }
 
 interface MypageProfileProps {
-    user: User;
+    data: User;
+    isVisitor: boolean;
 }
 
-export default function MypageProfile({ user }: MypageProfileProps) {
+export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const profileData = {
-        name: user.userName,
-        status: user.statusMessage,
-        location: user.location,
-        age: user.age,
-        gender: user.gender,
-        rating: user.rating,
-        reviews: user.reviewCount,
-        profileImage: user.profileImage,
+        name: data.userName,
+        status: data.statusMessage,
+        location: data.location,
+        age: data.age,
+        gender: data.gender,
+        rating: data.rating,
+        reviews: data.reviewCount,
+        profileImage: data.profileImage,
     };
 
     return (
@@ -58,18 +59,20 @@ export default function MypageProfile({ user }: MypageProfileProps) {
                         />
 
                         {/* 프로필 수정 버튼 */}
-                        <Button
-                            variant="ghost"
-                            onClick={() => setIsEditorOpen(true)}
-                            className="absolute right-0 bottom-0 flex h-7 w-7 items-center justify-center rounded-[14px] border border-solid border-[#d9d9d9] bg-white p-0"
-                        >
-                            <Image
-                                alt="edit"
-                                width={18}
-                                height={18}
-                                src="/icon/profile/profileEdit.svg"
-                            />
-                        </Button>
+                        {!isVisitor && (
+                            <Button
+                                variant="ghost"
+                                onClick={() => setIsEditorOpen(true)}
+                                className="absolute right-0 bottom-0 flex h-7 w-7 items-center justify-center rounded-[14px] border border-solid border-[#d9d9d9] bg-white p-0"
+                            >
+                                <Image
+                                    alt="edit"
+                                    width={18}
+                                    height={18}
+                                    src="/icon/profile/profileEdit.svg"
+                                />
+                            </Button>
+                        )}
 
                         {/* 프로필 수정 모달 창 */}
                         <ProfileEditor
