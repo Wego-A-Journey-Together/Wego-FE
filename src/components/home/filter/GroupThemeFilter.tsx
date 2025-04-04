@@ -14,12 +14,12 @@ import { setGroupTheme } from '@/redux/slices/filterSlice';
 import Image from 'next/image';
 
 const groupThemeOptions = [
-    '친구 동행',
-    '부부 동행',
-    '투어 동행',
-    '숙박 공유',
-    '전시/공연 동행',
-    '맛집 동행',
+    { value: 'friends', label: '친구 동행' },
+    { value: 'couple', label: '부부 동행' },
+    { value: 'tour', label: '투어 동행' },
+    { value: 'booking', label: '숙박 공유' },
+    { value: 'event', label: '전시/공연 동행' },
+    { value: 'food', label: '맛집 동행' },
 ];
 
 export const GroupThemeFilter = () => {
@@ -33,24 +33,27 @@ export const GroupThemeFilter = () => {
                 <div className="flex flex-col gap-5">
                     <h3 className="text-lg font-bold">동행 테마</h3>
                     <div className="flex flex-wrap gap-5">
-                        {groupThemeOptions.map((option) => (
+                        {groupThemeOptions.map((option, keyId) => (
                             <Button
-                                key={option}
+                                key={keyId}
+                                value={option.value}
                                 className="w-fit min-w-[76px]"
                                 variant={
-                                    groupTheme === option
+                                    groupTheme === option.label
                                         ? 'selected'
                                         : 'outline'
                                 }
                                 onClick={() =>
                                     dispatch(
                                         setGroupTheme(
-                                            groupTheme === option ? '' : option,
+                                            groupTheme === option.label
+                                                ? ''
+                                                : option.label,
                                         ),
                                     )
                                 }
                             >
-                                {option}
+                                {option.label}
                             </Button>
                         ))}
                     </div>
@@ -83,9 +86,9 @@ export const GroupThemeFilter = () => {
                 </div>
             </SelectTrigger>
             <SelectContent>
-                {groupThemeOptions.map((option) => (
-                    <SelectItem key={option} value={option}>
-                        {option}
+                {groupThemeOptions.map((option, keyId) => (
+                    <SelectItem key={keyId} value={option.value}>
+                        {option.label}
                     </SelectItem>
                 ))}
             </SelectContent>
