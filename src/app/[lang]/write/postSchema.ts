@@ -16,7 +16,7 @@ export const PostSchema = z.object({
         groupTheme: z.string(),
         groupSize: z.string(),
         gender: z.string().nullable(),
-        age: z.array(z.string()),
+        age: z.string().nullable(),
     }),
 
     // 카카오 로컬 api 스펙에 따르면 기본 제공은 세 가지 필드 입니다. ( 사용자가 검색어 입력 후 선택시 따라오는 필드들 )

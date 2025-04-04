@@ -39,7 +39,7 @@ export default function WritePage() {
                 groupTheme: '',
                 groupSize: '',
                 gender: null,
-                age: [],
+                age: null,
             },
         },
     });
