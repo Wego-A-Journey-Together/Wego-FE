@@ -103,12 +103,15 @@ export default function WritePage() {
     const handleCancel = () => {
         toast('작성 취소됨', {
             description: '이전 페이지로 돌아갑니다',
+            duration: 1000, // 토스트를 1초 동안 보여줌
             action: {
                 label: '닫기',
                 onClick: () => {},
             },
+            onAutoClose: () => {
+                router.back(); // 토스트가 자동으로 사라진 후 이전 페이지로 이동
+            },
         });
-        router.back();
     };
 
     return (
