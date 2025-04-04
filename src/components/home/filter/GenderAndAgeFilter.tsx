@@ -12,17 +12,21 @@ import { setAge, setGender } from '@/redux/slices/filterSlice';
 import { ChevronDownIcon } from 'lucide-react';
 import Image from 'next/image';
 
-const genderOptions = ['무관', '여성', '남성'];
+const GENDER_OPTIONS = [
+    { id: 'notCare', label: '무관' },
+    { id: 'female', label: '여성' },
+    { id: 'male', label: '남성' },
+];
 
-const ageOptions = [
-    '무관',
-    '10대',
-    '20대',
-    '30대',
-    '40대',
-    '50대',
-    '60대',
-    '70대',
+const AGE_OPTIONS = [
+    { id: 'notCare', label: '무관' },
+    { id: '10s', label: '10대' },
+    { id: '20s', label: '20대' },
+    { id: '30s', label: '30대' },
+    { id: '40s', label: '40대' },
+    { id: '50s', label: '50대' },
+    { id: '60s', label: '60대' },
+    { id: '70s', label: '70대' },
 ];
 
 export const GenderAndAgeFilter = () => {
@@ -39,24 +43,27 @@ export const GenderAndAgeFilter = () => {
                     <div className="flex flex-col gap-5">
                         <h3 className="text-lg font-bold">성별</h3>
                         <div className="flex flex-wrap gap-5">
-                            {genderOptions.map((option) => (
+                            {GENDER_OPTIONS.map((option, keyId) => (
                                 <Button
-                                    key={option}
+                                    key={keyId}
+                                    id={option.id}
                                     className="w-[52px]"
                                     variant={
-                                        gender === option
+                                        gender === option.label
                                             ? 'selected'
                                             : 'outline'
                                     }
                                     onClick={() =>
                                         dispatch(
                                             setGender(
-                                                gender === option ? '' : option,
+                                                gender === option.label
+                                                    ? ''
+                                                    : option.label,
                                             ),
                                         )
                                     }
                                 >
-                                    {option}
+                                    {option.label}
                                 </Button>
                             ))}
                         </div>
@@ -68,22 +75,27 @@ export const GenderAndAgeFilter = () => {
                     <div className="flex flex-col gap-5">
                         <h3 className="text-lg font-bold">나이</h3>
                         <div className="flex flex-wrap gap-5">
-                            {ageOptions.map((option) => (
+                            {AGE_OPTIONS.map((option, keyId) => (
                                 <Button
-                                    key={option}
+                                    key={keyId}
+                                    id={option.id}
                                     className="max-w-[52px] min-w-[52px]"
                                     variant={
-                                        age === option ? 'selected' : 'outline'
+                                        age === option.label
+                                            ? 'selected'
+                                            : 'outline'
                                     }
                                     onClick={() =>
                                         dispatch(
                                             setAge(
-                                                age === option ? '' : option,
+                                                age === option.label
+                                                    ? ''
+                                                    : option.label,
                                             ),
                                         )
                                     }
                                 >
-                                    {option}
+                                    {option.label}
                                 </Button>
                             ))}
                         </div>
@@ -124,24 +136,27 @@ export const GenderAndAgeFilter = () => {
                     <div className="flex flex-col gap-3">
                         <h3 className="text-sm font-bold">성별</h3>
                         <div className="flex flex-wrap gap-2">
-                            {genderOptions.map((option) => (
+                            {GENDER_OPTIONS.map((option, keyId) => (
                                 <Button
-                                    key={option}
+                                    key={keyId}
+                                    id={option.id}
                                     className="h-8 w-[52px] px-3"
                                     variant={
-                                        gender === option
+                                        gender === option.label
                                             ? 'selected'
                                             : 'outline'
                                     }
                                     onClick={() =>
                                         dispatch(
                                             setGender(
-                                                gender === option ? '' : option,
+                                                gender === option.label
+                                                    ? ''
+                                                    : option.label,
                                             ),
                                         )
                                     }
                                 >
-                                    {option}
+                                    {option.label}
                                 </Button>
                             ))}
                         </div>
@@ -151,23 +166,28 @@ export const GenderAndAgeFilter = () => {
                     <div className="flex flex-col gap-3">
                         <h3 className="text-sm font-bold">나이</h3>
                         <div className="flex flex-wrap gap-2">
-                            {ageOptions.map((option) => (
+                            {AGE_OPTIONS.map((option, keyId) => (
                                 <Button
-                                    key={option}
+                                    key={keyId}
+                                    id={option.id}
                                     size="sm"
                                     className="h-8 w-[52px] px-3"
                                     variant={
-                                        age === option ? 'selected' : 'outline'
+                                        age === option.label
+                                            ? 'selected'
+                                            : 'outline'
                                     }
                                     onClick={() =>
                                         dispatch(
                                             setAge(
-                                                age === option ? '' : option,
+                                                age === option.label
+                                                    ? ''
+                                                    : option.label,
                                             ),
                                         )
                                     }
                                 >
-                                    {option}
+                                    {option.label}
                                 </Button>
                             ))}
                         </div>
