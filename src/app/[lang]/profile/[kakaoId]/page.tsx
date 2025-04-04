@@ -4,16 +4,16 @@ import { notFound } from 'next/navigation';
 
 import trendingPost from '../../../../../public/data/trending';
 
-type Params = { userId: string };
+type Params = { kakaoId: string };
 
 interface TestPageProps {
     params: Promise<Params>;
 }
 
 export default async function ProfilePage({ params }: TestPageProps) {
-    const { userId } = await params;
+    const { kakaoId } = await params;
     // 임시데이터 기반 작성
-    const user = trendingPost.find((user) => user.userId === userId);
+    const user = trendingPost.find((user) => user.userId === kakaoId);
     if (!user) {
         notFound();
     }
