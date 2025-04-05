@@ -1,5 +1,6 @@
 'use client';
 
+import LoadingThreeDots from '@/components/common/LoadingThreeDots';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -11,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import { useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -131,6 +133,62 @@ export default function ProfileEditor({
 
     const formValues = watch();
 
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isUploading, setIsUploading] = useState(false);
+
+    const uploadProfileImage = async (file: File) => {
+        if (!file) return;
+        try {
+            setIsUploading(true);
+
+            //  업로드를 위한 presigned URL 요청
+            const response = await fetch('/api/s3', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    filename: file.name,
+                    contentType: file.type,
+                }),
+            });
+
+            // 버킷에 이미지를 업로드
+            if (!response.ok) {
+                throw new Error('업로드 URL을 가져오지 못했습니다');
+            }
+            const { url, key } = await response.json();
+            const uploadResponse = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': file.type,
+                },
+                body: file,
+            });
+
+            // 현재 프로필 이미지에서 업로드한 이미지로 교체
+            if (!uploadResponse.ok) {
+                throw new Error('이미지 업로드에 실패했습니다.');
+            }
+            const s3ImagePath = `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
+            setValue('profileImage', s3ImagePath);
+        } catch (error) {
+            console.error('이미지 업로드 실패', error);
+            alert('이미지 업로드에 실패했습니다.');
+        } finally {
+            setIsUploading(false);
+        }
+    };
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            uploadProfileImage(file);
+        }
+    };
+    const handleUploadClick = () => {
+        fileInputRef.current?.click();
+    };
+
     const onSubmit = (data: UserSchema) => {
         alert(JSON.stringify(data));
     };
@@ -183,15 +241,31 @@ export default function ProfileEditor({
                                     src={formValues.profileImage}
                                     fill
                                 />
+                                {isUploading && (
+                                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/70">
+                                        <LoadingThreeDots />
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex flex-col items-center justify-center gap-2">
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileChange}
+                                    accept="image/*"
+                                    className="hidden"
+                                />
                                 <Button
                                     variant="outline"
                                     className="h-auto rounded-md border border-solid border-[#e9e9e9] px-5 py-1.5"
+                                    onClick={handleUploadClick}
+                                    disabled={isUploading}
                                 >
                                     <span className="text-xs font-medium text-[#333333]">
-                                        사진 업로드
+                                        {isUploading
+                                            ? '업로드 중...'
+                                            : '사진 업로드'}
                                     </span>
                                 </Button>
 
