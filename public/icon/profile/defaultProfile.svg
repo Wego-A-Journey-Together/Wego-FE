@@ -1,11 +1,10 @@
-<svg width="96" height="104" viewBox="0 0 96 104" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g opacity="0.3">
-<mask id="mask0_1040_26277" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="96" height="96">
-<circle cx="48" cy="48" r="47.5" fill="white" stroke="black"/>
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_1423_25249" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="96" height="96">
+<rect width="96" height="96" fill="#F5F6F7"/>
 </mask>
-<g mask="url(#mask0_1040_26277)">
-<circle cx="48" cy="33" r="17" fill="#999999"/>
-<path d="M91 97C91 120.748 71.7482 140 48 140C24.2518 140 5 120.748 5 97C5 73.2518 24.2518 54 48 54C71.7482 54 91 73.2518 91 97Z" fill="#999999"/>
-</g>
+<g mask="url(#mask0_1423_25249)">
+<rect width="96" height="96" fill="#F5F6F7"/>
+<circle cx="48" cy="32" r="17" fill="#D9DADB"/>
+<path d="M91 96C91 119.748 71.7482 139 48 139C24.2518 139 5 119.748 5 96C5 72.2518 24.2518 53 48 53C71.7482 53 91 72.2518 91 96Z" fill="#D9DADB"/>
 </g>
 </svg>
