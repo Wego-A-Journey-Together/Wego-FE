@@ -73,6 +73,7 @@ export default function WritePage() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(submissionData),
+            credentials: 'include',
         });
 
         if (!res.ok) {
