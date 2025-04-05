@@ -8,6 +8,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
+import { useLocale } from '@/hooks/useLocale';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
@@ -32,6 +33,7 @@ export const DateFilter = () => {
 
     const fromDate = startDate ? new Date(startDate) : null;
     const toDate = endDate ? new Date(endDate) : null;
+    const { t } = useLocale();
 
     const handleDateSelect = (dateRange: DateRange | undefined) => {
         if (dateRange?.from) {
@@ -100,7 +102,7 @@ export const DateFilter = () => {
                         )
                     ) : (
                         <span className="mr-auto text-base">
-                            날짜는 언제인가요?
+                            {t.filter.date}
                         </span>
                     )}
                 </Button>
@@ -129,14 +131,14 @@ export const DateFilter = () => {
                             onClick={resetSelection}
                             className="h-10 w-1/2 rounded-lg border-1 text-sm"
                         >
-                            초기화
+                            {t.filter.reset}
                         </Button>
                         <Button
                             variant={'default'}
                             onClick={() => setOpen(false)}
                             className="h-10 w-1/2 rounded-lg text-sm"
                         >
-                            적용
+                            {t.filter.apply}
                         </Button>
                     </div>
                 </div>

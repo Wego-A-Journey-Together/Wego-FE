@@ -31,7 +31,6 @@ export default function PostSetupPanel() {
     const groupSize = watch('filter.groupSize') ?? '';
     const selectedGender = watch('filter.gender') ?? null;
     const selectedAge = watch('filter.age') ?? null;
-
     const ageGroups = [
         { id: 'notCare', label: '무관' },
         { id: '10s', label: '10대' },

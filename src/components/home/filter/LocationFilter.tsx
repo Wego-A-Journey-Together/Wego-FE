@@ -1,6 +1,7 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
+import { useLocale } from '@/hooks/useLocale';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setLocation } from '@/redux/slices/filterSlice';
@@ -10,6 +11,7 @@ export const LocationFilter = () => {
     const location = useAppSelector((state) => state.filter.location);
     const dispatch = useAppDispatch();
     const isMobile = useMediaQuery('(max-width: 1200px)');
+    const { t } = useLocale();
 
     if (isMobile) {
         return (
@@ -47,7 +49,7 @@ export const LocationFilter = () => {
             />
             <Input
                 className="h-auto w-auto border-0 p-0 text-base font-medium tracking-[-0.02px] text-black shadow-none placeholder:text-[#999999] focus-visible:ring-0"
-                placeholder="동행지는 어디인가요?"
+                placeholder={t.filter.where}
                 value={location}
                 onChange={(e) => dispatch(setLocation(e.target.value))}
             />

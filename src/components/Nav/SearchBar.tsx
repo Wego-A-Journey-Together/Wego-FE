@@ -2,12 +2,12 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useLocale } from '@/hooks/useLocale';
 import { cn } from '@/lib/utils';
 import { Search } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 const SearchBar = ({
-    placeholder = '동행 키워드를 검색해 보세요',
     className,
     ...props
 }: React.InputHTMLAttributes<HTMLInputElement>) => {
@@ -18,6 +18,8 @@ const SearchBar = ({
     const desktopInputRef = useRef<HTMLInputElement>(null);
     const searchRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    const { t } = useLocale();
 
     // 영역 밖 클릭 감지
     useEffect(() => {
@@ -118,7 +120,7 @@ const SearchBar = ({
                 <Input
                     ref={desktopInputRef}
                     type="text"
-                    placeholder={placeholder}
+                    placeholder={t.gnb.placeholder}
                     value={desktopValue}
                     onChange={handleDesktopInputChange}
                     className={cn(
@@ -131,7 +133,7 @@ const SearchBar = ({
                     variant="ghost"
                     className="absolute right-0 aspect-square h-full cursor-pointer p-0 hover:bg-transparent focus:bg-transparent"
                     type="button"
-                    aria-label="검색"
+                    aria-label={t.gnb.sAria}
                     onClick={handleSearch}
                 >
                     <Search size={15} className="pointer-events-none" />
@@ -144,7 +146,7 @@ const SearchBar = ({
                     variant="ghost"
                     className="aspect-square h-12 cursor-pointer p-0 hover:bg-transparent focus:bg-transparent"
                     onClick={() => setIsSearchOpen(!isSearchOpen)}
-                    aria-label="검색 토글"
+                    aria-label={t.gnb.sTAria}
                 >
                     <Search size={15} className="pointer-events-none" />
                 </Button>
@@ -159,7 +161,7 @@ const SearchBar = ({
                             <Input
                                 ref={inputRef}
                                 type="text"
-                                placeholder={placeholder}
+                                placeholder={t.gnb.placeholder}
                                 value={mobileValue}
                                 onChange={handleMobileInputChange}
                                 onKeyDown={handleMobileKeyDown}

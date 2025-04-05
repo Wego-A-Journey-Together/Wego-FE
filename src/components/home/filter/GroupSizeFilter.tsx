@@ -8,6 +8,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useLocale } from '@/hooks/useLocale';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setGroupSize } from '@/redux/slices/filterSlice';
@@ -19,12 +20,13 @@ export const GroupSizeFilter = () => {
     const groupSize = useAppSelector((state) => state.filter.groupSize);
     const dispatch = useAppDispatch();
     const isMobile = useMediaQuery('(max-width: 1200px)');
+    const { t } = useLocale();
 
     if (isMobile) {
         return (
             <div className="rounded-lg bg-[#F5F6F7] px-5 py-[30px]">
                 <div className="flex flex-col gap-5">
-                    <h3 className="text-lg font-bold">인원수</h3>
+                    <h3 className="text-lg font-bold">{t.filter.memb}</h3>
                     <div className="flex flex-wrap gap-5">
                         {groupSizeOptions.map((option) => (
                             <Button
@@ -66,7 +68,7 @@ export const GroupSizeFilter = () => {
                         height={17}
                     />
                     <SelectValue
-                        placeholder="인원 수"
+                        placeholder={t.filter.memb}
                         className="text-base font-normal tracking-[-0.02px] text-[#999999]"
                     />
                 </div>

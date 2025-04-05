@@ -1,3 +1,5 @@
+'use client';
+
 import LogoutBtn from '@/components/Btn/LogoutBtn';
 import { Button } from '@/components/ui/button';
 import {
@@ -5,6 +7,8 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
+import { useLocale } from '@/hooks/useLocale';
+import { useAppSelector } from '@/redux/hooks';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -14,6 +18,8 @@ interface AuthNavProps {
 }
 
 export default function AuthNav({ kakaoId, nickname }: AuthNavProps) {
+    const { t } = useLocale();
+    const locale = useAppSelector((state) => state.locale.current);
     return (
         <div
             className={
@@ -21,20 +27,20 @@ export default function AuthNav({ kakaoId, nickname }: AuthNavProps) {
             }
         >
             <Link href={'#'} className={'cursor-pointer'}>
-                찜한 동행
+                {t.gnb.book}
             </Link>
             <Link href={'#'} className={'cursor-pointer'}>
-                대화목록
+                {t.gnb.chat}
             </Link>
             <Link href={'#'} className={'cursor-pointer'}>
-                알림
+                {t.gnb.alert}
             </Link>
             <Popover>
                 <PopoverTrigger
                     asChild
                     className="border-sky-blue h-8 w-8 cursor-pointer rounded-full border"
                 >
-                    <Button variant="ghost" aria-label="프로필 메뉴">
+                    <Button variant="ghost" aria-label={t.gnb.pAria}>
                         <Image
                             src={'/icon/profile/defaultProfile.svg'}
                             alt={'프로필 이미지'}
@@ -45,13 +51,17 @@ export default function AuthNav({ kakaoId, nickname }: AuthNavProps) {
                 </PopoverTrigger>
                 <PopoverContent className="w-48">
                     <div className="flex flex-col items-center space-y-2">
-                        <p className="font-semibold">{`${nickname} 님`}</p>
+                        <p className="font-semibold">
+                            {locale !== 'en'
+                                ? `${nickname} ${t.gnb.dear}`
+                                : `${t.gnb.dear} ${nickname}`}
+                        </p>
                         <div className="h-px w-full bg-gray-200"></div>
                         <Link
                             href={`/profile/${kakaoId}`}
                             className="hover:text-sky-blue py-1"
                         >
-                            마이 페이지
+                            {t.gnb.mypage}
                         </Link>
                         <div className="pt-1">
                             <LogoutBtn />

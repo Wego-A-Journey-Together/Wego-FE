@@ -1,11 +1,12 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { useLocale } from '@/hooks/useLocale';
 import useMediaQuery from '@/hooks/useMediaQuery';
 
 export const SearchButton = ({ onSearch }: { onSearch: () => void }) => {
     const isMobile = useMediaQuery('(max-width: 1200px)');
-
+    const { t } = useLocale();
     if (isMobile) {
         return (
             <div className="mt-6">
@@ -26,7 +27,7 @@ export const SearchButton = ({ onSearch }: { onSearch: () => void }) => {
             className="h-auto w-[92px] gap-9 px-8 py-4 text-base font-semibold"
             onClick={onSearch}
         >
-            검색
+            {t.gnb.sAria}
         </Button>
     );
 };
