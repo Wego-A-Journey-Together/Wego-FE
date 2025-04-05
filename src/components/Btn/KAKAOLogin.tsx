@@ -26,7 +26,6 @@ export default function KAKAOLogin() {
         // 유저를 서버로 이동
         window.location.href = `${NEXT_PUBLIC_NEST_BFF_URL}/api/user/kakao/authorize`;
     };
-
     //lang 이 "ko"나 "en"이 아닐 경우에도 fallback "ko"를 기준으로 번역합니다
 
     return (

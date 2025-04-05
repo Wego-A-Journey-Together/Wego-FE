@@ -6,30 +6,26 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { setLocale } from '@/redux/slices/localeSlice';
 import { ChevronDown } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 export default function MultiLingualToggler() {
     const router = useRouter();
     const pathname = usePathname();
-
+    const dispatch = useAppDispatch();
     // URL에서 언어 감지 (ko, en 없으면 기본값 ko)
-    const currentLang = pathname.startsWith('/en') ? 'en' : 'ko';
-    const [selectedLang, setSelectedLang] = useState(currentLang);
-
-    useEffect(() => {
-        setSelectedLang(currentLang); // URL 변경될 때 상태 업데이트
-    }, [currentLang]);
+    const selectedLang = useAppSelector((state) => state.locale.current);
 
     const handleLanguageChange = (newLang: string) => {
         // 언어 변경 시 쿠키 업데이트
         document.cookie = `NEXT_LOCALE=${newLang}; path=/; max-age=${60 * 60 * 24 * 365}`;
 
-        // 현재 경로에서 언어 부분을 교체하여 새로운 경로 생성
+        dispatch(setLocale(newLang === 'en' ? 'en' : 'ko'));
+
         const newPath = pathname.replace(/^\/(ko|en)/, `/${newLang}`);
         router.replace(newPath);
-        setSelectedLang(newLang); // UI 즉시 업데이트
     };
 
     return (
