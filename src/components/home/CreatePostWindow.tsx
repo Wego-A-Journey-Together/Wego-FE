@@ -36,7 +36,7 @@ export default function CreatePostWindow() {
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: 10, opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="fixed bottom-10 left-1/2 z-10 max-h-[140px] w-[420px] -translate-x-1/2 rounded-2xl bg-white shadow-md"
+                    className="fixed bottom-10 left-1/2 z-10 max-h-[140px] w-[420px] -translate-x-1/2 rounded-2xl bg-white shadow-md dark:bg-[#222222]"
                 >
                     <div className="flex flex-col items-center gap-4 px-5 py-6">
                         <p className="text-sm text-[#666666]">
