@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import filterReducer from './slices/filterSlice';
+import localeReducer from './slices/localeSlice';
 import userReducer from './slices/userSlice';
 
 /**
@@ -9,7 +10,11 @@ import userReducer from './slices/userSlice';
  */
 export function initializeStore(initialState = {}) {
     return configureStore({
-        reducer: { filter: filterReducer, user: userReducer }, // '나와 함께 할 동행 찾기' 필터링 슬라이스
+        reducer: {
+            filter: filterReducer,
+            user: userReducer,
+            locale: localeReducer,
+        }, // '나와 함께 할 동행 찾기' 필터링 슬라이스
         preloadedState: initialState,
     });
 }

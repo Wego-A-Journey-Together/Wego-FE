@@ -83,7 +83,7 @@ export default async function RootLayout({
             )}
         >
             <body className={cn(`font-pretendard bg-custom-light antialiased`)}>
-                <ReduxProvider user={user}>
+                <ReduxProvider user={user} locale={currentLang}>
                     <TanstackProviders>
                         <NavBar
                             isDarkMode={isDarkMode}
