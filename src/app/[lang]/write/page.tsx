@@ -79,6 +79,9 @@ export default function WritePage() {
             const errorData = await res.json();
 
             console.warn('DTO 유효성 에러 발생:', errorData);
+            if (Array.isArray(errorData.message)) {
+                console.warn('에러 목록:', errorData.message);
+            }
 
             toast('글 발행 실패', {
                 description: '잠시 후 다시 시도해 주세요',
