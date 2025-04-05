@@ -45,7 +45,7 @@ export default function AuthNav({ kakaoId, nickname }: AuthNavProps) {
                 </PopoverTrigger>
                 <PopoverContent className="w-48">
                     <div className="flex flex-col items-center space-y-2">
-                        <p className="font-semibold">{`${nickname}님`}</p>
+                        <p className="font-semibold">{`${nickname} 님`}</p>
                         <div className="h-px w-full bg-gray-200"></div>
                         <Link
                             href={`/profile/${kakaoId}`}

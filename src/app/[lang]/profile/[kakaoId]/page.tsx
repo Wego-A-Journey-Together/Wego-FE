@@ -1,5 +1,6 @@
 import DropDown from '@/components/profile/DropDown';
 import MypageProfile from '@/components/profile/MypageProfile';
+import ProfileVisitor from '@/components/profile/ProfileVisitor';
 import getCurrentUser from '@/lib/getCurrentUser';
 import { notFound } from 'next/navigation';
 
@@ -29,10 +30,9 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             <main className="flex justify-center pt-10">
                 <div className="flex w-full max-w-[1200px] flex-col gap-[70px]">
                     <MypageProfile data={data} isVisitor={isVisitor} />
-
-                    {/*드롭다운 섹션 ( 동행,동행 소감, 받은 소감 ), 탭 포함*/}
                     <section>
-                        <DropDown name={data.userName} isVisitor={isVisitor} />
+                        {/*드롭다운 섹션 ( 동행,동행 소감, 받은 소감 ), 탭 포함*/}
+                        {isVisitor ? <ProfileVisitor /> : <DropDown />}
                     </section>
 
                     {/* TODO 이 줄에 탭 기능 코드 넣으면 됩니다. */}

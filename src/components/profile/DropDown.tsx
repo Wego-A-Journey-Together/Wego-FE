@@ -20,7 +20,7 @@ import trendingPost from '../../../public/data/trending';
 const CATEGORIES = {
     journey: {
         id: 'journey',
-        label: '의 동행',
+        label: '나의 동행',
         tabs: [
             { id: 'participating', label: '참여중인 동행' },
             { id: 'ended', label: '참여 종료된 동행' },
@@ -58,13 +58,7 @@ const TAB_CONTENTS = {
 
 type CategoryId = keyof typeof CATEGORIES;
 
-export default function DropDown({
-    name,
-    isVisitor,
-}: {
-    name: string;
-    isVisitor: boolean;
-}) {
+export default function DropDown() {
     const [categoryId, setCategoryId] = useState<CategoryId>('journey');
     const [tabIndex, setTabIndex] = useState(0);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -106,7 +100,7 @@ export default function DropDown({
     // 카테고리 표시 텍스트 생성
     const getCategoryDisplayText = (catId: CategoryId) => {
         const category = CATEGORIES[catId];
-        return catId === 'journey' ? name + category.label : category.label;
+        return category.label;
     };
 
     // 현재 탭 컨텐츠 렌더링
@@ -124,9 +118,8 @@ export default function DropDown({
                         {/*드롭다운 섹션 ( 동행,동행 소감, 받은 소감 )*/}
                         <h2 className="w-40 text-2xl font-bold">
                             {getCategoryDisplayText(categoryId)}
-                        </h2>{' '}
+                        </h2>
                         <PopoverTrigger>
-                            {' '}
                             <Image
                                 width={18}
                                 height={18}

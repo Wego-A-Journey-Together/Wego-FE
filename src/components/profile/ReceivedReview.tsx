@@ -4,6 +4,13 @@ import Image from 'next/image';
 import { postReviews } from '../../../public/data/review';
 import NoContentGuide from './NoContentGuide';
 
+function formatDate(date: Date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}.${month}.${day}`;
+}
+
 export default function ReceivedReview() {
     if (postReviews.length === 0) {
         return <NoContentGuide />;
@@ -63,8 +70,8 @@ export default function ReceivedReview() {
                                     <div className="h-2.5 w-px bg-gray-300"></div>
 
                                     <div className="max-w-full truncate text-xs font-normal text-[#666666]">
-                                        {/* new Date() 형식 변환 */}
-                                        {review.updatedAt?.toLocaleDateString()}
+                                        {/* new Date() 형식 변환 */}{' '}
+                                        {formatDate(review.updatedAt)}
                                     </div>
                                 </div>
                             </div>
