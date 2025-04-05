@@ -51,7 +51,7 @@
 }
 
 .dark {
-    --background-light: #333333; /* 다크 모드에서의 밝은 배경색 */
+    --background-light: #222222; /* 다크 모드에서의 밝은 배경색 */
     --sky-blue: #0ac7e4; /* 동일 */
     --background: oklch(0.141 0.005 285.823);
     --foreground: oklch(0.985 0 0);
@@ -186,5 +186,72 @@
     html body[data-scroll-locked] {
         overflow: visible !important;
         margin-right: 0 !important;
+    }
+}
+
+@layer utilities {
+    /* 하드코딩된 유틸 색상 클래스들에 다크모드 색상을 강제 부여 */
+    .dark .text-\[\#666666\] {
+        color: #b3b3b3 !important;
+    }
+    .dark .bg-\[\#666666\] {
+        background-color: #b3b3b3 !important;
+    }
+    .dark .border-\[\#666666\] {
+        border-color: #b3b3b3 !important;
+    }
+
+    .dark .bg-\[\#f5f6f7\] {
+        background-color: #4c4c4c !important;
+    }
+
+    .dark .text-\[\#ffffff\] {
+        color: #222222 !important;
+    }
+    .dark .bg-\[\#ffffff\] {
+        background-color: #222222 !important;
+    }
+
+    .dark .text-\[\#000000\],
+    .dark .text-black {
+        color: #cccccc !important;
+    }
+    .dark .bg-\[\#000000\] {
+        background-color: #ffffff !important;
+    }
+
+    .dark .text-\[\#333333\] {
+        color: #cccccc !important;
+    }
+    .dark .bg-\[\#333333\] {
+        background-color: #cccccc !important;
+    }
+
+    .dark .text-\[\#e9e9e9\] {
+        color: #333333 !important;
+    }
+    .dark .bg-\[\#e9e9e9\] {
+        background-color: #333333 !important;
+    }
+
+    .dark .text-\[\#e5e8ea\] {
+        color: #333333 !important;
+    }
+    .dark .bg-\[\#e5e8ea\] {
+        background-color: #333333 !important;
+    }
+
+    .dark .text-\[\#aaaaaa\] {
+        color: #666666 !important;
+    }
+    .dark .bg-\[\#aaaaaa\] {
+        background-color: #666666 !important;
+    }
+
+    .dark .text-\[\#999999\] {
+        color: #808080 !important;
+    }
+    .dark .bg-\[\#999999\] {
+        background-color: #808080 !important;
     }
 }
