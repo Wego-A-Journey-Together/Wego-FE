@@ -6,6 +6,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
+import { useLocale } from '@/hooks/useLocale';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setAge, setGender } from '@/redux/slices/filterSlice';
@@ -34,6 +35,7 @@ export const GenderAndAgeFilter = () => {
     const age = useAppSelector((state) => state.filter.age);
     const dispatch = useAppDispatch();
     const isMobile = useMediaQuery('(max-width: 1200px)');
+    const { t } = useLocale();
 
     if (isMobile) {
         return (
@@ -41,7 +43,7 @@ export const GenderAndAgeFilter = () => {
                 {/* 성별 */}
                 <div className="rounded-lg bg-[#F5F6F7] px-5 py-[30px]">
                     <div className="flex flex-col gap-5">
-                        <h3 className="text-lg font-bold">성별</h3>
+                        <h3 className="text-lg font-bold">{t.filter.gender}</h3>
                         <div className="flex flex-wrap gap-5">
                             {GENDER_OPTIONS.map((option, keyId) => (
                                 <Button
@@ -73,7 +75,7 @@ export const GenderAndAgeFilter = () => {
                 {/* 나이 */}
                 <div className="rounded-lg bg-[#F5F6F7] px-5 py-[30px]">
                     <div className="flex flex-col gap-5">
-                        <h3 className="text-lg font-bold">나이</h3>
+                        <h3 className="text-lg font-bold">{t.filter.age}</h3>
                         <div className="flex flex-wrap gap-5">
                             {AGE_OPTIONS.map((option, keyId) => (
                                 <Button
@@ -124,7 +126,7 @@ export const GenderAndAgeFilter = () => {
                         >
                             {gender || age
                                 ? `${gender} ${age}`.trim()
-                                : '성별/나이'}
+                                : t.filter.SA}
                         </span>
                     </div>
                     <ChevronDownIcon className="mr-1.5 size-4 opacity-50" />
@@ -134,7 +136,7 @@ export const GenderAndAgeFilter = () => {
                 <div className="flex flex-col gap-6">
                     {/* 성별 */}
                     <div className="flex flex-col gap-3">
-                        <h3 className="text-sm font-bold">성별</h3>
+                        <h3 className="text-sm font-bold">{t.filter.gender}</h3>
                         <div className="flex flex-wrap gap-2">
                             {GENDER_OPTIONS.map((option, keyId) => (
                                 <Button
@@ -164,7 +166,7 @@ export const GenderAndAgeFilter = () => {
 
                     {/* 나이 */}
                     <div className="flex flex-col gap-3">
-                        <h3 className="text-sm font-bold">나이</h3>
+                        <h3 className="text-sm font-bold">{t.filter.age}</h3>
                         <div className="flex flex-wrap gap-2">
                             {AGE_OPTIONS.map((option, keyId) => (
                                 <Button

@@ -8,6 +8,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from '@/components/ui/carousel';
+import { useLocale } from '@/hooks/useLocale';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { cn } from '@/lib';
 import { convertAgeRange } from '@/lib/convertAgeRange';
@@ -43,6 +44,7 @@ interface TrendingCarouselProps {
 
 export function TrendingCarousel({ posts, className }: TrendingCarouselProps) {
     const isMobile = useMediaQuery('(max-width: 630px)');
+    const { t } = useLocale();
 
     return (
         <div className={cn('relative w-full overflow-hidden', className)}>
@@ -76,7 +78,7 @@ export function TrendingCarousel({ posts, className }: TrendingCarouselProps) {
                         <h2
                             className={`flex items-end text-base font-semibold sm:text-2xl`}
                         >
-                            이번 주 Hot한 동행
+                            {t.ttt}
                         </h2>
                     </div>
                     {/* 버튼 컨테이너 - absolute 포지셔닝을 제거하여 flex 내에 유지 */}

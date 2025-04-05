@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 
 interface Props {
     children: React.ReactNode;
-    initialLang?: string;
+    locale?: string;
     user?: {
         kakaoId: string;
         nickname: string;
@@ -14,7 +14,7 @@ interface Props {
     };
 }
 
-const ReduxProvider: React.FC<Props> = ({ children, user }: Props) => {
+const ReduxProvider: React.FC<Props> = ({ children, user, locale }: Props) => {
     const storeRef = useRef<AppStore | null>(null);
 
     if (!storeRef.current) {
@@ -24,6 +24,7 @@ const ReduxProvider: React.FC<Props> = ({ children, user }: Props) => {
                 info: user || null,
                 isAuthenticated: !!user,
             },
+            locale: { current: locale === 'en' ? 'en' : 'ko' },
         });
     }
     return <Provider store={storeRef.current}>{children}</Provider>;

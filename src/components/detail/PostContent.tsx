@@ -72,7 +72,7 @@ export default function PostContent({ post }: { post: DetailPost }) {
                                         />
                                     </div>
                                     <h3 className="text-lg font-semibold text-black">
-                                        동행 테마
+                                        {post.filter.groupTheme}
                                     </h3>
                                 </div>
                                 <div className="text-base font-medium">

@@ -1,11 +1,15 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { useLocale } from '@/hooks/useLocale';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
 export default function LogoutBtn() {
     const [isClicked, setIsClicked] = useState(false);
+
+    const { t } = useLocale();
+
     const handleLogoutClick = async () => {
         setIsClicked(true);
         try {
@@ -33,7 +37,7 @@ export default function LogoutBtn() {
                 {isClicked ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin text-rose-600" />
                 ) : (
-                    '로그 아웃'
+                    t.gnb.logout
                 )}
             </Button>
         </>
