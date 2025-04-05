@@ -76,6 +76,10 @@ export default function WritePage() {
         });
 
         if (!res.ok) {
+            const errorData = await res.json();
+
+            console.warn('DTO 유효성 에러 발생:', errorData);
+
             toast('글 발행 실패', {
                 description: '잠시 후 다시 시도해 주세요',
                 action: {
