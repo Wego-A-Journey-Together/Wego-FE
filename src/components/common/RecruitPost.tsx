@@ -129,7 +129,7 @@ export default function RecruitPost({ post }: PostContentProps) {
                                 </span>
                                 <div className="h-1.5 w-px bg-gray-300" />
                                 <span className="text-xs text-[#666666]">
-                                    {post.gender}
+                                    {post.filter.gender}
                                 </span>
                             </div>
                         </div>

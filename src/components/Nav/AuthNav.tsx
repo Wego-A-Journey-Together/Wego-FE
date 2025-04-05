@@ -44,16 +44,15 @@ export default function AuthNav({ kakaoId, nickname }: AuthNavProps) {
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48">
-                    <div className="flex flex-col space-y-2">
-                        <p className="font-semibold">{`${nickname}님`}</p>
-                        <div className="h-px bg-gray-200"></div>
+                    <div className="flex flex-col items-center space-y-2">
+                        <p className="font-semibold">{`${nickname} 님`}</p>
+                        <div className="h-px w-full bg-gray-200"></div>
                         <Link
                             href={`/profile/${kakaoId}`}
-                            className="hover:text-sky-blue py-2"
+                            className="hover:text-sky-blue py-1"
                         >
                             마이 페이지
                         </Link>
-                        <div className="h-px bg-gray-200"></div>
                         <div className="pt-1">
                             <LogoutBtn />
                         </div>
