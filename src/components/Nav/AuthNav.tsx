@@ -29,7 +29,7 @@ export default function AuthNav({ kakaoId, nickname }: AuthNavProps) {
             <Link href={'#'} className={'cursor-pointer'}>
                 {t.gnb.book}
             </Link>
-            <Link href={'#'} className={'cursor-pointer'}>
+            <Link href={`/chat/${kakaoId}`} className={'cursor-pointer'}>
                 {t.gnb.chat}
             </Link>
             <Link href={'#'} className={'cursor-pointer'}>

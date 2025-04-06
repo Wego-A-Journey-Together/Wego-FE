@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 interface ChatProps {
     chat: {
-        id: number;
+        roomId: number;
         name: string;
         location: string;
         time: string;

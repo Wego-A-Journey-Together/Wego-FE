@@ -1,7 +1,7 @@
 // 임시 데이터들
 export interface ChatProps {
     chat: {
-        id: number;
+        roomId: number;
         name: string;
         location: string;
         time: string;
@@ -13,7 +13,7 @@ export interface ChatProps {
 export type ChatItem = ChatProps['chat'];
 export const chatData: ChatItem[] = [
     {
-        id: 1,
+        roomId: 1,
         name: '여행하는몽자',
         location: '제주도',
         time: '1분전',
@@ -23,7 +23,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 2,
+        roomId: 2,
         name: '백패커',
         location: '부산',
         time: '5분전',
@@ -33,7 +33,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 3,
+        roomId: 3,
         name: '등산러버',
         location: '설악산',
         time: '10분전',
@@ -43,7 +43,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 4,
+        roomId: 4,
         name: '맛집탐험가',
         location: '서울',
         time: '30분전',
@@ -53,7 +53,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 5,
+        roomId: 5,
         name: '문화여행자',
         location: '경주',
         time: '1시간전',
@@ -63,7 +63,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 6,
+        roomId: 6,
         name: '카메라맨',
         location: '강릉',
         time: '2시간전',
@@ -72,7 +72,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 7,
+        roomId: 7,
         name: '바다사랑',
         location: '여수',
         time: '3시간전',
@@ -81,7 +81,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 8,
+        roomId: 8,
         name: '한옥스테이',
         location: '전주',
         time: '4시간전',
@@ -90,7 +90,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 9,
+        roomId: 9,
         name: '산책러',
         location: '서울',
         time: '5시간전',
@@ -99,7 +99,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 10,
+        roomId: 10,
         name: '미술관투어',
         location: '서울',
         time: '6시간전',
@@ -109,7 +109,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 11,
+        roomId: 11,
         name: '섬여행자',
         location: '통영',
         time: '어제',
@@ -118,7 +118,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 12,
+        roomId: 12,
         name: '캠핑러버',
         location: '가평',
         time: '어제',
@@ -127,7 +127,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 13,
+        roomId: 13,
         name: '식도락여행',
         location: '대구',
         time: '어제',
@@ -136,7 +136,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 14,
+        roomId: 14,
         name: '올레길걷기',
         location: '제주도',
         time: '2일전',
@@ -146,7 +146,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 15,
+        roomId: 15,
         name: '카페투어',
         location: '광주',
         time: '2일전',
@@ -156,7 +156,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 16,
+        roomId: 16,
         name: '축제마니아',
         location: '진주',
         time: '3일전',
@@ -166,7 +166,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 17,
+        roomId: 17,
         name: '시장구경',
         location: '부산',
         time: '3일전',
@@ -175,7 +175,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 18,
+        roomId: 18,
         name: '템플스테이',
         location: '해인사',
         time: '4일전',
@@ -184,7 +184,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 19,
+        roomId: 19,
         name: '도보여행',
         location: '군산',
         time: '4일전',
@@ -194,7 +194,7 @@ export const chatData: ChatItem[] = [
         userIcon: '',
     },
     {
-        id: 20,
+        roomId: 20,
         name: '사진작가',
         location: '안동',
         time: '5일전',
