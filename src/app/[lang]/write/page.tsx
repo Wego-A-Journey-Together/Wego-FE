@@ -61,7 +61,7 @@ export default function WritePage() {
             // 사용자가 설정한 마감 시간과 결합
             const partOfTime = data.filter.deadlineTime;
 
-            submissionData.filter.deadlineTime = `${partOfDeadLine}T${partOfTime}:00.000Z`;
+            submissionData.filter.deadlineTime = `${partOfDeadLine}T${partOfTime}:00`;
         }
 
         // 개발용 처리
