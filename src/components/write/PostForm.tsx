@@ -75,7 +75,7 @@ export default function PostForm({
             const localDay = String(deadlineDate.getDate()).padStart(2, '0');
 
             // 최종 조합: 로컬 기준 날짜 + 시간
-            const isoString = `${localYear}-${localMonth}-${localDay}T${deadlineTime}:00`;
+            const isoString = `${localYear}-${localMonth}-${localDay}T${deadlineTime}`;
 
             //타입 변환하면 에러가 너무 나서 type assertion 했습니다.
             submissionData.filter.deadlineDate = isoString as unknown as Date;
