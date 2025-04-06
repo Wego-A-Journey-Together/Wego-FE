@@ -8,7 +8,7 @@ export default function ChatPage() {
     const roomId = parseInt(params.roomId as string, 10);
     const router = useRouter();
 
-    // 임시 데이터 - 실제로는 API에서 가져와야 함
+    // 임시 데이터 - DB에 데이터생기면 API 데이터로 불러오기
     const chatRoomData = {
         userName: '여행 동행자',
         userRating: 4.8,

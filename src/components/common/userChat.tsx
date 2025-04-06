@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -19,6 +21,7 @@ interface UserChatProps {
     endDate: string;
     onClose?: () => void;
     onParticipate?: () => void;
+    roomId?: number;
 }
 
 export default function UserChat({
@@ -29,6 +32,7 @@ export default function UserChat({
     endDate,
     onClose,
     onParticipate,
+    roomId,
 }: UserChatProps) {
     return (
         <div className="bg-background-light flex h-full flex-col">
@@ -88,8 +92,7 @@ export default function UserChat({
             {/* 채팅 말풍선 섹션 */}
             <section className="flex-1 overflow-y-auto p-4">
                 {/* TODO 조건 부분에 대화 내역이 있는지 없는지 반환 필요. */}
-                {/* roomId는 임시 타입 에러 제거 */}
-                {true ? <ChatRoom roomId={1} /> : <ChatNotice />}
+                {roomId ? <ChatRoom roomId={roomId} /> : <ChatNotice />}
             </section>
 
             {/* 메세지 입력 영역 */}
