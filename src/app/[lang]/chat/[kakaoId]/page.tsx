@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation';
 type Params = { kakaoId: string };
 
 interface ChatPageProps {
-    params: Params;
+    params: Promise<Params>;
 }
 
 // 채팅 데이터 임시 타입
@@ -21,7 +21,7 @@ interface ChatRoom {
 }
 
 export default async function Chat({ params }: ChatPageProps) {
-    const kakaoId = params.kakaoId;
+    const { kakaoId } = await params;
     const currentUser = await getCurrentUser();
     const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
     let chatData: ChatRoom[] = [];
