@@ -8,8 +8,8 @@ import {
 } from '@/components/ui/sheet';
 import { Calendar, MoreHorizontal, Star, X } from 'lucide-react';
 
-import ChatList from './ChatList';
 import ChatNotice from './ChatNotice';
+import ChatRoom from './ChatRoom';
 
 interface UserChatProps {
     userName: string;
@@ -88,7 +88,8 @@ export default function UserChat({
             {/* 채팅 말풍선 섹션 */}
             <section className="flex-1 overflow-y-auto p-4">
                 {/* TODO 조건 부분에 대화 내역이 있는지 없는지 반환 필요. */}
-                {true ? <ChatList /> : <ChatNotice />}
+                {/* roomId는 임시 타입 에러 제거 */}
+                {true ? <ChatRoom roomId={1} /> : <ChatNotice />}
             </section>
 
             {/* 메세지 입력 영역 */}
