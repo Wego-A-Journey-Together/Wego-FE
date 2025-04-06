@@ -63,14 +63,23 @@ export default function PostForm({
         // 데이터를 복사해 마감시간을 UTC 형식으로 변환
         if (data.filter.deadlineDate && data.filter.deadlineTime) {
             // 사용자가 설정한 마감일을
-            const partOfDeadLine = data.filter.deadlineDate
-                .toISOString()
-                .split('T')[0];
+            const deadlineDate = data.filter.deadlineDate;
+            const deadlineTime = data.filter.deadlineTime;
 
-            // 사용자가 설정한 마감 시간과 결합
-            const partOfTime = data.filter.deadlineTime;
+            // 날짜 객체에서 정확한 로컬 날짜 추출
+            const localYear = deadlineDate.getFullYear();
+            const localMonth = String(deadlineDate.getMonth() + 1).padStart(
+                2,
+                '0',
+            );
+            const localDay = String(deadlineDate.getDate()).padStart(2, '0');
 
-            submissionData.filter.deadlineTime = `${partOfDeadLine}T${partOfTime}:00`;
+            // 최종 조합: 로컬 기준 날짜 + 시간
+            const isoString = `${localYear}-${localMonth}-${localDay}T${deadlineTime}:00`;
+
+            //타입 변환하면 에러가 너무 나서 type assertion 했습니다.
+            submissionData.filter.deadlineDate = isoString as unknown as Date;
+            console.log(submissionData.filter.deadlineDate, '제발돼라');
         }
 
         // 개발용 처리
