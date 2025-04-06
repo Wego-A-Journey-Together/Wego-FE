@@ -53,10 +53,14 @@ export default async function Chat({ params }: ChatPageProps) {
         ];
     }
 
+    const HEADER_HEIGHT = 72;
     return (
         <>
             <div className="fixed inset-x-0 top-0 -z-10 h-full bg-[#F5F6F7]" />
-            <main className="bg-background-light mx-auto h-screen max-w-[580px] border-x-1 border-[#E9E9E9]">
+            <main
+                className="bg-background-light mx-auto max-w-[580px] border-x-1 border-[#E9E9E9]"
+                style={{ height: `calc(100vh - ${HEADER_HEIGHT}px)` }}
+            >
                 <header className="px-5 pt-10 pb-[50px]">
                     <h1 className="text-xl font-semibold">대화 목록</h1>
                 </header>
