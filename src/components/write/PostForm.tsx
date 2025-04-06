@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import HashtagInput from '@/components/write/HashtagInput';
 import LocationSelector from '@/components/write/LocationSelector';
 import ThumbnailUploader from '@/components/write/ThumbnailUploader';
+import { useLocale } from '@/hooks/useLocale';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -33,6 +34,7 @@ export default function PostForm({
 }: PostFormProps) {
     const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
     const router = useRouter();
+    const { t } = useLocale();
 
     const form = useForm<PostFormValues>({
         resolver: zodResolver(PostSchema),
@@ -154,10 +156,10 @@ export default function PostForm({
                 } catch (err) {
                     console.error(err);
 
-                    toast('글을 불러오는데 실패 했어요. ', {
-                        description: '잠시 후 다시 시도해 주세요',
+                    toast(t.errorLoading, {
+                        description: t.tryagain,
                         action: {
-                            label: '닫기',
+                            label: t.close,
                             onClick: () => {},
                         },
                     });
@@ -349,15 +351,13 @@ export default function PostForm({
                                     <div className="flex items-center gap-2">
                                         <div className="border-sky-blue h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
                                         <span>
-                                            {isEdit
-                                                ? '수정 중...'
-                                                : '등록 중...'}
+                                            {isEdit ? t.editting : t.posting}
                                         </span>
                                     </div>
                                 ) : isEdit ? (
-                                    '수정'
+                                    t.edit
                                 ) : (
-                                    '등록'
+                                    t.post
                                 )}
                             </Button>
                         </section>

@@ -27,4 +27,12 @@ export const ko = {
         gender: '성별',
         age: '나이',
     },
+
+    post: '등록',
+    edit: '수정',
+    posting: '등록중 ...',
+    editting: '수정중 ...',
+    close: '닫기',
+    errorLoading: '글을 불러오는데 실패 했어요.',
+    tryagain: '잠시 후 다시 시도해 주세요',
 };

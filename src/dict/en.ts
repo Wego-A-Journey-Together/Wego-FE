@@ -27,4 +27,11 @@ export const en = {
         gender: 'Gender',
         age: 'Age',
     },
+    post: 'Submit',
+    edit: 'Edit',
+    posting: 'Posting',
+    editting: 'Editing',
+    close: 'Close',
+    errorLoading: 'Error Loading Post',
+    tryagain: 'please try agin later',
 };
