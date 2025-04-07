@@ -3,7 +3,7 @@ import Image from 'next/image';
 interface UserProfileProps {
     post: {
         userName: string;
-        profileImage: string;
+        thumbnailImage: string;
         statusMessage: string;
         userAge: number;
         userGender: string;
@@ -21,8 +21,8 @@ export default function UserProfile({ post }: UserProfileProps) {
                     <div className="h-[50px] w-[50px] overflow-hidden rounded-full">
                         <Image
                             src={
-                                post.profileImage
-                                    ? post.profileImage
+                                post.thumbnailImage
+                                    ? post.thumbnailImage
                                     : '/icon/profile/defaultProfile.svg'
                             }
                             alt="유저 프로필 이미지"
