@@ -96,6 +96,7 @@ const userSchema = z.object({
         ),
     userIntroduce: z.string(),
     profileImage: z.string(),
+    ageGroup: z.enum(['10s', '20s', '30s', '40s', '50s', '60s', '70s', 'ALL']),
 });
 
 type UserSchema = z.infer<typeof userSchema>;
@@ -115,23 +116,82 @@ export default function ProfileEditor({
         formState: { errors, isValid },
         setValue,
         watch,
+        reset,
     } = useForm<UserSchema>({
         resolver: zodResolver(userSchema),
         defaultValues: {
-            id: 'user123',
-            nickname: '귀여운 동행자',
-            email: 'cute@kakao.com',
+            id: '',
+            nickname: '',
+            email: '',
             gender: undefined,
             birthYear: undefined,
             birthMonth: undefined,
             birthDay: undefined,
-            userIntroduce: '제주도 여행중',
-            profileImage: '/image/dogProfile.png',
+            userIntroduce: '',
+            profileImage: '/icon/profile/defaultProfile.svg',
+            ageGroup: undefined,
         },
         mode: 'onChange',
     });
 
     const formValues = watch();
+    const [isLoading, setIsLoading] = useState(false);
+    const [apiError, setApiError] = useState<string | null>(null);
+
+    // Fetch user profile data
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                setIsLoading(true);
+                setApiError(null);
+
+                const NEXT_PUBLIC_NEST_BFF_URL =
+                    process.env.NEXT_PUBLIC_NEST_BFF_URL;
+                const response = await fetch(
+                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/profile/me`,
+                );
+
+                if (!response.ok) {
+                    throw new Error('프로필 정보를 불러오는데 실패했습니다.');
+                }
+
+                const data = await response.json();
+
+                reset({
+                    id: data.id || 'user123',
+                    nickname: data.nickname || '',
+                    email: data.email || '',
+                    gender: data.gender || null,
+                    userIntroduce: data.statusMessage || '',
+                    profileImage:
+                        data.thumbnailUrl || '/icon/profile/defaultProfile.svg',
+                    ageGroup: data.ageGroup || 'ALL',
+                    birthYear: formValues.birthYear,
+                    birthMonth: formValues.birthMonth,
+                    birthDay: formValues.birthDay,
+                });
+            } catch (error) {
+                console.error('프로필 정보 불러오기 실패:', error);
+                setApiError(
+                    error instanceof Error
+                        ? error.message
+                        : '프로필 정보를 불러오는데 실패했습니다.',
+                );
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (open) {
+            fetchUserProfile();
+        }
+    }, [
+        open,
+        reset,
+        formValues.birthYear,
+        formValues.birthMonth,
+        formValues.birthDay,
+    ]);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -189,8 +249,73 @@ export default function ProfileEditor({
         fileInputRef.current?.click();
     };
 
-    const onSubmit = (data: UserSchema) => {
-        alert(JSON.stringify(data));
+    // 입력한 생년월일을 기준으로 연령대로 변환
+    useEffect(() => {
+        if (formValues.birthYear) {
+            const currentYear = new Date().getFullYear();
+            const age = currentYear - formValues.birthYear;
+
+            let ageGroup: string;
+            if (age < 20) ageGroup = '10s';
+            else if (age < 30) ageGroup = '20s';
+            else if (age < 40) ageGroup = '30s';
+            else if (age < 50) ageGroup = '40s';
+            else if (age < 60) ageGroup = '50s';
+            else if (age < 70) ageGroup = '60s';
+            else ageGroup = '70s';
+
+            setValue('ageGroup', ageGroup as any);
+        }
+    }, [formValues.birthYear, setValue]);
+
+    // 수정한 내용을 PUT으로 보내기
+    const onSubmit = async (data: UserSchema) => {
+        try {
+            setIsLoading(true);
+            setApiError(null);
+
+            const NEXT_PUBLIC_NEST_BFF_URL =
+                process.env.NEXT_PUBLIC_NEST_BFF_URL;
+            const response = await fetch(
+                `${NEXT_PUBLIC_NEST_BFF_URL}/api/profile/me`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nickname: data.nickname,
+                        email: data.email,
+                        statusMessage: data.userIntroduce,
+                        thumbnailUrl: data.profileImage,
+                        gender: data.gender,
+                        ageGroup: data.ageGroup,
+                    }),
+                },
+            );
+
+            if (!response.ok) {
+                throw new Error('프로필 정보 업데이트에 실패했습니다.');
+            }
+
+            alert('프로필이 성공적으로 업데이트되었습니다.');
+            onOpenChange(false);
+        } catch (error) {
+            console.error('프로필 업데이트 실패:', error);
+            setApiError(
+                error instanceof Error
+                    ? error.message
+                    : '프로필 업데이트에 실패했습니다.',
+            );
+            alert(
+                '프로필 업데이트에 실패했습니다: ' +
+                    (error instanceof Error
+                        ? error.message
+                        : '알 수 없는 오류'),
+            );
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const removeImage = () => {
@@ -230,244 +355,264 @@ export default function ProfileEditor({
                     </DialogTitle>
                 </DialogHeader>
 
-                <div className="px-[30px]">
-                    {/* 프로필 섹션 */}
-                    <div className="mt-[30px] flex items-start gap-[30px]">
-                        <div className="flex flex-col items-start justify-center gap-3">
-                            <div className="relative h-24 w-24">
-                                <Image
-                                    className="rounded-full bg-gray-100 object-cover"
-                                    alt="Profile"
-                                    src={formValues.profileImage}
-                                    fill
-                                />
-                                {isUploading && (
-                                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/70">
-                                        <LoadingThreeDots />
+                {isLoading ? (
+                    <div className="flex h-[400px] items-center justify-center">
+                        <LoadingThreeDots />
+                    </div>
+                ) : (
+                    <>
+                        {apiError && (
+                            <div className="px-[30px] pt-4 text-center text-red-500">
+                                {apiError}
+                            </div>
+                        )}
+
+                        <div className="px-[30px]">
+                            {/* 프로필 섹션 */}
+                            <div className="mt-[30px] flex items-start gap-[30px]">
+                                <div className="flex flex-col items-start justify-center gap-3">
+                                    <div className="relative h-24 w-24">
+                                        <Image
+                                            className="rounded-full bg-gray-100 object-cover"
+                                            alt="Profile"
+                                            src={formValues.profileImage}
+                                            fill
+                                        />
+                                        {isUploading && (
+                                            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/70">
+                                                <LoadingThreeDots />
+                                            </div>
+                                        )}
                                     </div>
-                                )}
+
+                                    <div className="flex flex-col items-center justify-center gap-2">
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            onChange={handleFileChange}
+                                            accept="image/*"
+                                            className="hidden"
+                                        />
+                                        <Button
+                                            variant="outline"
+                                            className="h-auto rounded-md border border-solid border-[#e9e9e9] px-5 py-1.5"
+                                            onClick={handleUploadClick}
+                                            disabled={isUploading}
+                                        >
+                                            <span className="text-xs font-medium text-[#333333]">
+                                                {isUploading
+                                                    ? '업로드 중...'
+                                                    : '사진 업로드'}
+                                            </span>
+                                        </Button>
+
+                                        {/* 사진 제거 누르면 기본 프로필 이미지로 변경 */}
+                                        <Button
+                                            variant="ghost"
+                                            className="h-auto p-0"
+                                            onClick={removeImage}
+                                        >
+                                            <span className="text-xs font-medium text-[#999999]">
+                                                사진 제거
+                                            </span>
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {/* 별명 설정 */}
+                                <div className="flex w-[314px] flex-col gap-5">
+                                    <div className="flex flex-col gap-2.5">
+                                        <div className="flex items-center gap-2">
+                                            <Label className="text-base font-bold text-black">
+                                                별명
+                                            </Label>
+                                            {errors.nickname && (
+                                                <span className="ml-auto text-xs text-[#FF0000]">
+                                                    {errors.nickname.message}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-2.5 rounded-xl bg-[#f5f6f7] px-4 py-2.5">
+                                            <input
+                                                type="text"
+                                                {...register('nickname')}
+                                                className="w-full bg-transparent text-base font-medium text-black outline-none"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* 이메일 수정 */}
+                                    {/* 소셜 로그인이라 이메일은 수정 불가능한 것으로 보여 readOnly 처리 했습니다. */}
+                                    <div className="flex flex-col gap-2.5">
+                                        <Label className="text-base font-bold text-black">
+                                            이메일
+                                        </Label>
+                                        <div className="flex h-11 items-center gap-2.5 rounded-xl bg-[#f5f6f7] px-4 py-2.5">
+                                            <input
+                                                type="email"
+                                                {...register('email')}
+                                                readOnly
+                                                className="w-full bg-transparent text-base font-normal text-[#999999] outline-none"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="flex flex-col items-center justify-center gap-2">
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    onChange={handleFileChange}
-                                    accept="image/*"
-                                    className="hidden"
-                                />
-                                <Button
-                                    variant="outline"
-                                    className="h-auto rounded-md border border-solid border-[#e9e9e9] px-5 py-1.5"
-                                    onClick={handleUploadClick}
-                                    disabled={isUploading}
-                                >
-                                    <span className="text-xs font-medium text-[#333333]">
-                                        {isUploading
-                                            ? '업로드 중...'
-                                            : '사진 업로드'}
-                                    </span>
-                                </Button>
-
-                                {/* 사진 제거 누르면 기본 프로필 이미지로 변경 */}
-                                <Button
-                                    variant="ghost"
-                                    className="h-auto p-0"
-                                    onClick={removeImage}
-                                >
-                                    <span className="text-xs font-medium text-[#999999]">
-                                        사진 제거
-                                    </span>
-                                </Button>
-                            </div>
-                        </div>
-
-                        {/* 별명 설정 */}
-                        <div className="flex w-[314px] flex-col gap-5">
-                            <div className="flex flex-col gap-2.5">
+                            {/* 성별 선택 */}
+                            <div className="mt-[30px] flex w-[440px] flex-col gap-2.5">
                                 <div className="flex items-center gap-2">
                                     <Label className="text-base font-bold text-black">
-                                        별명
+                                        성별
+                                        <span className="text-[#0ac7e4]">
+                                            *
+                                        </span>
                                     </Label>
-                                    {errors.nickname && (
+                                    {errors.gender && (
                                         <span className="ml-auto text-xs text-[#FF0000]">
-                                            {errors.nickname.message}
+                                            {errors.gender.message}
                                         </span>
                                     )}
                                 </div>
-                                <div className="flex items-center gap-2.5 rounded-xl bg-[#f5f6f7] px-4 py-2.5">
+                                <div className="flex gap-10">
+                                    <div className="flex items-center gap-1.5">
+                                        <input
+                                            type="radio"
+                                            {...register('gender')}
+                                            value="male"
+                                            id="male"
+                                            className="h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#D9D9D9] bg-white checked:border-[5px] checked:border-[#0ac7e4]"
+                                        />
+                                        <Label htmlFor="male">남자</Label>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <input
+                                            type="radio"
+                                            {...register('gender')}
+                                            value="female"
+                                            id="female"
+                                            className="h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#D9D9D9] bg-white checked:border-[5px] checked:border-[#0ac7e4]"
+                                        />
+                                        <Label htmlFor="female">여자</Label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 생년월일 */}
+                            <div className="mt-[30px] flex w-[440px] flex-col gap-2.5">
+                                <div className="flex items-center gap-2">
+                                    <Label className="text-base font-bold text-black">
+                                        생년월일
+                                        <span className="text-[#0ac7e4]">
+                                            *
+                                        </span>
+                                    </Label>
+                                    {(errors.birthYear ||
+                                        errors.birthMonth ||
+                                        errors.birthDay) && (
+                                        <span className="ml-auto text-xs text-[#FF0000]">
+                                            {errors.birthYear?.message ||
+                                                errors.birthMonth?.message ||
+                                                errors.birthDay?.message}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="flex items-center justify-center gap-[30px] rounded-xl bg-[#f5f6f7] px-4 py-2.5">
                                     <input
                                         type="text"
-                                        {...register('nickname')}
-                                        className="w-full bg-transparent text-base font-medium text-black outline-none"
+                                        placeholder="YYYY"
+                                        maxLength={4}
+                                        {...register('birthYear', {
+                                            setValueAs: (value) =>
+                                                value === ''
+                                                    ? undefined
+                                                    : parseInt(value, 10),
+                                        })}
+                                        className="w-12 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
                                     />
-                                </div>
-                            </div>
-
-                            {/* 이메일 수정 */}
-                            {/* 소셜 로그인이라 이메일은 수정 불가능한 것으로 보여 readOnly 처리 했습니다. */}
-                            <div className="flex flex-col gap-2.5">
-                                <Label className="text-base font-bold text-black">
-                                    이메일
-                                </Label>
-                                <div className="flex h-11 items-center gap-2.5 rounded-xl bg-[#f5f6f7] px-4 py-2.5">
+                                    <span className="text-base font-extralight text-[#999999]">
+                                        /
+                                    </span>
                                     <input
-                                        type="email"
-                                        {...register('email')}
-                                        readOnly
-                                        className="w-full bg-transparent text-base font-normal text-[#999999] outline-none"
+                                        type="text"
+                                        placeholder="MM"
+                                        maxLength={2}
+                                        {...register('birthMonth', {
+                                            setValueAs: (value) =>
+                                                value === ''
+                                                    ? undefined
+                                                    : parseInt(value, 10),
+                                        })}
+                                        className="w-8 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
+                                    />
+                                    <span className="text-base font-extralight text-[#999999]">
+                                        /
+                                    </span>
+                                    <input
+                                        type="text"
+                                        placeholder="DD"
+                                        maxLength={2}
+                                        {...register('birthDay', {
+                                            setValueAs: (value) =>
+                                                value === ''
+                                                    ? undefined
+                                                    : parseInt(value, 10),
+                                        })}
+                                        className="w-8 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
                                     />
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    {/* 성별 선택 */}
-                    <div className="mt-[30px] flex w-[440px] flex-col gap-2.5">
-                        <div className="flex items-center gap-2">
-                            <Label className="text-base font-bold text-black">
-                                성별
-                                <span className="text-[#0ac7e4]">*</span>
-                            </Label>
-                            {errors.gender && (
-                                <span className="ml-auto text-xs text-[#FF0000]">
-                                    {errors.gender.message}
-                                </span>
-                            )}
-                        </div>
-                        <div className="flex gap-10">
-                            <div className="flex items-center gap-1.5">
-                                <input
-                                    type="radio"
-                                    {...register('gender')}
-                                    value="male"
-                                    id="male"
-                                    className="h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#D9D9D9] bg-white checked:border-[5px] checked:border-[#0ac7e4]"
-                                />
-                                <Label htmlFor="male">남자</Label>
+                            {/* 상태 메세지 */}
+                            <div className="mt-[30px] flex flex-col gap-2.5">
+                                <Label className="text-base font-bold text-black">
+                                    한 줄 소개
+                                </Label>
+                                <div className="flex w-[440px] items-center gap-2.5 rounded-xl bg-[#f5f6f7] px-4 py-2.5">
+                                    <input
+                                        type="text"
+                                        placeholder="간단하게 나를 소개해 보세요."
+                                        {...register('userIntroduce')}
+                                        className="w-full bg-transparent text-base font-medium text-black outline-none placeholder:text-[#999999]"
+                                    />
+                                </div>
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <input
-                                    type="radio"
-                                    {...register('gender')}
-                                    value="female"
-                                    id="female"
-                                    className="h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#D9D9D9] bg-white checked:border-[5px] checked:border-[#0ac7e4]"
-                                />
-                                <Label htmlFor="female">여자</Label>
+
+                            <div className="mt-[30px]">
+                                <Button
+                                    variant="link"
+                                    className="cursor-pointer p-0 text-xs font-medium text-[#898989] underline"
+                                >
+                                    회원탈퇴
+                                </Button>
                             </div>
                         </div>
-                    </div>
 
-                    {/* 생년월일 */}
-                    <div className="mt-[30px] flex w-[440px] flex-col gap-2.5">
-                        <div className="flex items-center gap-2">
-                            <Label className="text-base font-bold text-black">
-                                생년월일
-                                <span className="text-[#0ac7e4]">*</span>
-                            </Label>
-                            {(errors.birthYear ||
-                                errors.birthMonth ||
-                                errors.birthDay) && (
-                                <span className="ml-auto text-xs text-[#FF0000]">
-                                    {errors.birthYear?.message ||
-                                        errors.birthMonth?.message ||
-                                        errors.birthDay?.message}
-                                </span>
-                            )}
+                        <div className="mt-[20px] flex flex-col items-center gap-5">
+                            <hr className="h-1.5 w-full border-0 bg-[#f5f6f7]" />
+
+                            <div className="mb-5 flex w-[440px] gap-2">
+                                <Button
+                                    onClick={() => onOpenChange(false)}
+                                    variant="outline"
+                                    className="h-[52px] flex-1"
+                                    disabled={isLoading}
+                                >
+                                    취소
+                                </Button>
+
+                                <Button
+                                    onClick={handleSubmit(onSubmit)}
+                                    variant={isValid ? 'default' : 'darkGray'}
+                                    className="h-[52px] flex-1"
+                                    disabled={isLoading || !isValid}
+                                >
+                                    {isLoading ? '처리 중...' : '수정하기'}
+                                </Button>
+                            </div>
                         </div>
-                        <div className="flex items-center justify-center gap-[30px] rounded-xl bg-[#f5f6f7] px-4 py-2.5">
-                            <input
-                                type="text"
-                                placeholder="YYYY"
-                                maxLength={4}
-                                {...register('birthYear', {
-                                    setValueAs: (value) =>
-                                        value === ''
-                                            ? undefined
-                                            : parseInt(value, 10),
-                                })}
-                                className="w-12 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
-                            />
-                            <span className="text-base font-extralight text-[#999999]">
-                                /
-                            </span>
-                            <input
-                                type="text"
-                                placeholder="MM"
-                                maxLength={2}
-                                {...register('birthMonth', {
-                                    setValueAs: (value) =>
-                                        value === ''
-                                            ? undefined
-                                            : parseInt(value, 10),
-                                })}
-                                className="w-8 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
-                            />
-                            <span className="text-base font-extralight text-[#999999]">
-                                /
-                            </span>
-                            <input
-                                type="text"
-                                placeholder="DD"
-                                maxLength={2}
-                                {...register('birthDay', {
-                                    setValueAs: (value) =>
-                                        value === ''
-                                            ? undefined
-                                            : parseInt(value, 10),
-                                })}
-                                className="w-8 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
-                            />
-                        </div>
-                    </div>
-
-                    {/* 상태 메세지 */}
-                    <div className="mt-[30px] flex flex-col gap-2.5">
-                        <Label className="text-base font-bold text-black">
-                            한 줄 소개
-                        </Label>
-                        <div className="flex w-[440px] items-center gap-2.5 rounded-xl bg-[#f5f6f7] px-4 py-2.5">
-                            <input
-                                type="text"
-                                placeholder="간단하게 나를 소개해 보세요."
-                                {...register('userIntroduce')}
-                                className="w-full bg-transparent text-base font-medium text-black outline-none placeholder:text-[#999999]"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="mt-[30px]">
-                        <Button
-                            variant="link"
-                            className="cursor-pointer p-0 text-xs font-medium text-[#898989] underline"
-                        >
-                            회원탈퇴
-                        </Button>
-                    </div>
-                </div>
-
-                <div className="mt-[20px] flex flex-col items-center gap-5">
-                    <hr className="h-1.5 w-full border-0 bg-[#f5f6f7]" />
-
-                    <div className="mb-5 flex w-[440px] gap-2">
-                        <Button
-                            onClick={() => onOpenChange(false)}
-                            variant="outline"
-                            className="h-[52px] flex-1"
-                        >
-                            취소
-                        </Button>
-
-                        <Button
-                            onClick={handleSubmit(onSubmit)}
-                            variant={isValid ? 'default' : 'darkGray'}
-                            className="h-[52px] flex-1"
-                        >
-                            수정하기
-                        </Button>
-                    </div>
-                </div>
+                    </>
+                )}
             </DialogContent>
         </Dialog>
     );
