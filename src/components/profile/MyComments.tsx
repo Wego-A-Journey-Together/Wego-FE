@@ -53,7 +53,6 @@ export default function Comments() {
 
     const [messages, setMessages] = useState<Message[]>(tempMessages);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchComments = async () => {
@@ -73,21 +72,14 @@ export default function Comments() {
                 setMessages(data);
             } catch (err) {
                 console.error('Error fetching comments:', err);
-
-                // 에러 제거를 위해 임시 데이터 추가 / 데이터 생기면 제거
                 setMessages(tempMessages);
-
-                setError(
-                    err instanceof Error ? err.message : '오류가 발생했습니다.',
-                );
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchComments();
-    }, []);
-
+    }, [tempMessages]);
     if (isLoading) {
         return (
             <div className="w-full py-4">
