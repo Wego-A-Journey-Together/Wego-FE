@@ -11,6 +11,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -110,6 +111,9 @@ export default function ProfileEditor({
     open,
     onOpenChange,
 }: ProfileEditorProps) {
+    const searchParams = useSearchParams();
+    const kakaoId = searchParams.get('kakaoId') || '';
+
     const {
         register,
         handleSubmit,
@@ -121,7 +125,7 @@ export default function ProfileEditor({
         resolver: zodResolver(userSchema),
         defaultValues: {
             id: '',
-            nickname: '',
+            nickname: kakaoId,
             email: '',
             gender: undefined,
             birthYear: undefined,
@@ -138,17 +142,21 @@ export default function ProfileEditor({
     const [isLoading, setIsLoading] = useState(false);
     const [apiError, setApiError] = useState<string | null>(null);
 
-    // Fetch user profile data
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
                 setIsLoading(true);
                 setApiError(null);
 
+                if (!kakaoId) {
+                    setIsLoading(false);
+                    return;
+                }
+
                 const NEXT_PUBLIC_NEST_BFF_URL =
                     process.env.NEXT_PUBLIC_NEST_BFF_URL;
                 const response = await fetch(
-                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/profile/me`,
+                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/profile/${kakaoId}`,
                 );
 
                 if (!response.ok) {
@@ -158,17 +166,17 @@ export default function ProfileEditor({
                 const data = await response.json();
 
                 reset({
-                    id: data.id || 'user123',
-                    nickname: data.nickname || '',
+                    id: data.id || '',
+                    nickname: kakaoId,
                     email: data.email || '',
                     gender: data.gender || null,
                     userIntroduce: data.statusMessage || '',
                     profileImage:
                         data.thumbnailUrl || '/icon/profile/defaultProfile.svg',
                     ageGroup: data.ageGroup || 'ALL',
-                    birthYear: formValues.birthYear,
-                    birthMonth: formValues.birthMonth,
-                    birthDay: formValues.birthDay,
+                    birthYear: watch('birthYear'),
+                    birthMonth: watch('birthMonth'),
+                    birthDay: watch('birthDay'),
                 });
             } catch (error) {
                 console.error('프로필 정보 불러오기 실패:', error);
@@ -185,13 +193,7 @@ export default function ProfileEditor({
         if (open) {
             fetchUserProfile();
         }
-    }, [
-        open,
-        reset,
-        formValues.birthYear,
-        formValues.birthMonth,
-        formValues.birthDay,
-    ]);
+    }, [open, reset, watch, kakaoId]);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -254,7 +256,6 @@ export default function ProfileEditor({
         if (formValues.birthYear) {
             const currentYear = new Date().getFullYear();
             const age = currentYear - formValues.birthYear;
-            
             let ageGroup: z.infer<typeof userSchema>['ageGroup'];
             if (age < 20) ageGroup = '10s';
             else if (age < 30) ageGroup = '20s';
@@ -263,7 +264,6 @@ export default function ProfileEditor({
             else if (age < 60) ageGroup = '50s';
             else if (age < 70) ageGroup = '60s';
             else ageGroup = '70s';
-            
             setValue('ageGroup', ageGroup);
         }
     }, [formValues.birthYear, setValue]);
@@ -321,6 +321,46 @@ export default function ProfileEditor({
     const removeImage = () => {
         setValue('profileImage', '/icon/profile/defaultProfile.svg');
     };
+
+    // 리랜더링 오류 해결
+    useEffect(() => {
+        const birthYear = watch('birthYear');
+        const birthMonth = watch('birthMonth');
+        const birthDay = watch('birthDay');
+
+        if (birthYear && birthMonth && birthDay) {
+            const date = new Date(birthYear, birthMonth - 1, birthDay);
+            const isValidDate =
+                date.getFullYear() === birthYear &&
+                date.getMonth() === birthMonth - 1 &&
+                date.getDate() === birthDay;
+
+            if (!isValidDate) {
+                setValue('birthYear', null);
+                setValue('birthMonth', null);
+                setValue('birthDay', null);
+            }
+        }
+    }, [watch, setValue]);
+
+    useEffect(() => {
+        const birthYear = watch('birthYear');
+        if (birthYear) {
+            const currentYear = new Date().getFullYear();
+            const age = currentYear - birthYear;
+
+            let ageGroup: z.infer<typeof userSchema>['ageGroup'];
+            if (age < 20) ageGroup = '10s';
+            else if (age < 30) ageGroup = '20s';
+            else if (age < 40) ageGroup = '30s';
+            else if (age < 50) ageGroup = '40s';
+            else if (age < 60) ageGroup = '50s';
+            else if (age < 70) ageGroup = '60s';
+            else ageGroup = '70s';
+
+            setValue('ageGroup', ageGroup);
+        }
+    }, [watch, setValue]);
 
     useEffect(() => {
         const { birthYear, birthMonth, birthDay } = formValues;
