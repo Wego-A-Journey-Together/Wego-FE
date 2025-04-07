@@ -1,4 +1,3 @@
-import { convertAgeRange } from '@/lib/convertAgeRange';
 import Image from 'next/image';
 
 interface UserProfileProps {
@@ -43,7 +42,8 @@ export default function UserProfile({ post }: UserProfileProps) {
                             </p>
                             <div className="h-1.5 w-px bg-gray-300" />
                             <p className="text-xs text-[#666666]">
-                                {convertAgeRange(post.userAge)}
+                                {/*{convertAgeRange(post.userAge)}*/}
+                                {post.userAge}{' '}
                             </p>
                             <div className="h-1.5 w-px bg-gray-300" />
                             <p className="text-xs text-[#666666]">
