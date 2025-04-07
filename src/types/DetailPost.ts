@@ -13,8 +13,8 @@ export interface DetailPost {
     };
     location: {
         placeName: string;
-        lat: number;
-        lng: number;
+        latitude: number;
+        longitude: number;
     };
     content: string;
     thumbnailUrl: string;
