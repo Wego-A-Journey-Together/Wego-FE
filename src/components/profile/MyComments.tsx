@@ -1,9 +1,22 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useEffect, useState } from 'react';
+
+import LoadingThreeDots from '../common/LoadingThreeDots';
+
+interface Message {
+    id: number;
+    title: string;
+    timestamp: string;
+    status: string;
+    subtitle: string;
+    isGroupOpen: boolean;
+}
 
 export default function Comments() {
-    const messages = [
+    // 임시데이터
+    const tempMessages = [
         {
             id: 1,
             title: '혹시 3.24일 점심만 같이 하는 건 어떠세요?',
@@ -37,6 +50,50 @@ export default function Comments() {
             isGroupOpen: true,
         },
     ];
+
+    const [messages, setMessages] = useState<Message[]>(tempMessages);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchComments = async () => {
+            try {
+                setIsLoading(true);
+                const response = await fetch(
+                    '/api/gatherings/users/me/comments',
+                );
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch comments');
+                }
+
+                const data = await response.json();
+                setMessages(data);
+            } catch (err) {
+                console.error('Error fetching comments:', err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchComments();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div className="w-full py-4">
+                <LoadingThreeDots />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="w-full py-4 text-center text-red-500">
+                Error: {error}
+            </div>
+        );
+    }
 
     return (
         <div className="w-full">
