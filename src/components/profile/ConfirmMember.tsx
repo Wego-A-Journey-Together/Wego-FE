@@ -49,10 +49,12 @@ export default function ConfirmMember({
         try {
             // 현재 탭 인덱스에 따라 다른 API 엔드포인트를 호출합니다.
             // 탭0: 확정 대기중, 탭 1: 참여 확정 멤버
+            const NEXT_PUBLIC_NEST_BFF_URL =
+                process.env.NEXT_PUBLIC_NEST_BFF_URL;
             const endpoint =
                 currentTabIndex === 0
-                    ? `/api/gatherings/appliers/${id}`
-                    : `/api/gatherings/participants/${id}`;
+                    ? `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/appliers/${id}`
+                    : `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/participants/${id}`;
 
             const response = await fetch(endpoint);
 

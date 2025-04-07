@@ -59,8 +59,9 @@ export default function Comments() {
         const fetchComments = async () => {
             try {
                 setIsLoading(true);
+                const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
                 const response = await fetch(
-                    '/api/gatherings/users/me/comments',
+                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/users/me/comments`,
                 );
 
                 if (!response.ok) {
