@@ -8,14 +8,11 @@ import { Button } from '../ui/button';
 import ProfileEditor from './ProfileEditor';
 
 interface User {
-    userName: string;
-    statusMessage: string;
-    location: string;
-    age: string;
-    gender: string;
-    rating: number;
-    reviewCount: number;
-    profileImage: string;
+    nickName: string;
+    statusMessage?: string;
+    thumbnailUrl?: string;
+    ageGroup?: string;
+    gender?: string;
 }
 
 interface MypageProfileProps {
@@ -26,14 +23,11 @@ interface MypageProfileProps {
 export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const profileData = {
-        name: data.userName,
+        name: data.nickName,
         status: data.statusMessage,
-        location: data.location,
-        age: data.age,
+        age: data.ageGroup,
         gender: data.gender,
-        rating: data.rating,
-        reviews: data.reviewCount,
-        profileImage: data.profileImage,
+        profileImage: data.thumbnailUrl,
     };
 
     return (
@@ -115,8 +109,10 @@ export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
                     <div className="flex w-full items-center justify-end gap-1">
                         <StarIcon className="h-8 w-8 fill-current text-[#FFD700]" />
                         <span className="text-right text-[28px] font-semibold text-[#333333]">
-                            {profileData.rating.toFixed(1)}(
-                            {profileData.reviews})
+                            {/*todo: 평점과 리뷰 관련 정보는 아직 api에서 조회 불가한 것 같습니다.*/}
+                            {/*{profileData.rating.toFixed(1)}(*/}
+                            {/*{profileData.reviews})*/}
+                            4.5(1)
                         </span>
                     </div>
                 </div>
