@@ -40,7 +40,12 @@ export default function AuthNav({ kakaoId, nickname }: AuthNavProps) {
                     asChild
                     className="border-sky-blue h-8 w-8 cursor-pointer rounded-full border"
                 >
-                    <Button variant="ghost" aria-label={t.gnb.pAria}>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 overflow-hidden rounded-full p-0"
+                        aria-label={t.gnb.pAria}
+                    >
                         <Image
                             src={'/icon/profile/defaultProfile.svg'}
                             alt={'프로필 이미지'}
