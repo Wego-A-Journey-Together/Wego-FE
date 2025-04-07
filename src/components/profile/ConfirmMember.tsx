@@ -31,17 +31,6 @@ export default function ConfirmMember({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (initialMembers && initialMembers.length > 0) {
-            setMembers(initialMembers);
-            return;
-        }
-
-        if (gatheringId) {
-            fetchMembers(gatheringId);
-        }
-    }, [gatheringId, initialMembers, currentTabIndex]);
-
     const fetchMembers = async (id: number) => {
         setLoading(true);
         setError(null);
@@ -80,6 +69,17 @@ export default function ConfirmMember({
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (initialMembers && initialMembers.length > 0) {
+            setMembers(initialMembers);
+            return;
+        }
+
+        if (gatheringId) {
+            fetchMembers(gatheringId);
+        }
+    }, [gatheringId, initialMembers, currentTabIndex, fetchMembers]);
 
     return (
         <div className="mt-5">

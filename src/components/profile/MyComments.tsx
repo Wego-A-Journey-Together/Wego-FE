@@ -59,7 +59,8 @@ export default function Comments() {
         const fetchComments = async () => {
             try {
                 setIsLoading(true);
-                const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
+                const NEXT_PUBLIC_NEST_BFF_URL =
+                    process.env.NEXT_PUBLIC_NEST_BFF_URL;
                 const response = await fetch(
                     `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/users/me/comments`,
                 );
@@ -72,6 +73,9 @@ export default function Comments() {
                 setMessages(data);
             } catch (err) {
                 console.error('Error fetching comments:', err);
+                setError(
+                    err instanceof Error ? err.message : '오류가 발생했습니다.',
+                );
             } finally {
                 setIsLoading(false);
             }
