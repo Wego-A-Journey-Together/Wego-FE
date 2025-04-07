@@ -14,7 +14,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     const { kakaoId } = await params;
     const user = await getCurrentUser();
     // 현재 방문자가 프로필 페이지의 방문자인지, 주인인지 확인하는 변수
-    const isVisitor = kakaoId !== user?.kakaoId;
+    const isVisitor = kakaoId !== String(user?.kakaoId);
     const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
     let userData = undefined;
 
