@@ -40,30 +40,39 @@ export default function ConfirmMember({
         if (gatheringId) {
             fetchMembers(gatheringId);
         }
-    }, [gatheringId, initialMembers]);
+    }, [gatheringId, initialMembers, currentTabIndex]);
 
     const fetchMembers = async (id: number) => {
         setLoading(true);
         setError(null);
 
         try {
-            // 특정 동행에 참여 신청한 유저 목록을 조회합니다.
-            const response = await fetch(`/api/gatherings/appliers/${id}`);
+            // 현재 탭 인덱스에 따라 다른 API 엔드포인트를 호출합니다.
+            // 탭0: 확정 대기중, 탭 1: 참여 확정 멤버
+            const endpoint =
+                currentTabIndex === 0
+                    ? `/api/gatherings/appliers/${id}`
+                    : `/api/gatherings/participants/${id}`;
+
+            const response = await fetch(endpoint);
 
             if (!response.ok) {
                 throw new Error(
-                    `신청자 목록을 불러오는데 에러가 발생했습니다: ${response.status}`,
+                    `${currentTabIndex === 0 ? '신청자' : '참여자'} 목록을 불러오는데 에러가 발생했습니다: ${response.status}`,
                 );
             }
 
             const data = await response.json();
             setMembers(data);
         } catch (err) {
-            console.error('신청자 목록을 불러오는데 에러가 발생했습니다:', err);
+            console.error(
+                `${currentTabIndex === 0 ? '신청자' : '참여자'} 목록을 불러오는데 에러가 발생했습니다:`,
+                err,
+            );
             setError(
                 err instanceof Error
                     ? err.message
-                    : '신청자 목록을 불러오는데 에러가 발생했습니다.',
+                    : `${currentTabIndex === 0 ? '신청자' : '참여자'} 목록을 불러오는데 에러가 발생했습니다.`,
             );
         } finally {
             setLoading(false);
@@ -149,7 +158,9 @@ export default function ConfirmMember({
                     : !loading &&
                       !error && (
                           <div className="py-6 text-center text-gray-500">
-                              참여하려는 멤버가 없어요
+                              {currentTabIndex === 0
+                                  ? '참여 신청한 멤버가 없어요'
+                                  : '참여 확정된 멤버가 없어요'}
                           </div>
                       )}
             </div>
