@@ -8,7 +8,7 @@ import { Button } from '../ui/button';
 import ProfileEditor from './ProfileEditor';
 
 interface User {
-    nickName: string;
+    nickname: string;
     statusMessage?: string;
     thumbnailUrl?: string;
     ageGroup?: string;
@@ -23,7 +23,7 @@ interface MypageProfileProps {
 export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const profileData = {
-        name: data.nickName,
+        name: data.nickname,
         status: data.statusMessage,
         age: data.ageGroup,
         gender: data.gender,
