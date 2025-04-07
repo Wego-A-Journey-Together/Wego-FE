@@ -97,6 +97,8 @@ export default function PostForm({
             credentials: 'include',
         });
 
+        const newPostId = await res.json();
+
         if (!res.ok) {
             const errorData = await res.json();
 
@@ -124,7 +126,9 @@ export default function PostForm({
             },
         });
         form.reset();
-        router.push('/'); //todo: 지금은 홈으로 밀지만 be 연동 이후 포스트아이디가 넘어 온다면 해당 상세 페이지로 이동하는 것이 좋을 듯 합니다.
+
+        // 게시물 아이디 페이지로 이동시키기
+        router.push(`/detail/${newPostId}`);
     };
 
     /**
