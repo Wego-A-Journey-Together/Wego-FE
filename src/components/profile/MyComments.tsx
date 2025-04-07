@@ -73,6 +73,10 @@ export default function Comments() {
                 setMessages(data);
             } catch (err) {
                 console.error('Error fetching comments:', err);
+
+                // 에러 제거를 위해 임시 데이터 추가 / 데이터 생기면 제거
+                setMessages(tempMessages);
+
                 setError(
                     err instanceof Error ? err.message : '오류가 발생했습니다.',
                 );
@@ -92,13 +96,14 @@ export default function Comments() {
         );
     }
 
-    if (error) {
-        return (
-            <div className="w-full py-4 text-center text-red-500">
-                Error: {error}
-            </div>
-        );
-    }
+    // 에러메세지 임시 제거
+    // if (error) {
+    //     return (
+    //         <div className="w-full py-4 text-center text-red-500">
+    //             Error: {error}
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="w-full">
