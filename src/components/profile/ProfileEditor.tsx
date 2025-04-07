@@ -254,8 +254,8 @@ export default function ProfileEditor({
         if (formValues.birthYear) {
             const currentYear = new Date().getFullYear();
             const age = currentYear - formValues.birthYear;
-
-            let ageGroup: string;
+            
+            let ageGroup: z.infer<typeof userSchema>['ageGroup'];
             if (age < 20) ageGroup = '10s';
             else if (age < 30) ageGroup = '20s';
             else if (age < 40) ageGroup = '30s';
@@ -263,8 +263,8 @@ export default function ProfileEditor({
             else if (age < 60) ageGroup = '50s';
             else if (age < 70) ageGroup = '60s';
             else ageGroup = '70s';
-
-            setValue('ageGroup', ageGroup as any);
+            
+            setValue('ageGroup', ageGroup);
         }
     }, [formValues.birthYear, setValue]);
 
