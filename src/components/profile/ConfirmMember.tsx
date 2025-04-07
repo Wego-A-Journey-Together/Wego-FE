@@ -31,46 +31,46 @@ export default function ConfirmMember({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchMembers = async (id: number) => {
-        setLoading(true);
-        setError(null);
-
-        try {
-            // 현재 탭 인덱스에 따라 다른 API 엔드포인트를 호출합니다.
-            // 탭0: 확정 대기중, 탭 1: 참여 확정 멤버
-            const NEXT_PUBLIC_NEST_BFF_URL =
-                process.env.NEXT_PUBLIC_NEST_BFF_URL;
-            const endpoint =
-                currentTabIndex === 0
-                    ? `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/appliers/${id}`
-                    : `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/participants/${id}`;
-
-            const response = await fetch(endpoint);
-
-            if (!response.ok) {
-                throw new Error(
-                    `${currentTabIndex === 0 ? '신청자' : '참여자'} 목록을 불러오는데 에러가 발생했습니다: ${response.status}`,
-                );
-            }
-
-            const data = await response.json();
-            setMembers(data);
-        } catch (err) {
-            console.error(
-                `${currentTabIndex === 0 ? '신청자' : '참여자'} 목록을 불러오는데 에러가 발생했습니다:`,
-                err,
-            );
-            setError(
-                err instanceof Error
-                    ? err.message
-                    : `${currentTabIndex === 0 ? '신청자' : '참여자'} 목록을 불러오는데 에러가 발생했습니다.`,
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
+        const fetchMembers = async (id: number) => {
+            setLoading(true);
+            setError(null);
+
+            try {
+                // 현재 탭 인덱스에 따라 다른 API 엔드포인트를 호출합니다.
+                // 탭0: 확정 대기중, 탭 1: 참여 확정 멤버
+                const NEXT_PUBLIC_NEST_BFF_URL =
+                    process.env.NEXT_PUBLIC_NEST_BFF_URL;
+                const endpoint =
+                    currentTabIndex === 0
+                        ? `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/appliers/${id}`
+                        : `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/participants/${id}`;
+
+                const response = await fetch(endpoint);
+
+                if (!response.ok) {
+                    throw new Error(
+                        `${currentTabIndex === 0 ? '신청자' : '참여자'} 목록을 불러오는데 에러가 발생했습니다: ${response.status}`,
+                    );
+                }
+
+                const data = await response.json();
+                setMembers(data);
+            } catch (err) {
+                console.error(
+                    `${currentTabIndex === 0 ? '신청자' : '참여자'} 목록을 불러오는데 에러가 발생했습니다:`,
+                    err,
+                );
+                setError(
+                    err instanceof Error
+                        ? err.message
+                        : `${currentTabIndex === 0 ? '신청자' : '참여자'} 목록을 불러오는데 에러가 발생했습니다.`,
+                );
+            } finally {
+                setLoading(false);
+            }
+        };
+
         if (initialMembers && initialMembers.length > 0) {
             setMembers(initialMembers);
             return;
@@ -79,7 +79,7 @@ export default function ConfirmMember({
         if (gatheringId) {
             fetchMembers(gatheringId);
         }
-    }, [gatheringId, initialMembers, currentTabIndex, fetchMembers]);
+    }, [gatheringId, initialMembers, currentTabIndex]);
 
     return (
         <div className="mt-5">
