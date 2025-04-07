@@ -44,8 +44,9 @@ export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
                             className="rounded-full object-cover"
                             alt="Profile"
                             src={
-                                profileData.profileImage ||
-                                '/icon/profile/defaultProfile.svg'
+                                profileData.profileImage
+                                    ? profileData.profileImage
+                                    : '/icon/profile/defaultProfile.svg'
                             }
                             fill
                             sizes="96px"
