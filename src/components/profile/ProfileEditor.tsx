@@ -12,8 +12,7 @@ import { Label } from '@/components/ui/label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -232,7 +231,7 @@ export default function ProfileEditor({
             if (!uploadResponse.ok) {
                 throw new Error('이미지 업로드에 실패했습니다.');
             }
-            const s3ImagePath = `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
+            const s3ImagePath = `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
             setValue('profileImage', s3ImagePath);
         } catch (error) {
             console.error('이미지 업로드 실패', error);
