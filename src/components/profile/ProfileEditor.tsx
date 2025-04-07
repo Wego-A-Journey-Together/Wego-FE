@@ -231,7 +231,7 @@ export default function ProfileEditor({
             if (!uploadResponse.ok) {
                 throw new Error('이미지 업로드에 실패했습니다.');
             }
-            const s3ImagePath = `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
+            const s3ImagePath = `https://${process.env.NEXT_PUBLIC_S3_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
             setValue('profileImage', s3ImagePath);
         } catch (error) {
             console.error('이미지 업로드 실패', error);
