@@ -26,8 +26,11 @@ export default async function Chat({ params }: ChatPageProps) {
     const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
     let chatData: ChatRoom[] = [];
 
-    // 현재 사용자와 채팅창 URL의 kakaoId가 일치하는지 확인
     if (!currentUser || currentUser.kakaoId !== kakaoId) {
+        console.log('대화 목록 페이지 아이디 불일치', {
+            current: currentUser?.kakaoId,
+            requested: kakaoId,
+        });
         notFound();
     }
 
@@ -40,17 +43,7 @@ export default async function Chat({ params }: ChatPageProps) {
         chatData = await res.json();
     } catch (error) {
         console.error('채팅 데이터 불러오는데 실패했습니다.', error);
-        chatData = [
-            {
-                roomId: 1,
-                name: '임시데이터',
-                location: '서울',
-                time: '2025-04-06',
-                message: '안녕하세요!',
-                unreadChat: 3,
-                userIcon: '/icon/profile/defaultProfile.svg',
-            },
-        ];
+        notFound();
     }
 
     const HEADER_HEIGHT = 72;
@@ -67,17 +60,23 @@ export default async function Chat({ params }: ChatPageProps) {
 
                 {/* 채팅 목록 */}
                 <div className="overflow-y-auto px-4">
-                    <ul className="list-none space-y-[30px] p-0">
-                        {chatData.map((chat, i) => (
-                            <li key={i}>
-                                <Link
-                                    href={`/chat/${kakaoId}/rooms/${chat.roomId}`}
-                                >
-                                    <ChatPreview chat={chat} />
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
+                    {chatData.length === 0 ? (
+                        <div className="py-10 text-center text-gray-500">
+                            아직 대화 목록이 없습니다.
+                        </div>
+                    ) : (
+                        <ul className="list-none space-y-[30px] p-0">
+                            {chatData.map((chat, i) => (
+                                <li key={i}>
+                                    <Link
+                                        href={`/chat/${kakaoId}/rooms/${chat.roomId}`}
+                                    >
+                                        <ChatPreview chat={chat} />
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </main>
         </>
