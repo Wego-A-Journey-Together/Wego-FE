@@ -11,10 +11,6 @@ interface LikeProps {
     className?: string;
 }
 
-interface ItemData {
-    liked: boolean;
-}
-
 export default function Like({ id, className }: LikeProps) {
     const queryClient = useQueryClient();
     const router = useRouter();
@@ -63,29 +59,25 @@ export default function Like({ id, className }: LikeProps) {
         onMutate: async (postId) => {
             // (a) 혹시 이 게시물 데이터를 다시 불러오려던 게 있으면 취소
             await queryClient.cancelQueries({
-                queryKey: ['item', postId],
+                queryKey: ['likeStatus', postId],
             });
 
             // (b) 이전 캐시 값(스냅샷) 저장
-            const prevItemData = queryClient.getQueryData<ItemData>([
-                'item',
+            const prev = queryClient.getQueryData<boolean>([
+                'likeStatus',
                 postId,
             ]);
 
             // (c) 캐시 낙관적 업데이트
-            queryClient.setQueryData<ItemData>(['item', postId], (oldData) => {
-                if (!oldData) return oldData;
-                return {
-                    ...oldData,
-                    liked: !oldData.liked, // liked 토글
-                };
-            });
-
-            // (d) 로컬 state도 즉시 반영
-            setIsLike((prev) => !prev);
+            queryClient.setQueryData<boolean>(
+                ['likeStatus', postId],
+                (oldData) => {
+                    return !oldData;
+                },
+            );
 
             // (e) onError/onSettled에서 복원할 수 있도록 반환
-            return { prevItemData };
+            return { prev };
         },
 
         // -------------------
@@ -93,17 +85,9 @@ export default function Like({ id, className }: LikeProps) {
         // -------------------
         onError: (error, postId, context) => {
             // (a) onMutate에서 return한 { prevItemData }를 context로 받음
-            if (context?.prevItemData) {
+            if (context?.prev) {
                 // (b) 캐시 롤백
-                queryClient.setQueryData(
-                    ['item', postId],
-                    context.prevItemData,
-                );
-            }
-
-            // (c) 로컬 state도 복원
-            if (context?.prevItemData?.liked !== undefined) {
-                setIsLike(context.prevItemData.liked);
+                queryClient.setQueryData(['likeStatus', postId], context.prev);
             }
         },
 
@@ -112,8 +96,8 @@ export default function Like({ id, className }: LikeProps) {
         // -------------------
         onSettled: (_data, _error, postId) => {
             // (a) 성공/실패 관계없이 다시 캐시 invalidate -> 프로미스 체인은 보통 무시한다.
-            queryClient.invalidateQueries({
-                queryKey: ['item', postId],
+            void queryClient.invalidateQueries({
+                queryKey: ['likeStatus', postId],
             });
         },
     });
