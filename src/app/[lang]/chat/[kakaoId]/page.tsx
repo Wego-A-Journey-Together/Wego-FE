@@ -26,10 +26,19 @@ export default async function Chat({ params }: ChatPageProps) {
     const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
     let chatData: ChatRoom[] = [];
 
+    // 디버깅용 상세 내용들 확인용
+    console.log('사용자 정보 확인:', {
+        currentUser: currentUser,
+        kakaoIdFromURL: kakaoId,
+        kakaoIdType: typeof kakaoId,
+        currentUserIdType: typeof currentUser?.kakaoId,
+    });
+
     if (!currentUser || currentUser.kakaoId !== kakaoId) {
         console.log('대화 목록 페이지 아이디 불일치', {
             current: currentUser?.kakaoId,
             requested: kakaoId,
+            isEqual: currentUser?.kakaoId === kakaoId,
         });
         notFound();
     }
