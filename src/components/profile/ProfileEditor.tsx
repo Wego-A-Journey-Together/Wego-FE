@@ -96,7 +96,16 @@ const userSchema = z.object({
         ),
     userIntroduce: z.string(),
     profileImage: z.string(),
-    ageGroup: z.enum(['ALL', 'TEENS', 'TWENTIES', 'THIRTIES', 'FORTIES', 'FIFTIES', 'SIXTIES', 'SEVENTIES']),
+    ageGroup: z.enum([
+        'ALL',
+        'TEENS',
+        'TWENTIES',
+        'THIRTIES',
+        'FORTIES',
+        'FIFTIES',
+        'SIXTIES',
+        'SEVENTIES',
+    ]),
 });
 
 type UserSchema = z.infer<typeof userSchema>;
@@ -112,6 +121,23 @@ interface ProfileEditorProps {
         ageGroup?: string;
     };
 }
+
+// 연령대와 성별 표시를 위한 매핑 객체 추가
+const ageGroupDisplay = {
+    ALL: '전체',
+    TEENS: '10대',
+    TWENTIES: '20대',
+    THIRTIES: '30대',
+    FORTIES: '40대',
+    FIFTIES: '50대',
+    SIXTIES: '60대',
+    SEVENTIES: '70대 이상',
+};
+
+const genderDisplay = {
+    MALE: '남자',
+    FEMALE: '여자',
+};
 
 export default function ProfileEditor({
     open,
@@ -152,9 +178,9 @@ export default function ProfileEditor({
         mode: 'onChange',
     });
 
-    // 이메일 받아오는 api 추가
+    // 이메일과 닉네임을 함께 받아오는 API 호출
     useEffect(() => {
-        const fetchUserEmail = async () => {
+        const fetchUserData = async () => {
             try {
                 const NEXT_PUBLIC_NEST_BFF_URL =
                     process.env.NEXT_PUBLIC_NEST_BFF_URL;
@@ -175,13 +201,17 @@ export default function ProfileEditor({
 
                 const data = await response.json();
                 setValue('email', data.email);
+                // 닉네임이 없는 경우에만 API에서 받은 닉네임으로 설정
+                if (!initialData?.nickname) {
+                    setValue('nickname', data.nickname || kakaoId);
+                }
             } catch (error) {
-                console.error('Error fetching user email:', error);
+                console.log(error);
             }
         };
 
-        fetchUserEmail();
-    }, [setValue]);
+        fetchUserData();
+    }, [setValue, initialData?.nickname, kakaoId]);
 
     const formValues = watch();
     const [isLoading, setIsLoading] = useState(false);
@@ -272,13 +302,11 @@ export default function ProfileEditor({
             const requestBody = {
                 nickname: data.nickname,
                 email: data.email,
-                statusMessage: data.userIntroduce || "",
+                statusMessage: data.userIntroduce || '',
                 thumbnailUrl: data.profileImage,
                 gender: data.gender ? data.gender.toUpperCase() : null,
-                ageGroup: data.ageGroup || "ALL",
+                ageGroup: data.ageGroup || 'ALL',
             };
-
-            console.log('Request body:', requestBody);
 
             const response = await fetch(
                 `${NEXT_PUBLIC_NEST_BFF_URL}/api/profile/me`,
@@ -292,24 +320,16 @@ export default function ProfileEditor({
                 },
             );
 
-            // 테스트옹 디버깅
-            console.log('Response status:', response.status);
-
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('Error response:', {
-                    status: response.status,
-                    statusText: response.statusText,
-                    body: errorText,
-                });
-
-                throw new Error('프로필 정보 업데이트에 실패했습니다.');
+                throw new Error(errorText);
             }
 
             alert('프로필이 성공적으로 업데이트되었습니다.');
+            window.location.reload();
+
             onOpenChange(false);
         } catch (error) {
-            console.error('프로필 업데이트 실패:', error);
             setApiError(
                 error instanceof Error
                     ? error.message
@@ -490,7 +510,6 @@ export default function ProfileEditor({
                                     </div>
 
                                     {/* 이메일 수정 */}
-
                                     <div className="flex flex-col gap-2.5">
                                         <Label className="text-base font-bold text-black">
                                             이메일
@@ -500,13 +519,14 @@ export default function ProfileEditor({
                                                 type="email"
                                                 {...register('email')}
                                                 className="w-full bg-transparent text-base font-normal text-[#999999] outline-none"
+                                                readOnly
                                             />
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* 성별 선택 */}
+                            {/* 성별 선택 - 한글 표시 */}
                             <div className="mt-[30px] flex w-[440px] flex-col gap-2.5">
                                 <div className="flex items-center gap-2">
                                     <Label className="text-base font-bold text-black">
@@ -530,7 +550,9 @@ export default function ProfileEditor({
                                             id="male"
                                             className="h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#D9D9D9] bg-white checked:border-[5px] checked:border-[#0ac7e4]"
                                         />
-                                        <Label htmlFor="male">남자</Label>
+                                        <Label htmlFor="male">
+                                            {genderDisplay['MALE']}
+                                        </Label>
                                     </div>
                                     <div className="flex items-center gap-1.5">
                                         <input
@@ -540,7 +562,9 @@ export default function ProfileEditor({
                                             id="female"
                                             className="h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#D9D9D9] bg-white checked:border-[5px] checked:border-[#0ac7e4]"
                                         />
-                                        <Label htmlFor="female">여자</Label>
+                                        <Label htmlFor="female">
+                                            {genderDisplay['FEMALE']}
+                                        </Label>
                                     </div>
                                 </div>
                             </div>
@@ -608,6 +632,12 @@ export default function ProfileEditor({
                                         className="w-8 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
                                     />
                                 </div>
+                                {formValues.ageGroup && (
+                                    <div className="mt-1 text-xs text-[#666666]">
+                                        연령대:{' '}
+                                        {ageGroupDisplay[formValues.ageGroup]}
+                                    </div>
+                                )}
                             </div>
 
                             {/* 상태 메세지 */}
