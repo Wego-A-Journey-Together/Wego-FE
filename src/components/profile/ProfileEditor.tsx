@@ -96,7 +96,7 @@ const userSchema = z.object({
         ),
     userIntroduce: z.string(),
     profileImage: z.string(),
-    ageGroup: z.enum(['10s', '20s', '30s', '40s', '50s', '60s', '70s', 'ALL']),
+    ageGroup: z.enum(['ALL', 'TEENS', 'TWENTIES', 'THIRTIES', 'FORTIES', 'FIFTIES', 'SIXTIES', 'SEVENTIES']),
 });
 
 type UserSchema = z.infer<typeof userSchema>;
@@ -249,13 +249,13 @@ export default function ProfileEditor({
             const currentYear = new Date().getFullYear();
             const age = currentYear - formValues.birthYear;
             let ageGroup: z.infer<typeof userSchema>['ageGroup'];
-            if (age < 20) ageGroup = '10s';
-            else if (age < 30) ageGroup = '20s';
-            else if (age < 40) ageGroup = '30s';
-            else if (age < 50) ageGroup = '40s';
-            else if (age < 60) ageGroup = '50s';
-            else if (age < 70) ageGroup = '60s';
-            else ageGroup = '70s';
+            if (age < 20) ageGroup = 'TEENS';
+            else if (age < 30) ageGroup = 'TWENTIES';
+            else if (age < 40) ageGroup = 'THIRTIES';
+            else if (age < 50) ageGroup = 'FORTIES';
+            else if (age < 60) ageGroup = 'FIFTIES';
+            else if (age < 70) ageGroup = 'SIXTIES';
+            else ageGroup = 'SEVENTIES';
             setValue('ageGroup', ageGroup);
         }
     }, [formValues.birthYear, setValue]);
@@ -272,10 +272,10 @@ export default function ProfileEditor({
             const requestBody = {
                 nickname: data.nickname,
                 email: data.email,
-                statusMessage: data.userIntroduce,
+                statusMessage: data.userIntroduce || "",
                 thumbnailUrl: data.profileImage,
                 gender: data.gender ? data.gender.toUpperCase() : null,
-                ageGroup: data.ageGroup,
+                ageGroup: data.ageGroup || "ALL",
             };
 
             console.log('Request body:', requestBody);
@@ -358,13 +358,13 @@ export default function ProfileEditor({
             const age = currentYear - birthYear;
 
             let ageGroup: z.infer<typeof userSchema>['ageGroup'];
-            if (age < 20) ageGroup = '10s';
-            else if (age < 30) ageGroup = '20s';
-            else if (age < 40) ageGroup = '30s';
-            else if (age < 50) ageGroup = '40s';
-            else if (age < 60) ageGroup = '50s';
-            else if (age < 70) ageGroup = '60s';
-            else ageGroup = '70s';
+            if (age < 20) ageGroup = 'TEENS';
+            else if (age < 30) ageGroup = 'TWENTIES';
+            else if (age < 40) ageGroup = 'THIRTIES';
+            else if (age < 50) ageGroup = 'FORTIES';
+            else if (age < 60) ageGroup = 'FIFTIES';
+            else if (age < 70) ageGroup = 'SIXTIES';
+            else ageGroup = 'SEVENTIES';
 
             setValue('ageGroup', ageGroup);
         }
