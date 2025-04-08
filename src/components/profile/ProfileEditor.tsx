@@ -268,6 +268,18 @@ export default function ProfileEditor({
 
             const NEXT_PUBLIC_NEST_BFF_URL =
                 process.env.NEXT_PUBLIC_NEST_BFF_URL;
+
+            const requestBody = {
+                nickname: data.nickname,
+                email: data.email,
+                statusMessage: data.userIntroduce,
+                thumbnailUrl: data.profileImage,
+                gender: data.gender ? data.gender.toUpperCase() : null,
+                ageGroup: data.ageGroup,
+            };
+
+            console.log('Request body:', requestBody);
+
             const response = await fetch(
                 `${NEXT_PUBLIC_NEST_BFF_URL}/api/profile/me`,
                 {
@@ -275,19 +287,22 @@ export default function ProfileEditor({
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        nickname: data.nickname,
-                        email: data.email,
-                        statusMessage: data.userIntroduce,
-                        thumbnailUrl: data.profileImage,
-                        gender: data.gender?.toUpperCase(),
-                        ageGroup: data.ageGroup,
-                    }),
+                    body: JSON.stringify(requestBody),
                     credentials: 'include',
                 },
             );
 
+            // 테스트옹 디버깅
+            console.log('Response status:', response.status);
+
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Error response:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    body: errorText,
+                });
+
                 throw new Error('프로필 정보 업데이트에 실패했습니다.');
             }
 
