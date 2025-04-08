@@ -2,9 +2,9 @@
 
 import { useSession } from '@/hooks/useSession';
 import { cn } from '@/lib';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Bookmark } from 'lucide-react';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface LikeProps {
     id: number;
@@ -16,17 +16,31 @@ interface ItemData {
 }
 
 export default function Like({ id, className }: LikeProps) {
-    const [isLike, setIsLike] = useState<boolean>(false);
     const queryClient = useQueryClient();
+    const router = useRouter();
     const { isAuthenticated } = useSession();
+    const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
 
+    const { data: isLike = false } = useQuery<boolean>({
+        queryKey: ['likeStatus', id],
+        queryFn: async () => {
+            const res = await fetch(
+                `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/like/${id}`,
+                {
+                    credentials: 'include',
+                },
+            );
+            if (!res.ok) throw new Error('찜 상태 조회 실패');
+            return res.json(); //불리언 타입
+        },
+        enabled: isAuthenticated, // 로그인 안된 사람은 쿼리 방지
+    });
     /**
      * mutationFn 에 해당합니다. 백엔드에 찜할 포스트의 아이디를 연결합니다.
      * todo : 로그인 구현 후에 유저의 아이디를 포함해야 정확한 찜 로직으로 동작할 것 입니다 .
      * @param id
      */
-    const changeLike = async ({ postId }: { postId: string }) => {
-        const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
+    const changeLike = async ({ postId }: { postId: number }) => {
         const res = await fetch(
             `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/like/${postId}`,
             {
@@ -106,7 +120,10 @@ export default function Like({ id, className }: LikeProps) {
 
     // 버튼 클릭 시 -> mutate(id)
     const handleClick = () => {
-        const newLikeState = !isLike;
+        if (!isAuthenticated) {
+            router.push('/ko?loginRequired=true');
+            return;
+        }
         mutate({ postId: id });
     };
 
