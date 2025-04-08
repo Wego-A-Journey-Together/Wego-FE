@@ -34,17 +34,22 @@ export default async function Chat({ params }: ChatPageProps) {
         currentUserIdType: typeof currentUser?.kakaoId,
     });
 
-    if (!currentUser || currentUser.kakaoId !== kakaoId) {
-        console.log('대화 목록 페이지 아이디 불일치', {
-            current: currentUser?.kakaoId,
+    // kakaoId 타입 변환
+    const currentUserKakaoId = currentUser?.kakaoId?.toString();
+
+    if (!currentUser || currentUserKakaoId !== kakaoId) {
+        console.log({
+            current: currentUserKakaoId,
             requested: kakaoId,
-            isEqual: currentUser?.kakaoId === kakaoId,
+            isEqual: currentUserKakaoId === kakaoId,
         });
         notFound();
     }
 
     try {
-        const res = await fetch(`${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`);
+        const res = await fetch(`${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`, {
+            credentials: 'include', // 인증 정보 포함
+        });
         if (!res.ok) {
             throw new Error('데이터를 불러오는데 실패했습니다.');
         }

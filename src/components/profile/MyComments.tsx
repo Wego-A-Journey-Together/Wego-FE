@@ -39,6 +39,7 @@ export default function Comments() {
                         headers: {
                             'Content-Type': 'application/json',
                         },
+                        credentials: 'include',
                     },
                 );
 
