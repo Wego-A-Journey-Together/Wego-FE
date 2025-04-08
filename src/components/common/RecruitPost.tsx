@@ -77,17 +77,23 @@ export default function RecruitPost({ post }: PostContentProps) {
 
                     {/* 해시태그 리스트 */}
                     <ul className="mb-[22px] flex items-center gap-2">
-                        {post.hashtags.map((hashtag, index) => (
-                            <li
-                                key={index}
-                                className="relative rounded px-1.5 py-1"
-                            >
-                                <div className="text-sky-blue z-10 text-[15px] leading-[19.1px] font-medium tracking-[0.47px] whitespace-nowrap">
-                                    {hashtag}
-                                </div>
-                                <div className="bg-sky-blue absolute top-0 left-0 h-[27px] w-full rounded opacity-[0.08]" />
+                        {post.hashtags.length > 0 ? (
+                            post.hashtags.map((hashtag, index) => (
+                                <li
+                                    key={index}
+                                    className="relative rounded px-1.5 py-1"
+                                >
+                                    <div className="text-sky-blue z-10 text-[15px] leading-[19.1px] font-medium tracking-[0.47px] whitespace-nowrap">
+                                        #{hashtag}
+                                    </div>
+                                    <div className="bg-sky-blue absolute top-0 left-0 h-[27px] w-full rounded opacity-[0.08]" />
+                                </li>
+                            ))
+                        ) : (
+                            <li className="invisible text-sm text-[#999]">
+                                공간차지
                             </li>
-                        ))}
+                        )}
                     </ul>
 
                     {/* 본문 미리보기 */}
@@ -105,12 +111,12 @@ export default function RecruitPost({ post }: PostContentProps) {
                 <Link href={`/profile/${post.creator.nickname}`}>
                     {/* 아이콘 */}
                     <div className="flex items-center gap-3">
-                        <div className="h-[50px] w-[50px] overflow-hidden rounded-full">
+                        <div className="h-[42px] w-[42px] overflow-hidden rounded-full">
                             <Image
                                 src={post.creator.thumbnailUrl}
                                 alt="유저 프로필 이미지"
-                                width={50}
-                                height={50}
+                                width={42}
+                                height={42}
                                 className="h-full w-full object-cover"
                             />
                         </div>
