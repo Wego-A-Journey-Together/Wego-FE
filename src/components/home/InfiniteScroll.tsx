@@ -41,8 +41,8 @@ export default function InfiniteScroll({ initialPosts }: InfiniteScrollProps) {
             );
             return response.json();
         },
-        getNextPageParam: (lastPage, allPages) => {
-            return lastPage.length ? allPages.length + 1 : undefined;
+        getNextPageParam: (lastPage) => {
+            return lastPage.last ? undefined : lastPage.number + 1;
         },
         initialPageParam: 1,
     });

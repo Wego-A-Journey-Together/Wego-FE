@@ -21,6 +21,7 @@ export default function Like({ id, className }: LikeProps) {
     const { data: isLike = false } = useQuery<boolean>({
         queryKey: ['likeStatus', id],
         queryFn: async () => {
+            console.log('[queryfn] likeStatus 요청 시작');
             const res = await fetch(
                 `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/like/${id}`,
                 {
@@ -57,7 +58,8 @@ export default function Like({ id, className }: LikeProps) {
         // -------------------
         // 1) onMutate
         // -------------------
-        onMutate: async (postId) => {
+        onMutate: async ({ postId }) => {
+            console.log(`뮤테이션 시작: postId=${postId}`);
             // (a) 혹시 이 게시물 데이터를 다시 불러오려던 게 있으면 취소
             await queryClient.cancelQueries({
                 queryKey: ['likeStatus', postId],
@@ -78,27 +80,36 @@ export default function Like({ id, className }: LikeProps) {
             );
 
             // (e) onError/onSettled에서 복원할 수 있도록 반환
-            return { prev };
+            return { prev, postId };
         },
 
         // -------------------
         // 2) onError
         // -------------------
         onError: (error, postId, context) => {
+            console.error(
+                `[onError] 요청 실패 → 롤백 시도: postId=${context?.postId}`,
+                error,
+            );
             // (a) onMutate에서 return한 { prevItemData }를 context로 받음
             if (context?.prev) {
                 // (b) 캐시 롤백
-                queryClient.setQueryData(['likeStatus', postId], context.prev);
+                queryClient.setQueryData(
+                    ['likeStatus', context.postId],
+                    context.prev,
+                );
             }
         },
 
         // -------------------
         // 3) onSettled
         // -------------------
-        onSettled: (_data, _error, postId) => {
-            // (a) 성공/실패 관계없이 다시 캐시 invalidate -> 프로미스 체인은 보통 무시한다.
+        onSettled: (_data, _error, _variables, context) => {
+            console.log(
+                `[onSettled] 캐시 invalidate: postId=${context?.postId}`,
+            );
             void queryClient.invalidateQueries({
-                queryKey: ['likeStatus', postId],
+                queryKey: ['likeStatus', context?.postId],
             });
         },
     });
@@ -109,6 +120,7 @@ export default function Like({ id, className }: LikeProps) {
             dispatch(openLoginModal());
             return;
         }
+        console.log('찜버튼 눌렀음.');
         mutate({ postId: id });
     };
 
