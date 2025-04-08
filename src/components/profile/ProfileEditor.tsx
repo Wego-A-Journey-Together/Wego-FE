@@ -137,6 +137,36 @@ export default function ProfileEditor({
         mode: 'onChange',
     });
 
+    // 이메일 받아오는 api 추가
+    useEffect(() => {
+        const fetchUserEmail = async () => {
+            try {
+                const NEXT_PUBLIC_NEST_BFF_URL =
+                    process.env.NEXT_PUBLIC_NEST_BFF_URL;
+                const response = await fetch(
+                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/user/me`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                );
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+
+                const data = await response.json();
+                setValue('email', data.email);
+            } catch (error) {
+                console.error('Error fetching user email:', error);
+            }
+        };
+
+        fetchUserEmail();
+    }, [setValue]);
+
     const formValues = watch();
     const [isLoading, setIsLoading] = useState(false);
     const [apiError, setApiError] = useState<string | null>(null);
@@ -154,6 +184,13 @@ export default function ProfileEditor({
 
                 const NEXT_PUBLIC_NEST_BFF_URL =
                     process.env.NEXT_PUBLIC_NEST_BFF_URL;
+
+                if (!NEXT_PUBLIC_NEST_BFF_URL) {
+                    throw new Error(
+                        'API URL is not defined in environment variables',
+                    );
+                }
+
                 const response = await fetch(
                     `${NEXT_PUBLIC_NEST_BFF_URL}/api/profile/${kakaoId}`,
                 );
@@ -163,12 +200,13 @@ export default function ProfileEditor({
                 }
 
                 const data = await response.json();
+                console.log('Fetched profile data:', data);
 
                 reset({
-                    id: data.id || '',
-                    nickname: kakaoId,
-                    email: data.email || '',
-                    gender: data.gender || null,
+                    id: data.id,
+                    nickname: data.nickname || kakaoId,
+                    email: data.email,
+                    gender: data.gender?.toLowerCase() || null,
                     userIntroduce: data.statusMessage || '',
                     profileImage:
                         data.thumbnailUrl || '/icon/profile/defaultProfile.svg',
