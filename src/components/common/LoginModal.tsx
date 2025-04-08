@@ -9,41 +9,41 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { closeLoginModal, openLoginModal } from '@/redux/slices/modalSlice';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export default function LoginModal() {
-    const [open, setOpen] = useState(false);
+    const open = useAppSelector((state) => state.modal.loginModalOpen);
+    const dispatch = useAppDispatch();
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
 
     useEffect(() => {
-        // URL 파라미터에서 loginRequired 확인
-        const loginRequired = searchParams.get('loginRequired');
-
-        if (loginRequired === 'true') {
-            setOpen(true);
+        if (searchParams.get('loginRequired') === 'true') {
+            dispatch(openLoginModal());
         }
     }, [searchParams]);
 
     const handleOpenChange = (newOpen: boolean) => {
-        setOpen(newOpen);
-
         if (!newOpen) {
-            // 모달이 닫히면 URL에서 loginRequired 파라미터 제거
-            const params = new URLSearchParams(window.location.search);
-            params.delete('loginRequired');
+            dispatch(closeLoginModal());
 
-            // 쿼리 파라미터 없이 현재 경로로 업데이트
-            const newUrl =
-                pathname + (params.toString() ? `?${params.toString()}` : '');
-            router.replace(newUrl);
+            const loginRequired = searchParams.get('loginRequired');
+            if (loginRequired === 'true') {
+                const params = new URLSearchParams(window.location.search);
+                params.delete('loginRequired');
+                const newUrl =
+                    pathname +
+                    (params.toString() ? `?${params.toString()}` : '');
+                router.replace(newUrl);
+            }
         }
     };
 
     return (
-
         <Dialog open={open} onOpenChange={handleOpenChange} modal={true}>
             <DialogContent className="flex flex-col items-center justify-start py-5 sm:max-w-md">
                 <DialogClose className="absolute top-4 right-4 rounded-sm opacity-70 hover:opacity-100" />

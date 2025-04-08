@@ -2,9 +2,10 @@
 
 import { useSession } from '@/hooks/useSession';
 import { cn } from '@/lib';
+import { useAppDispatch } from '@/redux/hooks';
+import { openLoginModal } from '@/redux/slices/modalSlice';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Bookmark } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 interface LikeProps {
     id: number;
@@ -13,7 +14,7 @@ interface LikeProps {
 
 export default function Like({ id, className }: LikeProps) {
     const queryClient = useQueryClient();
-    const router = useRouter();
+    const dispatch = useAppDispatch();
     const { isAuthenticated } = useSession();
     const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
 
@@ -105,7 +106,7 @@ export default function Like({ id, className }: LikeProps) {
     // 버튼 클릭 시 -> mutate(id)
     const handleClick = () => {
         if (!isAuthenticated) {
-            router.push('/ko?loginRequired=true');
+            dispatch(openLoginModal());
             return;
         }
         mutate({ postId: id });
