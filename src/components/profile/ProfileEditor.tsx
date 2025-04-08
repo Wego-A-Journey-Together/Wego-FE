@@ -104,11 +104,19 @@ type UserSchema = z.infer<typeof userSchema>;
 interface ProfileEditorProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    initialData?: {
+        nickname?: string;
+        statusMessage?: string;
+        thumbnailUrl?: string;
+        gender?: string;
+        ageGroup?: string;
+    };
 }
 
 export default function ProfileEditor({
     open,
     onOpenChange,
+    initialData,
 }: ProfileEditorProps) {
     const searchParams = useSearchParams();
     const kakaoId = searchParams.get('kakaoId') || '';
@@ -119,20 +127,27 @@ export default function ProfileEditor({
         formState: { errors, isValid },
         setValue,
         watch,
-        reset,
     } = useForm<UserSchema>({
         resolver: zodResolver(userSchema),
         defaultValues: {
             id: '',
-            nickname: kakaoId,
+            nickname: initialData?.nickname || kakaoId,
             email: '',
-            gender: undefined,
+            gender:
+                (initialData?.gender?.toLowerCase() as
+                    | 'male'
+                    | 'female'
+                    | null) || undefined,
             birthYear: undefined,
             birthMonth: undefined,
             birthDay: undefined,
-            userIntroduce: '',
-            profileImage: '/icon/profile/defaultProfile.svg',
-            ageGroup: undefined,
+            userIntroduce: initialData?.statusMessage || '',
+            profileImage:
+                initialData?.thumbnailUrl || '/icon/profile/defaultProfile.svg',
+            ageGroup:
+                (initialData?.ageGroup as z.infer<
+                    typeof userSchema
+                >['ageGroup']) || undefined,
         },
         mode: 'onChange',
     });
@@ -170,67 +185,6 @@ export default function ProfileEditor({
     const formValues = watch();
     const [isLoading, setIsLoading] = useState(false);
     const [apiError, setApiError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                setIsLoading(true);
-                setApiError(null);
-
-                if (!kakaoId) {
-                    setIsLoading(false);
-                    return;
-                }
-
-                const NEXT_PUBLIC_NEST_BFF_URL =
-                    process.env.NEXT_PUBLIC_NEST_BFF_URL;
-
-                if (!NEXT_PUBLIC_NEST_BFF_URL) {
-                    throw new Error(
-                        'API URL is not defined in environment variables',
-                    );
-                }
-
-                const response = await fetch(
-                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/profile/${kakaoId}`,
-                );
-
-                if (!response.ok) {
-                    throw new Error('프로필 정보를 불러오는데 실패했습니다.');
-                }
-
-                const data = await response.json();
-                console.log('Fetched profile data:', data);
-
-                reset({
-                    id: data.id,
-                    nickname: data.nickname || kakaoId,
-                    email: data.email,
-                    gender: data.gender?.toLowerCase() || null,
-                    userIntroduce: data.statusMessage || '',
-                    profileImage:
-                        data.thumbnailUrl || '/icon/profile/defaultProfile.svg',
-                    ageGroup: data.ageGroup || 'ALL',
-                    birthYear: watch('birthYear'),
-                    birthMonth: watch('birthMonth'),
-                    birthDay: watch('birthDay'),
-                });
-            } catch (error) {
-                console.error('프로필 정보 불러오기 실패:', error);
-                setApiError(
-                    error instanceof Error
-                        ? error.message
-                        : '프로필 정보를 불러오는데 실패했습니다.',
-                );
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        if (open) {
-            fetchUserProfile();
-        }
-    }, [open, reset, watch, kakaoId]);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -325,7 +279,7 @@ export default function ProfileEditor({
                         email: data.email,
                         statusMessage: data.userIntroduce,
                         thumbnailUrl: data.profileImage,
-                        gender: data.gender,
+                        gender: data.gender?.toUpperCase(),
                         ageGroup: data.ageGroup,
                     }),
                 },
@@ -519,7 +473,7 @@ export default function ProfileEditor({
                                     </div>
 
                                     {/* 이메일 수정 */}
-                                    {/* 소셜 로그인이라 이메일은 수정 불가능한 것으로 보여 readOnly 처리 했습니다. */}
+
                                     <div className="flex flex-col gap-2.5">
                                         <Label className="text-base font-bold text-black">
                                             이메일
@@ -528,7 +482,6 @@ export default function ProfileEditor({
                                             <input
                                                 type="email"
                                                 {...register('email')}
-                                                readOnly
                                                 className="w-full bg-transparent text-base font-normal text-[#999999] outline-none"
                                             />
                                         </div>

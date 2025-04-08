@@ -75,6 +75,13 @@ export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
                         <ProfileEditor
                             open={isEditorOpen}
                             onOpenChange={setIsEditorOpen}
+                            initialData={{
+                                nickname: data.nickname,
+                                statusMessage: data.statusMessage,
+                                thumbnailUrl: data.thumbnailUrl,
+                                gender: data.gender,
+                                ageGroup: data.ageGroup,
+                            }}
                         />
                     </div>
 
