@@ -11,6 +11,10 @@ import LoadingThreeDots from '../common/LoadingThreeDots';
 import CreatePost from './CreatePost';
 import CreatePostWindow from './CreatePostWindow';
 
+interface InfiniteScrollProps {
+    initial;
+}
+
 export default function InfiniteScroll() {
     const ref = useRef(null);
     const isInView = useInView(ref);

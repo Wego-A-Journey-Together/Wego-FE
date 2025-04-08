@@ -11,8 +11,9 @@ export default async function Home() {
         }),
     ]);
     const trendingPosts = await trendingRes.json();
-    const initialPostsData = await postsRes.json();
-    const initialPosts = initialPostsData.content;
+    const initialPostData = await postsRes.json();
+    const initialPosts = initialPostData.content;
+    const totalCount = initialPostData.totalElements;
     return (
         <div>
             {/* 인기 모임 캐러셀 영역 */}
@@ -22,7 +23,7 @@ export default async function Home() {
             />
 
             {/* 필터링 영역 */}
-            <HomeSearch />
+            <HomeSearch totalCount={totalCount} />
 
             {/* 동행 모집글 리스트 */}
             <section className="m-auto">

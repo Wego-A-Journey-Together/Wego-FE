@@ -4,7 +4,11 @@ import FilterSelector from '@/components/home/FilterSelector';
 import { RecruitingCheckbox } from '@/components/home/filter/RecruitingCheckbox';
 import { useLocale } from '@/hooks/useLocale';
 
-export default function HomeSearch() {
+interface Props {
+    totalCount: string | number;
+}
+
+export default function HomeSearch({ totalCount }: Props) {
     const { t } = useLocale();
     return (
         <>
@@ -15,7 +19,7 @@ export default function HomeSearch() {
             <FilterSelector />
             <section className="mt-[30px] flex items-center text-sm text-[#808080]">
                 <h2>
-                    {t.result} <span className="font-bold">{'90'}</span>
+                    {t.result} <span className="font-bold">{totalCount}</span>
                     {t.count}
                 </h2>
                 <RecruitingCheckbox />
