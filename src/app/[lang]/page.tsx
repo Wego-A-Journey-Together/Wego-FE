@@ -4,10 +4,15 @@ import { TrendingCarousel } from '@/components/home/TrendingCarousel';
 
 export default async function Home() {
     const NEST_BFF_URL = process.env.NEST_BFF_URL;
-    const res = await fetch(`${NEST_BFF_URL}/api/trending`, {
-        cache: 'no-store',
-    });
-    const trendingPosts = await res.json();
+    const [trendingRes, postsRes] = await Promise.all([
+        fetch(`${NEST_BFF_URL}/api/trending`, { cache: 'no-store' }),
+        fetch(`${NEST_BFF_URL}/api/gatherings/list?page=0`, {
+            cache: 'no-store',
+        }),
+    ]);
+    const trendingPosts = await trendingRes.json();
+    const initialPostsData = await postsRes.json();
+    const initialPosts = initialPostsData.content;
     return (
         <div>
             {/* 인기 모임 캐러셀 영역 */}
@@ -21,7 +26,7 @@ export default async function Home() {
 
             {/* 동행 모집글 리스트 */}
             <section className="m-auto">
-                <InfiniteScroll />
+                <InfiniteScroll initialPosts={initialPosts} />
             </section>
         </div>
     );
