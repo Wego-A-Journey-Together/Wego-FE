@@ -165,6 +165,7 @@ export default function ProfileEditor({
                         headers: {
                             'Content-Type': 'application/json',
                         },
+                        credentials: 'include',
                     },
                 );
 
