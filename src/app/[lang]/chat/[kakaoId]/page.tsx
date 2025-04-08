@@ -34,30 +34,53 @@ export default async function Chat({ params }: ChatPageProps) {
         currentUserIdType: typeof currentUser?.kakaoId,
     });
 
-    // kakaoId 타입 변환
+    // kakaoId 타입 변환 - 문자열로 확실하게 변환
     const currentUserKakaoId = currentUser?.kakaoId?.toString();
+    const requestedKakaoId = kakaoId?.toString();
 
-    if (!currentUser || currentUserKakaoId !== kakaoId) {
+    // 더 유연한 비교 (숫자 문자열로 변환 후 비교)
+    if (
+        !currentUser ||
+        !currentUserKakaoId ||
+        currentUserKakaoId !== requestedKakaoId
+    ) {
         console.log({
             current: currentUserKakaoId,
-            requested: kakaoId,
-            isEqual: currentUserKakaoId === kakaoId,
+            requested: requestedKakaoId,
+            isEqual: currentUserKakaoId === requestedKakaoId,
         });
         notFound();
     }
 
     try {
-        const res = await fetch(`${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`, {
-            credentials: 'include', // 인증 정보 포함
-        });
-        if (!res.ok) {
-            throw new Error('데이터를 불러오는데 실패했습니다.');
+        // API 요청 시 오류 처리 개선
+        if (!NEXT_PUBLIC_NEST_BFF_URL) {
+            throw new Error('API URL이 설정되지 않았습니다.');
         }
 
-        chatData = await res.json();
+        const res = await fetch(`${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`, {
+            credentials: 'include',
+            headers: {
+                Accept: 'application/json',
+            },
+        });
+
+        if (!res.ok) {
+            console.error('API 응답 오류:', res.status, res.statusText);
+            throw new Error(
+                `데이터를 불러오는데 실패했습니다. 상태 코드: ${res.status}`,
+            );
+        }
+
+        const responseData = await res.json();
+        console.log('API 응답 데이터:', responseData);
+
+        // API 응답이 배열인지 확인
+        chatData = Array.isArray(responseData) ? responseData : [];
     } catch (error) {
         console.error('채팅 데이터 불러오는데 실패했습니다.', error);
-        notFound();
+        // 에러 발생 시 빈 배열로 처리하고 계속 진행 (notFound 대신)
+        chatData = [];
     }
 
     const HEADER_HEIGHT = 72;
