@@ -5,54 +5,26 @@ import { useEffect, useState } from 'react';
 
 import LoadingThreeDots from '../common/LoadingThreeDots';
 
-interface Message {
-    id: number;
-    title: string;
-    timestamp: string;
-    status: string;
-    subtitle: string;
-    isGroupOpen: boolean;
+interface CommentData {
+    content: string;
+    parentId: number;
+    id?: number;
+    timestamp?: string;
+    subtitle?: string;
+    isGroupOpen?: boolean;
+}
+
+interface PaginatedResponse {
+    page: number;
+    size: number;
+    sort: string[];
+    content: CommentData[];
 }
 
 export default function Comments() {
-    // 임시데이터
-    const tempMessages = [
-        {
-            id: 1,
-            title: '혹시 3.24일 점심만 같이 하는 건 어떠세요?',
-            timestamp: '2025.03.24 오후 8:45',
-            status: '동행마감',
-            subtitle: '제주도 동행 구합니다',
-            isGroupOpen: false,
-        },
-        {
-            id: 2,
-            title: '혹시 3.24일 점심만 같이 하는 건 어떠세요?',
-            timestamp: '2025.03.24 오후 8:45',
-            status: '동행마감',
-            subtitle: '제주도 동행 구합니다',
-            isGroupOpen: true,
-        },
-        {
-            id: 3,
-            title: '혹시 3.24일 점심만 같이 하는 건 어떠세요?',
-            timestamp: '2025.03.24 오후 8:45',
-            status: '동행마감',
-            subtitle: '제주도 동행 구합니다',
-            isGroupOpen: false,
-        },
-        {
-            id: 4,
-            title: '혹시 3.24일 점심만 같이 하는 건 어떠세요?',
-            timestamp: '2025.03.24 오후 8:45',
-            status: '동행마감',
-            subtitle: '제주도 동행 구합니다',
-            isGroupOpen: true,
-        },
-    ];
-
-    const [messages, setMessages] = useState<Message[]>(tempMessages);
+    const [messages, setMessages] = useState<CommentData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchComments = async () => {
@@ -68,18 +40,20 @@ export default function Comments() {
                     throw new Error('Failed to fetch comments');
                 }
 
-                const data = await response.json();
-                setMessages(data);
+                const data: PaginatedResponse = await response.json();
+                setMessages(data.content || []);
+                setError(null);
             } catch (err) {
                 console.error('Error fetching comments:', err);
-                setMessages(tempMessages);
+                setError('댓글을 불러오는데 실패했습니다.');
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchComments();
-    }, [tempMessages]);
+    }, []);
+
     if (isLoading) {
         return (
             <div className="w-full py-4">
@@ -88,14 +62,21 @@ export default function Comments() {
         );
     }
 
-    // 에러메세지 임시 제거
-    // if (error) {
-    //     return (
-    //         <div className="w-full py-4 text-center text-red-500">
-    //             Error: {error}
-    //         </div>
-    //     );
-    // }
+    if (error) {
+        return (
+            <div className="w-full py-4 text-center text-red-500">
+                Error: {error}
+            </div>
+        );
+    }
+
+    if (messages.length === 0) {
+        return (
+            <div className="w-full py-4 text-center text-[#666666]">
+                내가 작성한 댓글이 없어요
+            </div>
+        );
+    }
 
     return (
         <div className="w-full">
@@ -108,24 +89,24 @@ export default function Comments() {
 
                     <div className="ml-3 flex flex-col">
                         <div className="text-base font-medium">
-                            {message.title}
+                            {message.content}
                         </div>
 
                         <div className="mt-1 text-xs text-[#333333]">
-                            {message.timestamp}
+                            {message?.timestamp}
                         </div>
 
                         <div className="mt-2 flex items-center">
                             <Badge
                                 variant={
-                                    message.isGroupOpen ? 'default' : 'disable'
+                                    message?.isGroupOpen ? 'default' : 'disable'
                                 }
                             >
-                                {message.isGroupOpen ? '모집 중' : '모집 마감'}
+                                {message?.isGroupOpen ? '모집 중' : '모집 마감'}
                             </Badge>
 
                             <div className="ml-2 text-sm font-semibold text-[#666666]">
-                                {message.subtitle}
+                                {message?.subtitle}
                             </div>
                         </div>
                     </div>
