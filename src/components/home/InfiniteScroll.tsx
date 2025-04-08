@@ -1,7 +1,7 @@
 'use client';
 
 import RecruitPost from '@/components/common/RecruitPost';
-import { HomePost } from '@/types/HomePost';
+import { BEHomePost } from '@/types/BEHomePost';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { motion, useInView } from 'motion/react';
 import { useEffect, useRef } from 'react';
@@ -11,7 +11,17 @@ import LoadingThreeDots from '../common/LoadingThreeDots';
 import CreatePost from './CreatePost';
 import CreatePostWindow from './CreatePostWindow';
 
-export default function InfiniteScroll() {
+interface InfiniteScrollProps {
+    initialPosts: BEHomePost[];
+}
+
+/**
+ * 0 페이지 데이터는 SSR 로 넘겨받아서 랜더링
+ * 이후 페이지에 대해 무한스크롤 (page=1, default size = 10 입니다.)
+ * @param initialPosts
+ * @constructor
+ */
+export default function InfiniteScroll({ initialPosts }: InfiniteScrollProps) {
     const ref = useRef(null);
     const isInView = useInView(ref);
     const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
@@ -27,12 +37,12 @@ export default function InfiniteScroll() {
         queryFn: async ({ pageParam = 1 }) => {
             const response = await fetch(
                 // 임시 링크입니다.
-                `${NEXT_PUBLIC_NEST_BFF_URL}/api/posts?_page=${pageParam}&_limit=12`,
+                `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/list?page=${pageParam}&size=12`,
             );
             return response.json();
         },
-        getNextPageParam: (lastPage, allPages) => {
-            return lastPage.length ? allPages.length + 1 : undefined;
+        getNextPageParam: (lastPage) => {
+            return lastPage.last ? undefined : lastPage.number + 1;
         },
         initialPageParam: 1,
     });
@@ -58,29 +68,34 @@ export default function InfiniteScroll() {
 
     return (
         <div className="mt-6 grid max-w-[1200px] grid-cols-1 gap-6 lg:grid-cols-2">
-            {isLoading && (
-                <div className="col-span-full my-30">
-                    <LoadingThreeDots />
-                </div>
-            )}
+            {/* SSR로 받은 초기 데이터 렌더링 */}
+            {initialPosts.map((post) => (
+                <motion.div
+                    key={`initial-${post.id}`}
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <RecruitPost post={post} />
+                </motion.div>
+            ))}
 
-            {/* 임시 데이터 */}
-            {!isLoading &&
-                data?.pages.map((page, pageIndex) =>
-                    page.map((post: HomePost, postIndex: number) => (
-                        <motion.div
-                            key={`${pageIndex}-${post.id}`}
-                            initial={{ y: 30, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{
-                                duration: 0.3,
-                                delay: postIndex * 0.05,
-                            }}
-                        >
-                            <RecruitPost post={post} />
-                        </motion.div>
-                    )),
-                )}
+            {/* 클라이언트에서 가져온 나머지 페이지 */}
+            {data?.pages.map((page, pageIndex) =>
+                page.content.map((post: BEHomePost, postIndex: number) => (
+                    <motion.div
+                        key={`${pageIndex + 1}-${post.id}`}
+                        initial={{ y: 30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{
+                            duration: 0.3,
+                            delay: postIndex * 0.05,
+                        }}
+                    >
+                        <RecruitPost post={post} />
+                    </motion.div>
+                )),
+            )}
 
             {/* 글이 없는 경우 띄울 Ui */}
             {hasNoData && <CreatePost />}
