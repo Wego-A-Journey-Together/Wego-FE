@@ -1,5 +1,6 @@
 'use client';
 
+import { checkProfileComplete } from '@/lib/checkProfileComplete';
 import { StarIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -29,6 +30,7 @@ export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
         gender: data.gender,
         profileImage: data.thumbnailUrl,
     };
+    const isProfileFilled: boolean = checkProfileComplete(profileData);
 
     return (
         <div className="flex w-full flex-col gap-10">
@@ -77,17 +79,19 @@ export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-1">
-                            <Image
-                                width={13}
-                                height={13}
-                                alt="verifiedCheck"
-                                src={'/icon/profile/verifiedCheck.svg'}
-                            />
-                            <span className="text-xs text-[#005ECA]">
-                                프로필 작성 완료
-                            </span>
-                        </div>
+                        {isProfileFilled && (
+                            <div className="flex items-center gap-1">
+                                <Image
+                                    width={13}
+                                    height={13}
+                                    alt="verifiedCheck"
+                                    src={'/icon/profile/verifiedCheck.svg'}
+                                />
+                                <span className="text-xs text-[#005ECA]">
+                                    프로필 작성 완료
+                                </span>
+                            </div>
+                        )}
 
                         <h2 className="text-2xl font-bold text-black">
                             {profileData.name}
