@@ -1,7 +1,7 @@
 'use client';
 
 import { checkProfileComplete } from '@/lib/checkProfileComplete';
-import { StarIcon } from 'lucide-react';
+import { CircleAlert, StarIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -79,7 +79,16 @@ export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        {isProfileFilled && (
+                        {!isProfileFilled ? (
+                            !isVisitor && (
+                                <div className="flex items-center gap-1">
+                                    <CircleAlert className="h-[13px] w-[13px] text-rose-500" />
+                                    <span className="text-xs text-neutral-500">
+                                        프로필을 완성해 보세요
+                                    </span>
+                                </div>
+                            )
+                        ) : (
                             <div className="flex items-center gap-1">
                                 <Image
                                     width={13}
@@ -97,12 +106,20 @@ export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
                             {profileData.name}
                         </h2>
 
-                        <div className="inline-flex items-center rounded-[24.53px] bg-[#e5e8ea] px-4 py-1.5 font-normal text-[#666666]">
-                            <span>{profileData.status}</span>
-                            <div className="mx-3 inline-block h-2 w-px bg-current"></div>
-                            <span>{profileData.age}</span>
-                            <div className="mx-3 inline-block h-2 w-px bg-current"></div>
-                            <span>{profileData.gender}</span>
+                        <div className="inline-flex h-7 items-center rounded-[24.53px] bg-[#e5e8ea] px-4 py-1.5 text-sm font-normal text-[#666666]">
+                            {isProfileFilled ? (
+                                <>
+                                    <span>{profileData.status}</span>
+                                    <div className="mx-3 inline-block h-2 w-px bg-current"></div>
+                                    <span>{profileData.age}</span>
+                                    <div className="mx-3 inline-block h-2 w-px bg-current"></div>
+                                    <span>{profileData.gender}</span>
+                                </>
+                            ) : (
+                                <span>
+                                    프로필을 작성하지 않은 동행자 입니다.
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>
