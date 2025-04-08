@@ -135,6 +135,21 @@ export default function ProfileEditor({
     const searchParams = useSearchParams();
     const kakaoId = searchParams.get('kakaoId') || '';
 
+    // 로컬스토리지에서 생년월일 정보 가져오기
+    const getBirthInfoFromStorage = () => {
+        const storedBirthInfo = localStorage.getItem(
+            `birthInfo_${initialData?.nickname}`,
+        );
+        if (storedBirthInfo) {
+            return JSON.parse(storedBirthInfo);
+        }
+        return {
+            birthYear: undefined,
+            birthMonth: undefined,
+            birthDay: undefined,
+        };
+    };
+
     const {
         register,
         handleSubmit,
@@ -152,9 +167,7 @@ export default function ProfileEditor({
                     | 'male'
                     | 'female'
                     | null) || undefined,
-            birthYear: undefined,
-            birthMonth: undefined,
-            birthDay: undefined,
+            ...getBirthInfoFromStorage(), // 저장된 생년월일 정보 사용
             userIntroduce: initialData?.statusMessage || '',
             profileImage:
                 initialData?.thumbnailUrl || '/icon/profile/defaultProfile.svg',
@@ -283,6 +296,18 @@ export default function ProfileEditor({
         try {
             setIsLoading(true);
             setApiError(null);
+
+            // 생년월일 정보 저장
+            if (data.birthYear || data.birthMonth || data.birthDay) {
+                localStorage.setItem(
+                    `birthInfo_${data.nickname}`,
+                    JSON.stringify({
+                        birthYear: data.birthYear,
+                        birthMonth: data.birthMonth,
+                        birthDay: data.birthDay,
+                    }),
+                );
+            }
 
             const NEXT_PUBLIC_NEST_BFF_URL =
                 process.env.NEXT_PUBLIC_NEST_BFF_URL;
