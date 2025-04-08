@@ -122,18 +122,6 @@ interface ProfileEditorProps {
     };
 }
 
-// 연령대와 성별 표시를 위한 매핑 객체 추가
-const ageGroupDisplay = {
-    ALL: '전체',
-    TEENS: '10대',
-    TWENTIES: '20대',
-    THIRTIES: '30대',
-    FORTIES: '40대',
-    FIFTIES: '50대',
-    SIXTIES: '60대',
-    SEVENTIES: '70대 이상',
-};
-
 const genderDisplay = {
     MALE: '남자',
     FEMALE: '여자',
@@ -632,12 +620,6 @@ export default function ProfileEditor({
                                         className="w-8 bg-transparent text-center text-base font-medium text-black outline-none placeholder:text-[#999999]"
                                     />
                                 </div>
-                                {formValues.ageGroup && (
-                                    <div className="mt-1 text-xs text-[#666666]">
-                                        연령대:{' '}
-                                        {ageGroupDisplay[formValues.ageGroup]}
-                                    </div>
-                                )}
                             </div>
 
                             {/* 상태 메세지 */}

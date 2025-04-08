@@ -21,13 +21,34 @@ interface MypageProfileProps {
     isVisitor: boolean;
 }
 
+const ageGroupDisplay = {
+    ALL: '전체',
+    TEENS: '10대',
+    TWENTIES: '20대',
+    THIRTIES: '30대',
+    FORTIES: '40대',
+    FIFTIES: '50대',
+    SIXTIES: '60대',
+    SEVENTIES: '70대 이상',
+};
+
+const genderDisplay = {
+    MALE: '남자',
+    FEMALE: '여자',
+};
+
 export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const profileData = {
         name: data.nickname,
         status: data.statusMessage,
-        age: data.ageGroup,
-        gender: data.gender,
+        // 스키마를 ui에 맞게 데이터 가공
+        age:
+            data.ageGroup &&
+            ageGroupDisplay[data.ageGroup as keyof typeof ageGroupDisplay],
+        gender:
+            data.gender &&
+            genderDisplay[data.gender as keyof typeof genderDisplay],
         profileImage: data.thumbnailUrl,
     };
     const isProfileFilled: boolean = checkProfileComplete(profileData);
