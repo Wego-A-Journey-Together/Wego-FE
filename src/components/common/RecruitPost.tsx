@@ -9,6 +9,25 @@ import { Badge } from '../ui/badge';
 
 //todo : 현재는 낙관적 업데이트를 위한 단순한 id 만 정의 (데이터 바인딩 x )
 
+// 나이대 표시 매핑
+const ageGroupDisplay = {
+    ALL: '전체',
+    TEENS: '10대',
+    TWENTIES: '20대',
+    THIRTIES: '30대',
+    FORTIES: '40대',
+    FIFTIES: '50대',
+    SIXTIES: '60대',
+    SEVENTIES: '70대 이상',
+};
+
+// 성별 표시 매핑
+const genderDisplay = {
+    MALE: '남자',
+    FEMALE: '여자',
+    ANY: '무관',
+};
+
 export interface PostContentProps {
     post: BEHomePost;
 }
@@ -57,17 +76,21 @@ export default function RecruitPost({ post }: PostContentProps) {
                         </span>
                         <div className="h-1.5 w-px bg-gray-300" />
                         <span className="text-sm text-[#333333]">
-                            {post.preferredAge}
+                            {ageGroupDisplay[
+                                post.preferredAge as keyof typeof ageGroupDisplay
+                            ] || post.preferredAge}
                         </span>
                         <div className="h-1.5 w-px bg-gray-300" />
                         <span className="text-sm text-[#333333]">
-                            {post.preferredGender}
+                            {genderDisplay[
+                                post.preferredGender as keyof typeof genderDisplay
+                            ] || post.preferredGender}
                         </span>
                         <div className="h-1.5 w-px bg-gray-300" />
                         <span>
                             <span className="text-sm text-[#999999]">
                                 {/*todo: 백엔드 api에 참여중인 사람 수는 안나오는 것 같습니다. */}
-                                1
+                                {'1 '}
                             </span>
                             <span className="text-sm text-[#333333]">
                                 / {post.maxParticipants}
