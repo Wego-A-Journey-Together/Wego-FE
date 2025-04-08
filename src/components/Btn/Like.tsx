@@ -1,5 +1,6 @@
 'use client';
 
+import { useSession } from '@/hooks/useSession';
 import { cn } from '@/lib';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Bookmark } from 'lucide-react';
@@ -17,26 +18,23 @@ interface ItemData {
 export default function Like({ id, className }: LikeProps) {
     const [isLike, setIsLike] = useState<boolean>(false);
     const queryClient = useQueryClient();
+    const { isAuthenticated } = useSession();
 
     /**
      * mutationFn 에 해당합니다. 백엔드에 찜할 포스트의 아이디를 연결합니다.
      * todo : 로그인 구현 후에 유저의 아이디를 포함해야 정확한 찜 로직으로 동작할 것 입니다 .
      * @param id
      */
-    const changeLike = async ({
-        postId,
-        newLike,
-    }: {
-        postId: number;
-        newLike: boolean;
-    }) => {
-        const res = await fetch(`/api/likes/${postId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                like: newLike,
-            }),
-        });
+    const changeLike = async ({ postId }: { postId: string }) => {
+        const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
+        const res = await fetch(
+            `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/like/${postId}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+            },
+        );
         if (!res.ok) {
             throw new Error('Like 요청 실패');
         }
@@ -109,7 +107,7 @@ export default function Like({ id, className }: LikeProps) {
     // 버튼 클릭 시 -> mutate(id)
     const handleClick = () => {
         const newLikeState = !isLike;
-        mutate({ postId: id, newLike: newLikeState });
+        mutate({ postId: id });
     };
 
     return (
