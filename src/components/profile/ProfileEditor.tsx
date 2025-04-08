@@ -283,6 +283,7 @@ export default function ProfileEditor({
                         gender: data.gender?.toUpperCase(),
                         ageGroup: data.ageGroup,
                     }),
+                    credentials: 'include',
                 },
             );
 
