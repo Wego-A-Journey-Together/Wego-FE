@@ -6,12 +6,15 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { motion, useInView } from 'motion/react';
 import { useEffect, useRef } from 'react';
 
-// api 생기면 삭제
 import LoadingThreeDots from '../common/LoadingThreeDots';
 import CreatePost from './CreatePost';
 import CreatePostWindow from './CreatePostWindow';
 
-export default function InfiniteScroll() {
+/**
+ * 무한스크롤 데이터 많아질 경우를 대비하여 모킹용 컴포넌트로 복사해 두겠습니다.
+ * @constructor
+ */
+export default function MockInfiniteScroll() {
     const ref = useRef(null);
     const isInView = useInView(ref);
     const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
@@ -23,11 +26,11 @@ export default function InfiniteScroll() {
         isLoading,
         isError,
     } = useInfiniteQuery({
-        queryKey: ['posts'],
+        queryKey: ['mockposts'],
         queryFn: async ({ pageParam = 1 }) => {
             const response = await fetch(
                 // 임시 링크입니다.
-                `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/list?page=${pageParam}&size=12`,
+                `${NEXT_PUBLIC_NEST_BFF_URL}/api/posts?_page=${pageParam}&_limit=12`,
             );
             return response.json();
         },
