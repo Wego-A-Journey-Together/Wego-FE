@@ -15,6 +15,7 @@ interface ChatPageViewProps {
     onClose?: () => void;
     onParticipate?: () => void;
     roomId?: number;
+    kakaoId?: string;  // kakaoId prop 추가
 }
 
 export default function ChatPageView({
@@ -26,6 +27,7 @@ export default function ChatPageView({
     onClose,
     onParticipate,
     roomId,
+    kakaoId,  // 구조 분해에 kakaoId 추가
 }: ChatPageViewProps) {
     return (
         <div className="bg-background-light flex h-full w-full flex-col border-x-1 border-[#E9E9E9]">
@@ -84,7 +86,7 @@ export default function ChatPageView({
 
             {/* 채팅 말풍선 섹션 */}
             <section className="w-full flex-1 overflow-y-auto p-4">
-                {roomId ? <ChatRoom roomId={roomId} /> : <ChatNotice />}
+                {roomId ? <ChatRoom roomId={roomId} kakaoId={kakaoId} /> : <ChatNotice />}
             </section>
         </div>
     );
