@@ -60,6 +60,7 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
                         endDate={post.filter.endDate}
                         onClose={toggleChat}
                         postId={post.id}
+                        opponentKakaoId={post.userId}
                     />
                 </SheetContent>
             </Sheet>
