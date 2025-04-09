@@ -49,7 +49,20 @@ export default function UserChat({
 
     // 채팅방 생성 또는 기존 채팅방 가져오기
     const createOrGetChatRoom = useCallback(async () => {
-        if (!opponentKakaoId || !kakaoId) return;
+        // 디버깅용 로그
+        console.log('createOrGetChatRoom 호출됨', { opponentKakaoId, kakaoId });
+
+        if (!opponentKakaoId) {
+            console.error('상대방 카카오 ID가 없습니다.');
+            setError('상대방 정보가 없습니다.');
+            return;
+        }
+
+        if (!kakaoId) {
+            console.error('내 카카오 ID가 없습니다. 로그인이 필요합니다.');
+            setError('로그인이 필요합니다.');
+            return;
+        }
 
         try {
             setIsLoading(true);
@@ -196,7 +209,6 @@ export default function UserChat({
                     <MoreHorizontal className="h-5 w-5 cursor-pointer text-[#333333]" />
                 </button>
             </SheetHeader>
-
             {/* 게시글 제목, 상태, 참여하기 버튼 섹션 */}
             <section className="flex w-full flex-col gap-2.5 border-b px-5 py-4">
                 <div className="flex w-full items-center justify-between">
@@ -215,7 +227,6 @@ export default function UserChat({
                     </Button>
                 </div>
             </section>
-
             {/* 채팅 말풍선 섹션 */}
             <section className="flex-1 overflow-y-auto p-4">
                 {isLoading ? (
@@ -232,19 +243,27 @@ export default function UserChat({
                     <ChatNotice />
                 )}
             </section>
-
             {/* 메세지 입력 영역 */}
             <SheetFooter className="flex flex-col items-center justify-center gap-2.5 bg-white px-2.5 py-5">
                 <div className="w-full rounded-xl border-solid bg-[#f9f9f9]">
                     <div className="p-5">
                         <div className="flex flex-col gap-10">
+                            <div className="mb-2 text-xs text-gray-500">
+                                Debug: isLoading=
+                                {isLoading ? 'true' : 'false'}, roomId=
+                                {roomId ? roomId.toString() : 'undefined'},
+                                kakaoId={kakaoId || 'undefined'},
+                                opponentKakaoId=
+                                {opponentKakaoId || 'undefined'}
+                            </div>
+
                             <Input
                                 placeholder="메세지를 입력하세요"
                                 className="border-none bg-transparent text-base leading-[20.8px] font-normal text-[#999999] shadow-none focus-visible:ring-0"
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 onKeyDown={handleKeyPress}
-                                disabled={isLoading || !roomId}
+                                disabled={isLoading}
                             />
                             <div className="flex w-full items-center justify-end gap-2">
                                 <Button
