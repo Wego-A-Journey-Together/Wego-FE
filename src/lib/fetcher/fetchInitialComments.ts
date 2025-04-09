@@ -1,4 +1,4 @@
-import { Comment } from '@/components/detail/CommentBundle';
+import { Comment } from '@/components/comment/CommentBundle';
 
 
 

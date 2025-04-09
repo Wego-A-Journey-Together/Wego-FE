@@ -7,9 +7,10 @@ import { toast } from 'sonner';
 
 interface AssignCommentProps {
     content: string;
-    parentId: string | null;
+    parentId: number | null;
     postId: number;
     setContent: React.Dispatch<React.SetStateAction<string>>;
+    variant: 'Comment' | 'Reply';
 }
 
 export default function AssignCommentBtn({
@@ -17,6 +18,7 @@ export default function AssignCommentBtn({
     parentId,
     postId,
     setContent,
+    variant,
 }: AssignCommentProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -65,7 +67,7 @@ export default function AssignCommentBtn({
             onClick={handleSubmitComment}
             disabled={loading}
         >
-            댓글 등록
+            {variant === 'Comment' ? '댓글 등록' : '답글 달기'}
         </Button>
     );
 }

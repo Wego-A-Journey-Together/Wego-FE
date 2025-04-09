@@ -1,6 +1,6 @@
 'use client';
 
-import PostComment from '@/components/detail/PostComment';
+import PostComment from '@/components/comment/PostComment';
 import PostContent from '@/components/detail/PostContent';
 import PostLocation from '@/components/detail/PostLocation';
 import PostReview from '@/components/detail/PostReview';

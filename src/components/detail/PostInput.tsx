@@ -1,8 +1,10 @@
 'use client';
 
 import AssignComment from '@/components/Btn/AssignComment';
+import Replies from '@/components/Icons/Replies';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib';
 import { useState } from 'react';
 
 /**
@@ -11,20 +13,38 @@ import { useState } from 'react';
 export default function PostInput({
     parentId,
     postId,
+    variant,
 }: {
-    parentId: string | null;
+    parentId: number | null;
     postId: number;
+    variant: 'Comment' | 'Reply';
 }) {
     const [content, setContent] = useState('');
     return (
         // 댓글 반복문에서 마진 40px + 10px =50px
         <div
-            className={`mt-2.5 flex h-[138px] w-full flex-col rounded-2xl border p-5`}
+            className={cn(
+                `mt-2.5 flex w-auto flex-col gap-2 rounded-2xl border p-4`,
+                variant === 'Reply'
+                    ? 'ml-10 flex-row items-center border-[#dcdcdc] bg-[#fafafa]'
+                    : 'bg-white',
+            )}
         >
+            {variant === 'Reply' && <Replies className="mr-3" />}
             <Textarea
-                className="h-auto flex-grow-1 resize-none border-none p-0 shadow-none outline-none placeholder:text-base placeholder:font-medium placeholder:text-[#666666] hover:border-none focus:border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                placeholder={`댓글을 입력하세요`}
+                className={cn(
+                    `resize-none border-none p-0 shadow-none outline-none placeholder:text-sm placeholder:text-[#666666] focus:ring-0`,
+                    variant === 'Reply'
+                        ? 'min-h-[48px] text-sm'
+                        : 'min-h-[80px] text-base',
+                )}
+                placeholder={
+                    variant === 'Reply'
+                        ? '답글을 남겨 보세요'
+                        : '댓글을 남겨 주세요'
+                }
                 onChange={(e) => setContent(e.target.value)}
+                value={content}
             />
             {/*버튼 그룹*/}
             <section className={`flex justify-end gap-2`}>
@@ -42,6 +62,7 @@ export default function PostInput({
                     parentId={parentId}
                     postId={postId}
                     setContent={setContent}
+                    variant={variant}
                 />
             </section>
         </div>
