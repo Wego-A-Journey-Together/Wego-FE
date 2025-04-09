@@ -8,9 +8,8 @@ import {
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet';
-import getCurrentUser from '@/lib/getCurrentUser';
+import { useSession } from '@/hooks/useSession';
 import { Calendar, MoreHorizontal, Star, X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 import ChatNotice from './ChatNotice';
@@ -38,32 +37,15 @@ export default function UserChat({
     onClose,
     onParticipate,
     roomId: initialRoomId,
-    postId,
     opponentKakaoId,
 }: UserChatProps) {
     const [message, setMessage] = useState('');
     const [roomId, setRoomId] = useState<number | undefined>(initialRoomId);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [kakaoId, setKakaoId] = useState<string | null>(null);
-    const router = useRouter();
 
-    // 현재 사용자 정보 가져오기
-    useEffect(() => {
-        const fetchCurrentUser = async () => {
-            try {
-                const user = await getCurrentUser();
-                if (user && user.kakaoId) {
-                    setKakaoId(user.kakaoId.toString());
-                }
-            } catch (error) {
-                console.error('사용자 정보를 가져오는데 실패했습니다.', error);
-                setError('사용자 정보를 가져오는데 실패했습니다.');
-            }
-        };
-
-        fetchCurrentUser();
-    }, []);
+    // Use the useSession hook instead of getCurrentUser
+    const { kakaoId } = useSession();
 
     // 채팅방 생성 또는 기존 채팅방 가져오기
     const createOrGetChatRoom = useCallback(async () => {
