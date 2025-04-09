@@ -38,14 +38,36 @@ export default function UserChat({
     onParticipate,
     roomId: initialRoomId,
     opponentKakaoId,
+    postId,
 }: UserChatProps) {
     const [message, setMessage] = useState('');
     const [roomId, setRoomId] = useState<number | undefined>(initialRoomId);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Use the useSession hook instead of getCurrentUser
     const { kakaoId } = useSession();
+
+    useEffect(() => {
+        console.log('유저 챗 컴포넌트 마운트 확인:', {
+            userName,
+            userRating,
+            title,
+            startDate,
+            endDate,
+            initialRoomId,
+            opponentKakaoId,
+            postId,
+        });
+    }, [
+        userName,
+        userRating,
+        title,
+        startDate,
+        endDate,
+        initialRoomId,
+        opponentKakaoId,
+        postId,
+    ]);
 
     // 채팅방 생성 또는 기존 채팅방 가져오기
     const createOrGetChatRoom = useCallback(async () => {

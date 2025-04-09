@@ -6,10 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { DetailPost } from '@/types/DetailPost';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function RecruitFooter({ post }: { post: DetailPost }) {
     const [showChat, setShowChat] = useState(false);
+
+    useEffect(() => {
+        console.log('RecruitFooter post data:', {
+            userId: post.userId,
+            userName: post.userName,
+            title: post.title,
+        });
+    }, [post]);
 
     const toggleChat = () => {
         setShowChat((prev) => !prev);
