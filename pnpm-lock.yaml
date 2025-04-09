@@ -47,6 +47,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^2.6.0
         version: 2.6.0(react-redux@9.2.0(@types/react@19.0.10)(react@19.0.0)(redux@5.0.1))(react@19.0.0)
+      '@stomp/stompjs':
+        specifier: ^7.1.1
+        version: 7.1.1
       '@tanstack/react-query':
         specifier: ^5.66.9
         version: 5.66.9(react@19.0.0)
@@ -86,6 +89,9 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^2.11.5
         version: 2.11.5
+      '@types/sockjs-client':
+        specifier: ^1.5.4
+        version: 1.5.4
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -143,6 +149,9 @@ importers:
       shadcn:
         specifier: 2.4.0-canary.17
         version: 2.4.0-canary.17(@types/node@20.17.19)(typescript@5.7.3)
+      sockjs-client:
+        specifier: ^1.6.1
+        version: 1.6.1
       sonner:
         specifier: ^2.0.2
         version: 2.0.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -182,7 +191,7 @@ importers:
         version: 8.6.7(@babel/core@7.26.10)(@storybook/test@8.6.7(storybook@8.6.7(prettier@3.5.2)))(next@15.2.0(@babel/core@7.26.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(rollup@4.36.0)(storybook@8.6.7(prettier@3.5.2))(typescript@5.7.3)(vite@6.2.2(@types/node@20.17.19)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.0))
       '@storybook/nextjs':
         specifier: 8.6.7
-        version: 8.6.7(esbuild@0.25.1)(next@15.2.0(@babel/core@7.26.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.6.7(prettier@3.5.2))(type-fest@4.37.0)(typescript@5.7.3)(webpack-hot-middleware@2.26.1)(webpack@5.98.0(esbuild@0.25.1))
+        version: 8.6.7(esbuild@0.25.1)(next@15.2.0(@babel/core@7.26.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sockjs-client@1.6.1)(storybook@8.6.7(prettier@3.5.2))(type-fest@4.37.0)(typescript@5.7.3)(webpack-hot-middleware@2.26.1)(webpack@5.98.0(esbuild@0.25.1))
       '@storybook/react':
         specifier: 8.6.7
         version: 8.6.7(@storybook/test@8.6.7(storybook@8.6.7(prettier@3.5.2)))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.6.7(prettier@3.5.2))(typescript@5.7.3)
@@ -2238,6 +2247,9 @@ packages:
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
+  '@stomp/stompjs@7.1.1':
+    resolution: {integrity: sha512-chcDs6YkAnKp1FqzwhGvh3i7v0+/ytzqWdKYw6XzINEKAzke/iD00dNgFPWSZEqktHOK+C1gSzXhLkLbARIaZw==}
+
   '@storybook/addon-actions@8.6.7':
     resolution: {integrity: sha512-XgZCwIcZGThEyD7e2q7rN/jzg7ZHUxn/ln403eex04jWAGBBbtC2IVuowwCWV8HwDihnhpCZEP6HlgjakOYZbQ==}
     peerDependencies:
@@ -2846,6 +2858,9 @@ packages:
 
   '@types/semver@7.5.8':
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
+
+  '@types/sockjs-client@1.5.4':
+    resolution: {integrity: sha512-zk+uFZeWyvJ5ZFkLIwoGA/DfJ+pYzcZ8eH4H/EILCm2OBZyHH6Hkdna1/UWL/CFruh5wj6ES7g75SvUB0VsH5w==}
 
   '@types/statuses@2.0.5':
     resolution: {integrity: sha512-jmIUGWrAiwu3dZpxntxieC+1n/5c3mjrImkmOSQ2NC5uP6cYO4aAZDdSmRcI5C1oiTmqlZGHC+/NmJrKogbP5A==}
@@ -3958,6 +3973,10 @@ packages:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
     engines: {node: '>=0.8.x'}
 
+  eventsource@2.0.2:
+    resolution: {integrity: sha512-IzUmBGPR3+oUG9dUeXynyNmf91/3zUSJg1lCktzKw47OXuhco54U3r9B7O4XX+Rb1Itm9OZ2b0RkTs10bICOxA==}
+    engines: {node: '>=12.0.0'}
+
   evp_bytestokey@1.0.3:
     resolution: {integrity: sha512-/f2Go4TognH/KvCISP7OUsHn85hT9nUkxxA9BEWxFn+Oj9o8ZNLm/40hdlgSLyuOimsrTKLUMEorQexp/aPQeA==}
 
@@ -3998,6 +4017,10 @@ packages:
 
   fastq@1.19.1:
     resolution: {integrity: sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==}
+
+  faye-websocket@0.11.4:
+    resolution: {integrity: sha512-CzbClwlXAuiRQAlUyfqPgvPoNKTckTPGfwZV4ZdAhVcP2lh9KUxJg2b5GkE7XbjKQ3YJnQ9z6D9ntLAlB+tP8g==}
+    engines: {node: '>=0.8.0'}
 
   fdir@6.4.3:
     resolution: {integrity: sha512-PMXmW2y1hDDfTSRc9gaXIuCCRpuoz3Kaz8cUelp3smouvfT632ozg2vrT6lJsHKKOF59YLbOGfAWGUcKEfRMQw==}
@@ -4277,6 +4300,9 @@ packages:
 
   htmlparser2@6.1.0:
     resolution: {integrity: sha512-gyyPk6rgonLFEDGoeRgQNaEUvdJ4ktTmmUh/h2t7s+M8oPpIPxgNACWa+6ESR57kXstwqPiCut0V8NRpcwgU7A==}
+
+  http-parser-js@0.5.10:
+    resolution: {integrity: sha512-Pysuw9XpUq5dVc/2SMHpuTY01RFl8fttgcyunjL7eEMhGM3cI4eOmiCycJDVCo/7O7ClfQD3SaI6ftDzqOXYMA==}
 
   https-browserify@1.0.0:
     resolution: {integrity: sha512-J+FkSdyD+0mA0N+81tMotaRMfSL9SGi+xpD3T6YApKsc3bGSXJlfXri3VyFOeYkfLRQisDk1W+jIFFKBeUBbBg==}
@@ -5794,6 +5820,10 @@ packages:
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
 
+  sockjs-client@1.6.1:
+    resolution: {integrity: sha512-2g0tjOR+fRs0amxENLi/q5TiJTqY+WXFOzb5UwXndlK6TO3U/mirZznpx6w34HVMoc3g7cY24yC/ZMIYnDlfkw==}
+    engines: {node: '>=12'}
+
   sonner@2.0.2:
     resolution: {integrity: sha512-xOeXErZ4blqQd11ZnlDmoRmg+ctUJBkTU8H+HVh9rnWi9Ke28xiL39r4iCTeDX31ODTe/s1MaiaY333dUzLCtA==}
     peerDependencies:
@@ -6348,6 +6378,14 @@ packages:
     peerDependenciesMeta:
       webpack-cli:
         optional: true
+
+  websocket-driver@0.7.4:
+    resolution: {integrity: sha512-b17KeDIQVjvb0ssuSDF2cYXSg2iztliJ4B9WdsuB6J952qCPKmnVq4DyW5motImXHDC1cBT/1UezrJVsKw5zjg==}
+    engines: {node: '>=0.8.0'}
+
+  websocket-extensions@0.1.4:
+    resolution: {integrity: sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==}
+    engines: {node: '>=0.8.0'}
 
   which-boxed-primitive@1.1.1:
     resolution: {integrity: sha512-TbX3mj8n0odCBFVlY8AxkqcHASw3L60jIuF8jFP78az3C2YhmGvqbHBpAjTRH2/xqYunrJ9g1jSyjCjpoWzIAA==}
@@ -8066,7 +8104,7 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@pmmmwh/react-refresh-webpack-plugin@0.5.15(react-refresh@0.14.2)(type-fest@4.37.0)(webpack-hot-middleware@2.26.1)(webpack@5.98.0(esbuild@0.25.1))':
+  '@pmmmwh/react-refresh-webpack-plugin@0.5.15(react-refresh@0.14.2)(sockjs-client@1.6.1)(type-fest@4.37.0)(webpack-hot-middleware@2.26.1)(webpack@5.98.0(esbuild@0.25.1))':
     dependencies:
       ansi-html: 0.0.9
       core-js-pure: 3.41.0
@@ -8078,6 +8116,7 @@ snapshots:
       source-map: 0.7.4
       webpack: 5.98.0(esbuild@0.25.1)
     optionalDependencies:
+      sockjs-client: 1.6.1
       type-fest: 4.37.0
       webpack-hot-middleware: 2.26.1
 
@@ -8874,6 +8913,8 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
+  '@stomp/stompjs@7.1.1': {}
+
   '@storybook/addon-actions@8.6.7(storybook@8.6.7(prettier@3.5.2))':
     dependencies:
       '@storybook/global': 5.0.0
@@ -9105,7 +9146,7 @@ snapshots:
     dependencies:
       storybook: 8.6.7(prettier@3.5.2)
 
-  '@storybook/nextjs@8.6.7(esbuild@0.25.1)(next@15.2.0(@babel/core@7.26.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.6.7(prettier@3.5.2))(type-fest@4.37.0)(typescript@5.7.3)(webpack-hot-middleware@2.26.1)(webpack@5.98.0(esbuild@0.25.1))':
+  '@storybook/nextjs@8.6.7(esbuild@0.25.1)(next@15.2.0(@babel/core@7.26.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sockjs-client@1.6.1)(storybook@8.6.7(prettier@3.5.2))(type-fest@4.37.0)(typescript@5.7.3)(webpack-hot-middleware@2.26.1)(webpack@5.98.0(esbuild@0.25.1))':
     dependencies:
       '@babel/core': 7.26.10
       '@babel/plugin-syntax-bigint': 7.8.3(@babel/core@7.26.10)
@@ -9120,7 +9161,7 @@ snapshots:
       '@babel/preset-react': 7.26.3(@babel/core@7.26.10)
       '@babel/preset-typescript': 7.26.0(@babel/core@7.26.10)
       '@babel/runtime': 7.26.9
-      '@pmmmwh/react-refresh-webpack-plugin': 0.5.15(react-refresh@0.14.2)(type-fest@4.37.0)(webpack-hot-middleware@2.26.1)(webpack@5.98.0(esbuild@0.25.1))
+      '@pmmmwh/react-refresh-webpack-plugin': 0.5.15(react-refresh@0.14.2)(sockjs-client@1.6.1)(type-fest@4.37.0)(webpack-hot-middleware@2.26.1)(webpack@5.98.0(esbuild@0.25.1))
       '@storybook/builder-webpack5': 8.6.7(esbuild@0.25.1)(storybook@8.6.7(prettier@3.5.2))(typescript@5.7.3)
       '@storybook/preset-react-webpack': 8.6.7(@storybook/test@8.6.7(storybook@8.6.7(prettier@3.5.2)))(esbuild@0.25.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.6.7(prettier@3.5.2))(typescript@5.7.3)
       '@storybook/react': 8.6.7(@storybook/test@8.6.7(storybook@8.6.7(prettier@3.5.2)))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.6.7(prettier@3.5.2))(typescript@5.7.3)
@@ -9660,6 +9701,8 @@ snapshots:
   '@types/resolve@1.20.6': {}
 
   '@types/semver@7.5.8': {}
+
+  '@types/sockjs-client@1.5.4': {}
 
   '@types/statuses@2.0.5': {}
 
@@ -11074,6 +11117,8 @@ snapshots:
 
   events@3.3.0: {}
 
+  eventsource@2.0.2: {}
+
   evp_bytestokey@1.0.3:
     dependencies:
       md5.js: 1.3.5
@@ -11126,6 +11171,10 @@ snapshots:
   fastq@1.19.1:
     dependencies:
       reusify: 1.1.0
+
+  faye-websocket@0.11.4:
+    dependencies:
+      websocket-driver: 0.7.4
 
   fdir@6.4.3(picomatch@4.0.2):
     optionalDependencies:
@@ -11420,6 +11469,8 @@ snapshots:
       domhandler: 4.3.1
       domutils: 2.8.0
       entities: 2.2.0
+
+  http-parser-js@0.5.10: {}
 
   https-browserify@1.0.0: {}
 
@@ -13012,6 +13063,16 @@ snapshots:
 
   sisteransi@1.0.5: {}
 
+  sockjs-client@1.6.1:
+    dependencies:
+      debug: 3.2.7
+      eventsource: 2.0.2
+      faye-websocket: 0.11.4
+      inherits: 2.0.4
+      url-parse: 1.5.10
+    transitivePeerDependencies:
+      - supports-color
+
   sonner@2.0.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       react: 19.0.0
@@ -13585,6 +13646,14 @@ snapshots:
       - '@swc/core'
       - esbuild
       - uglify-js
+
+  websocket-driver@0.7.4:
+    dependencies:
+      http-parser-js: 0.5.10
+      safe-buffer: 5.2.1
+      websocket-extensions: 0.1.4
+
+  websocket-extensions@0.1.4: {}
 
   which-boxed-primitive@1.1.1:
     dependencies:

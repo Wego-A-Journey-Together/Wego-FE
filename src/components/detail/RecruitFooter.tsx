@@ -59,6 +59,7 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
                         startDate={post.filter.startDate}
                         endDate={post.filter.endDate}
                         onClose={toggleChat}
+                        postId={post.id}
                     />
                 </SheetContent>
             </Sheet>
