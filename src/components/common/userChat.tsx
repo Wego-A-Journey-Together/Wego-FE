@@ -8,7 +8,10 @@ import {
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet';
+import getCurrentUser from '@/lib/getCurrentUser';
 import { Calendar, MoreHorizontal, Star, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 import ChatNotice from './ChatNotice';
 import ChatRoom from './ChatRoom';
@@ -22,6 +25,8 @@ interface UserChatProps {
     onClose?: () => void;
     onParticipate?: () => void;
     roomId?: number;
+    postId?: number;
+    opponentKakaoId?: string; // 상대방 카카오 ID
 }
 
 export default function UserChat({
@@ -32,8 +37,148 @@ export default function UserChat({
     endDate,
     onClose,
     onParticipate,
-    roomId,
+    roomId: initialRoomId,
+    postId,
+    opponentKakaoId,
 }: UserChatProps) {
+    const [message, setMessage] = useState('');
+    const [roomId, setRoomId] = useState<number | undefined>(initialRoomId);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [kakaoId, setKakaoId] = useState<string | null>(null);
+    const router = useRouter();
+
+    // 현재 사용자 정보 가져오기
+    useEffect(() => {
+        const fetchCurrentUser = async () => {
+            try {
+                const user = await getCurrentUser();
+                if (user && user.kakaoId) {
+                    setKakaoId(user.kakaoId.toString());
+                }
+            } catch (error) {
+                console.error('사용자 정보를 가져오는데 실패했습니다.', error);
+                setError('사용자 정보를 가져오는데 실패했습니다.');
+            }
+        };
+
+        fetchCurrentUser();
+    }, []);
+
+    // 채팅방 생성 또는 기존 채팅방 가져오기
+    const createOrGetChatRoom = useCallback(async () => {
+        if (!opponentKakaoId || !kakaoId) return;
+
+        try {
+            setIsLoading(true);
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                throw new Error('인증 토큰이 없습니다. 로그인이 필요합니다.');
+            }
+
+            const NEXT_PUBLIC_NEST_BFF_URL =
+                process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
+
+            // 채팅방 생성 또는 기존 채팅방 가져오기 API 호출
+            const response = await fetch(
+                `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        opponentKakaoId: opponentKakaoId, // 상대방 카카오 ID 전송
+                    }),
+                    credentials: 'include',
+                },
+            );
+
+            if (!response.ok) {
+                throw new Error('채팅방을 생성하는데 실패했습니다.');
+            }
+
+            const data = await response.json();
+            setRoomId(data.roomId);
+            return data.roomId;
+        } catch (error) {
+            console.error('채팅방 생성 오류:', error);
+            setError('채팅방을 생성하는데 실패했습니다.');
+            return null;
+        } finally {
+            setIsLoading(false);
+        }
+    }, [opponentKakaoId, kakaoId]);
+
+    // 초기 채팅방 설정 (의존성 배열 업데이트)
+    useEffect(() => {
+        if (!roomId && opponentKakaoId) {
+            createOrGetChatRoom();
+        }
+    }, [roomId, opponentKakaoId, createOrGetChatRoom]);
+
+    // 메시지 전송 함수
+    const sendMessage = async () => {
+        if (!message.trim() || !roomId || !kakaoId) return;
+
+        try {
+            // 채팅방이 없으면 생성
+            let currentRoomId = roomId;
+            if (!currentRoomId) {
+                if (!opponentKakaoId) {
+                    throw new Error('상대방 정보가 없습니다.');
+                }
+                currentRoomId = await createOrGetChatRoom();
+                if (!currentRoomId) return;
+            }
+
+            // 토큰 가져오기
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
+            }
+
+            // WebSocket으로 메시지 전송
+            const NEXT_PUBLIC_NEST_BFF_URL =
+                process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
+
+            // 메시지 전송 API 호출
+            const response = await fetch(
+                `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${currentRoomId}/messages`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                    }),
+                    credentials: 'include',
+                },
+            );
+
+            if (!response.ok) {
+                throw new Error('메시지 전송에 실패했습니다.');
+            }
+
+            // 메시지 입력 후 입력창 초기화
+            setMessage('');
+        } catch (error) {
+            console.error('메시지 전송 오류:', error);
+            setError('메시지를 전송하는데 실패했습니다.');
+        }
+    };
+
+    // 엔터키로 메시지 전송
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    };
+
     return (
         <div className="bg-background-light flex h-full flex-col">
             {/* 채팅창 헤더 */}
@@ -91,8 +236,19 @@ export default function UserChat({
 
             {/* 채팅 말풍선 섹션 */}
             <section className="flex-1 overflow-y-auto p-4">
-                {/* TODO 조건 부분에 대화 내역이 있는지 없는지 반환 필요. */}
-                {roomId ? <ChatRoom roomId={roomId} /> : <ChatNotice />}
+                {isLoading ? (
+                    <div className="flex h-full items-center justify-center">
+                        <p>로딩 중...</p>
+                    </div>
+                ) : error ? (
+                    <div className="flex h-full items-center justify-center text-red-500">
+                        <p>{error}</p>
+                    </div>
+                ) : roomId ? (
+                    <ChatRoom roomId={roomId} kakaoId={kakaoId || undefined} />
+                ) : (
+                    <ChatNotice />
+                )}
             </section>
 
             {/* 메세지 입력 영역 */}
@@ -103,9 +259,21 @@ export default function UserChat({
                             <Input
                                 placeholder="메세지를 입력하세요"
                                 className="border-none bg-transparent text-base leading-[20.8px] font-normal text-[#999999] shadow-none focus-visible:ring-0"
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                onKeyDown={handleKeyPress}
+                                disabled={isLoading || !roomId}
                             />
                             <div className="flex w-full items-center justify-end gap-2">
-                                <Button className="px-5 py-2">전송</Button>
+                                <Button
+                                    className="px-5 py-2"
+                                    onClick={sendMessage}
+                                    disabled={
+                                        isLoading || !message.trim() || !roomId
+                                    }
+                                >
+                                    전송
+                                </Button>
                             </div>
                         </div>
                     </div>
