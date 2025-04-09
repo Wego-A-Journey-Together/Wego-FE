@@ -2,6 +2,12 @@ import Like from '@/components/Btn/Like';
 import RecruitFooter from '@/components/detail/RecruitFooter';
 import TabSection from '@/components/detail/TabSection';
 import UserProfile from '@/components/detail/UserProfile';
+import {
+    SpringCommentResponse,
+    fetchInitialComments,
+} from '@/lib/fetcher/fetchInitialComments';
+import { fetchPostDetail } from '@/lib/fetcher/fetchPostDetail';
+import { DetailPost } from '@/types/DetailPost';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
@@ -13,25 +19,20 @@ interface DetailPageProps {
 
 export default async function DetailPage({ params }: DetailPageProps) {
     const { id } = await params;
-    const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
-    let post = null;
+    let post: DetailPost;
+    let firstCommentBundle: SpringCommentResponse;
 
     try {
-        const res = await fetch(
-            `${NEXT_PUBLIC_NEST_BFF_URL}/api/detail/${id}`,
-            {
-                cache: 'no-cache',
-            },
-        );
-
-        if (!res.ok) {
-            if (res.status === 404) notFound();
-        }
-
-        post = await res.json();
+        [post, firstCommentBundle] = await Promise.all([
+            fetchPostDetail(id),
+            fetchInitialComments(Number(id)),
+        ]);
     } catch (error) {
-        console.error('네트워크 끊김 fetch 실패', error);
-        throw new Error('데이터 로딩 실패');
+        if ((error as Error).message === '404') {
+            notFound();
+        }
+        console.error('데이터 로딩 실패', error);
+        throw new Error('페이지 렌더링 실패');
     }
 
     return (
@@ -66,7 +67,7 @@ export default async function DetailPage({ params }: DetailPageProps) {
                 <UserProfile post={post} />
             </section>
             {/*scrollspy 네비게이션 탭 섹션*/}
-            <TabSection post={post} />
+            <TabSection post={post} firstCommentBundle={firstCommentBundle} />
             {/*상세 정보 섹션*/}
 
             {/*푸터 섹션 (참여하기,문의채팅)*/}

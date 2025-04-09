@@ -4,7 +4,6 @@ import Link from 'next/link';
 interface UserProfileProps {
     post: {
         userName: string;
-        thumbnailImage: string;
         statusMessage: string;
         userAge: number;
         userGender: string;
