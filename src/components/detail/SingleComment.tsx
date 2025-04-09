@@ -27,44 +27,46 @@ export default function SingleComment({
     variant,
 }: SingleCommentProps) {
     return (
-        <div className="flex items-start gap-2.5">
-            {variant === 'Reply' && <Replies className={'shrink-0'} />}
-            {/*유저 정보 섹션*/}
-            <div className="flex-1 items-center gap-3">
-                {/*유저 이미지*/}
-                <div className="relative aspect-square h-8 w-8">
-                    <Image
-                        src={content.writer.thumbnailUrl}
-                        alt="유저 프로필 이미지"
-                        fill
-                        className="rounded-full object-cover"
-                    />
+        <div className="flex gap-2.5">
+            <div>
+                {variant === 'Reply' && <Replies className={'shrink-0'} />}
+                {/*유저 정보 섹션*/}
+                <div className="flex flex-1 items-center gap-3">
+                    {/*유저 이미지*/}
+                    <div className="relative aspect-square h-8 w-8">
+                        <Image
+                            src={content.writer.thumbnailUrl}
+                            alt="유저 프로필 이미지"
+                            fill
+                            className="rounded-full object-cover"
+                        />
+                    </div>
+
+                    {/* 유저 정보 */}
+                    <div className="w-full text-sm font-semibold text-black">
+                        {content.writer.nickname}
+                    </div>
                 </div>
 
-                {/* 유저 정보 */}
-                <div className="w-full text-sm font-semibold text-black">
-                    {content.writer.nickname}
+                {/*댓글 본문 */}
+                <div className={`mt-2.5`}>
+                    <p className={`text-base font-medium text-[#333333]`}>
+                        {content.content}
+                    </p>
                 </div>
-            </div>
 
-            {/*댓글 본문 */}
-            <div className={`mt-2.5`}>
-                <p className={`text-base font-medium text-[#333333]`}>
-                    {content.content}
-                </p>
-            </div>
-
-            <div className={`mt-2.5 flex justify-start gap-[27px]`}>
-                {/*날짜 섹션*/}
-                <p className={`text-xs font-normal text-[#666666]`}>
-                    {dateFormat(content.createdAt)}
-                </p>
-                {/*todo: 답글달기 클릭시 답글 입력 (디자이너 분들께 질문하기 )*/}
-                <p
-                    className={`cursor-pointer text-xs font-medium text-[#666666]`}
-                >
-                    답글달기
-                </p>
+                <div className={`mt-2.5 flex justify-start gap-[27px]`}>
+                    {/*날짜 섹션*/}
+                    <p className={`text-xs font-normal text-[#666666]`}>
+                        {dateFormat(content.createdAt)}
+                    </p>
+                    {/*todo: 답글달기 클릭시 답글 입력 (디자이너 분들께 질문하기 )*/}
+                    <p
+                        className={`cursor-pointer text-xs font-medium text-[#666666]`}
+                    >
+                        답글달기
+                    </p>
+                </div>
             </div>
         </div>
     );
