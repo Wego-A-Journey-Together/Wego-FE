@@ -1,4 +1,5 @@
 import CommentBundle from '@/components/detail/CommentBundle';
+import PostInput from '@/components/detail/PostInput';
 import { SpringCommentResponse } from '@/lib/fetcher/fetchInitialComments';
 
 /**
@@ -10,8 +11,10 @@ import { SpringCommentResponse } from '@/lib/fetcher/fetchInitialComments';
  */
 export default function PostComment({
     firstCommentBundle,
+    postId,
 }: {
     firstCommentBundle: SpringCommentResponse;
+    postId: number;
 }) {
     const initialComments = firstCommentBundle.content;
     return (
@@ -25,7 +28,18 @@ export default function PostComment({
                     <CommentBundle key={setIndex} bundle={set} />
                 ))
             ) : (
-                <div>댓글없음</div>
+                <>
+                    <div
+                        className={
+                            'flex min-h-30 items-center justify-center pb-3 text-center text-neutral-600'
+                        }
+                    >
+                        아직 댓글이 없어요
+                        <br /> 첫 댓글을 작성해 주세요
+                    </div>
+                    {/*글이 없는 경우 100% 신규 부모댓글 이므로 null , api 스펙이 null 명시되어 있습니다.*/}
+                    <PostInput postId={postId} parentId={null} />
+                </>
             )}
         </div>
     );

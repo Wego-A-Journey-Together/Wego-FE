@@ -2,7 +2,6 @@
 
 import PostComment from '@/components/detail/PostComment';
 import PostContent from '@/components/detail/PostContent';
-import PostInput from '@/components/detail/PostInput';
 import PostLocation from '@/components/detail/PostLocation';
 import PostReview from '@/components/detail/PostReview';
 import ScrollSpy from '@/components/detail/ScrollSpy';
@@ -63,8 +62,10 @@ export default function TabSection({
             {/*todo: 댓글과 리뷰도 ajax요청으로 변경 해야 할 것 같습니다.*/}
             {/*댓글 섹션*/}
             <section ref={commentAreaRef} className={`mt-15 scroll-mt-40`}>
-                <PostComment firstCommentBundle={firstCommentBundle} />
-                <PostInput />
+                <PostComment
+                    firstCommentBundle={firstCommentBundle}
+                    postId={post.id}
+                />
             </section>
             {/*리뷰 섹션*/}
             <section ref={reviewAreaRef} className="scroll-mt-40">
