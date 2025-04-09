@@ -1,61 +1,46 @@
-import { dateFormat } from '@/lib';
-import Image from 'next/image';
+import CommentBundle from '@/components/detail/CommentBundle';
+import PostInput from '@/components/detail/PostInput';
+import { SpringCommentResponse } from '@/lib/fetcher/fetchInitialComments';
 
-import { postComments } from '../../../public/data/comments';
-
-export default function PostComment() {
-    const totalComments = postComments.length;
+/**
+ * 첫 페이지는 서버사이드 랜더링으로 불러와서 내려줍니다.
+ * 이후 페이지는 더보기 버튼을 클릭시마다 fetch 해서 불러오고, 마지막 페이지에서는 댓글 접기로 변경
+ * @param postId
+ * @param firstCommentBundle
+ * @constructor
+ */
+export default function PostComment({
+    firstCommentBundle,
+    postId,
+}: {
+    firstCommentBundle: SpringCommentResponse;
+    postId: number;
+}) {
+    const initialComments = firstCommentBundle.content;
     return (
         <div>
             {/*댓글 헤더*/}
             <h2 className={`mb-7.5 text-xl font-bold text-neutral-950`}>
-                댓글 {totalComments}
+                댓글 {firstCommentBundle?.totalElements}
             </h2>
-
-            {/*댓글 섹션*/}
-            {postComments.map((comment, idx) => (
-                <div key={`post-comment-${idx}`}>
-                    {/*유저 정보 섹션*/}
-                    <div className="flex items-center gap-3">
-                        {/*유저 이미지*/}
-                        <div className="relative aspect-square h-8 w-8">
-                            <Image
-                                src={comment.userIcon}
-                                alt="유저 프로필 이미지"
-                                fill
-                                className="rounded-full object-cover"
-                            />
-                        </div>
-
-                        {/* 유저 정보 */}
-                        <div className="w-full text-sm font-semibold text-black">
-                            {comment.userName}
-                        </div>
+            {!!firstCommentBundle && initialComments.length > 0 ? (
+                initialComments.map((set, setIndex) => (
+                    <CommentBundle key={setIndex} bundle={set} />
+                ))
+            ) : (
+                <>
+                    <div
+                        className={
+                            'flex min-h-30 items-center justify-center pb-3 text-center text-neutral-600'
+                        }
+                    >
+                        아직 댓글이 없어요
+                        <br /> 첫 댓글을 작성해 주세요
                     </div>
-
-                    {/*댓글 본문 */}
-                    <div className={`mt-2.5`}>
-                        <p className={`text-base font-medium text-[#333333]`}>
-                            {comment.content}
-                        </p>
-                    </div>
-
-                    <div className={`mt-2.5 flex justify-start gap-[27px]`}>
-                        {/*날짜 섹션*/}
-                        <p className={`text-xs font-normal text-[#666666]`}>
-                            {dateFormat(comment.updatedAt)}
-                        </p>
-                        {/*todo: 답글달기 클릭시 답글 입력 (디자이너 분들께 질문하기 )*/}
-                        <p
-                            className={`cursor-pointer text-xs font-medium text-[#666666]`}
-                        >
-                            답글달기
-                        </p>
-                    </div>
-                    {/*세퍼레이터*/}
-                    <div className="my-5 h-px w-full bg-[#e9e9e9]" />
-                </div>
-            ))}
+                    {/*글이 없는 경우 100% 신규 부모댓글 이므로 null , api 스펙이 null 명시되어 있습니다.*/}
+                    <PostInput postId={postId} parentId={null} />
+                </>
+            )}
         </div>
     );
 }

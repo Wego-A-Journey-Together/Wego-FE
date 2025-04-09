@@ -1,13 +1,15 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface UserProfileProps {
     post: {
         userName: string;
-        thumbnailImage: string;
         statusMessage: string;
         userAge: number;
         userGender: string;
         userRating: number;
+        profileImage: string;
+        userId: string;
     };
 }
 
@@ -17,12 +19,15 @@ export default function UserProfile({ post }: UserProfileProps) {
             {/* 유저 프로필 영역 */}
             <div className="mt-7.5 flex w-full flex-col items-start justify-between gap-4 md:flex-row md:items-center md:gap-2">
                 {/* 아이콘 */}
-                <div className="flex items-center gap-3">
+                <Link
+                    href={`/profile/${post.userId}`}
+                    className="flex items-center gap-3"
+                >
                     <div className="h-[50px] w-[50px] overflow-hidden rounded-full">
                         <Image
                             src={
-                                post.thumbnailImage
-                                    ? post.thumbnailImage
+                                post.profileImage
+                                    ? post.profileImage
                                     : '/icon/profile/defaultProfile.svg'
                             }
                             alt="유저 프로필 이미지"
@@ -51,7 +56,7 @@ export default function UserProfile({ post }: UserProfileProps) {
                             </p>
                         </div>
                     </div>
-                </div>
+                </Link>
 
                 {/* 리뷰, 평점 */}
                 <div className="flex flex-col items-end gap-[3px]">
