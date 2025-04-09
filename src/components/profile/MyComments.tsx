@@ -36,9 +36,6 @@ export default function Comments() {
                     `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/users/me/comments`,
                     {
                         method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
                         credentials: 'include',
                     },
                 );
