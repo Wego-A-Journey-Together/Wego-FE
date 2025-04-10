@@ -52,10 +52,13 @@ export default function UserChat({
     // WebSocket 연결 설정
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
-        if (!token || !roomId) return;
+        if (!token || !roomId) {
+            console.log('WebSocket 연결 조건 미충족:', { token, roomId });
+            return;
+        }
 
         const client = new Client({
-            brokerURL: `${process.env.NEXT_PUBLIC_NEST_BFF_URL?.replace('http', 'ws')}/ws/chat/websocket`,
+            brokerURL: 'ws://localhost:8080/ws/chat/websocket',
             connectHeaders: {
                 Authorization: `Bearer ${token}`,
             },
@@ -67,27 +70,25 @@ export default function UserChat({
             heartbeatOutgoing: 4000,
             onConnect: () => {
                 console.log('WebSocket 연결 성공');
-                // 채팅방 메시지 구독
-                client.subscribe(`/topic/chat.room.${roomId}`, (message) => {
+                client.subscribe(`/topic/chatroom/${roomId}`, (message) => {
                     const receivedMessage = JSON.parse(message.body);
                     console.log('새 메시지 수신:', receivedMessage);
                 });
             },
             onStompError: (frame) => {
                 console.error(
-                    'Broker reported error: ' + frame.headers['message'],
+                    'Broker reported error:',
+                    frame.headers['message'],
                 );
-                console.error('Additional details: ' + frame.body);
+                console.error('Additional details:', frame.body);
                 setError('WebSocket 연결 오류가 발생했습니다.');
-            },
-            onDisconnect: () => {
-                console.log('WebSocket 연결 해제');
             },
         });
 
         try {
             client.activate();
             setStompClient(client);
+            setError(null); // 연결 성공시 에러 초기화
         } catch (error) {
             console.error('WebSocket 연결 실패:', error);
             setError('WebSocket 연결에 실패했습니다.');
@@ -102,56 +103,33 @@ export default function UserChat({
 
     // 메시지 전송 함수
     const sendMessage = async () => {
-        console.log('sendMessage 호출됨', {
-            messageEmpty: !message.trim(),
-            roomId,
-            kakaoId,
-            stompClientActive: stompClient?.active,
-            message
-        });
+        if (!message.trim() || !roomId || !stompClient?.active) {
+            console.log('메시지 전송 조건 미충족:', {
+                messageEmpty: !message.trim(),
+                roomId,
+                stompClientActive: stompClient?.active,
+            });
+            return;
+        }
 
-        if (!message.trim()) {
-            console.log('메시지가 비어있음');
-            return;
-        }
-        if (!roomId) {
-            console.log('roomId가 없음');
-            return;
-        }
-        if (!kakaoId) {
-            console.log('kakaoId가 없음');
-            return;
-        }
-        if (!stompClient) {
-            console.log('stompClient가 없음');
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            setError('인증 토큰이 없습니다.');
             return;
         }
 
         try {
-            if (!stompClient.active) {
-                console.log('WebSocket이 연결되어 있지 않음');
-                throw new Error('WebSocket이 연결되어 있지 않습니다.');
-            }
-
-            console.log('메시지 전송 시도:', {
-                roomId,
-                message,
-                kakaoId,
-            });
-
             stompClient.publish({
                 destination: '/app/chat.sendMessage',
                 body: JSON.stringify({
                     roomId: roomId,
-                    message: message,
-                    sentAt: new Date().toISOString(),
+                    message: message.trim(),
                 }),
                 headers: {
+                    Authorization: `Bearer ${token}`,
                     'content-type': 'application/json',
                 },
             });
-
-            console.log('메시지 전송 완료');
             setMessage('');
         } catch (error) {
             console.error('메시지 전송 오류:', error);
