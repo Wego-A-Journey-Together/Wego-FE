@@ -4,7 +4,7 @@
  */
 
 interface UserDetails {
-    kakaoId: number;
+    kakaoId: number | string;
     nickname: string;
     thumbnailUrl?: string;
     statusMessage?: string;
@@ -12,7 +12,9 @@ interface UserDetails {
     ageGroup?: string;
 }
 
-export async function fetchUserDetail(kakaoId: number): Promise<UserDetails> {
+export async function fetchUserDetail(
+    kakaoId: number | string,
+): Promise<UserDetails> {
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/profile/${kakaoId}`,
         {

@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 interface AuthNavProps {
-    kakaoId?: number;
+    kakaoId?: string | number;
     nickname?: string;
 }
 
