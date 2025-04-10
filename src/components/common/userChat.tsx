@@ -53,12 +53,11 @@ export default function UserChat({
     useEffect(() => {
         if (!roomId) return;
 
-        // 토큰 추출 디버깅
         const token = document.cookie.split('accessToken=')[1]?.split(';')[0];
         console.log('Extracted token:', token);
 
         const client = new Client({
-            brokerURL: 'ws://localhost:8080/ws/chat/websocket',
+            brokerURL: 'wss://gateway.wego-travel.click/ws/chat/websocket',
             connectHeaders: {
                 Authorization: `Bearer ${token}`,
             },
@@ -66,15 +65,20 @@ export default function UserChat({
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
             onConnect: () => {
+                console.log('WebSocket connected successfully');
                 setStompClient(client);
                 setError(null);
+                // 채팅방 구독
                 client.subscribe(`/topic/chatroom/${roomId}`, (message) => {
                     const receivedMessage = JSON.parse(message.body);
                     console.log('Received message:', receivedMessage);
                 });
             },
-            onStompError: () => {
-                setError('WebSocket 연결 오류가 발생했습니다.');
+            onStompError: (frame) => {
+                console.error('STOMP error:', frame);
+                setError(
+                    `WebSocket 연결 오류: ${frame.headers?.message || '알 수 없는 오류'}`,
+                );
                 setStompClient(null);
             },
         });
