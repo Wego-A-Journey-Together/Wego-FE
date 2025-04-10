@@ -53,21 +53,37 @@ export default function UserChat({
     useEffect(() => {
         // 쿠키에서 토큰 가져오기
         const getCookie = (name: string): string | null => {
+            // 전체 쿠키 문자열을 로그로 확인
+            console.log('전체 쿠키:', document.cookie);
+
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
-            if (parts.length === 2)
-                return parts.pop()?.split(';').shift() || null;
+
+            // 파싱 과정 디버깅
+            console.log('쿠키 파싱:', {
+                cookieParts: parts,
+                hasToken: parts.length === 2,
+            });
+
+            if (parts.length === 2) {
+                const token = parts.pop()?.split(';').shift();
+                console.log('찾은 토큰:', token);
+                return token || null;
+            }
             return null;
         };
 
-        const token = getCookie('accessToken');
+        const token = getCookie('accessToken') || getCookie('token');
+
         if (!token || !roomId) {
             console.log('WebSocket 연결 조건 미충족:', {
                 token: token ? '존재' : 'null',
                 roomId,
+                allCookies: document.cookie,
             });
             return;
         }
+
         const client = new Client({
             brokerURL: 'ws://localhost:8080/ws/chat/websocket',
             connectHeaders: {
