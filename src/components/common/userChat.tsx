@@ -102,10 +102,34 @@ export default function UserChat({
 
     // 메시지 전송 함수
     const sendMessage = async () => {
-        if (!message.trim() || !roomId || !kakaoId || !stompClient) return;
+        console.log('sendMessage 호출됨', {
+            messageEmpty: !message.trim(),
+            roomId,
+            kakaoId,
+            stompClientActive: stompClient?.active,
+            message
+        });
+
+        if (!message.trim()) {
+            console.log('메시지가 비어있음');
+            return;
+        }
+        if (!roomId) {
+            console.log('roomId가 없음');
+            return;
+        }
+        if (!kakaoId) {
+            console.log('kakaoId가 없음');
+            return;
+        }
+        if (!stompClient) {
+            console.log('stompClient가 없음');
+            return;
+        }
 
         try {
             if (!stompClient.active) {
+                console.log('WebSocket이 연결되어 있지 않음');
                 throw new Error('WebSocket이 연결되어 있지 않습니다.');
             }
 
@@ -127,6 +151,7 @@ export default function UserChat({
                 },
             });
 
+            console.log('메시지 전송 완료');
             setMessage('');
         } catch (error) {
             console.error('메시지 전송 오류:', error);
