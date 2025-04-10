@@ -1,5 +1,6 @@
 'use client';
 
+import ApplyGatheringBtn from '@/components/Btn/ApplyGatheringBtn';
 import UserChat from '@/components/common/userChat';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -141,7 +142,10 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
                             />
                             문의하기
                         </Button>
-                        <Button className="h-9 w-[150px]">참여하기</Button>
+                        <ApplyGatheringBtn
+                            postId={post.id}
+                            className="h-9 w-[150px]"
+                        />
                     </div>
                 </div>
             </footer>
