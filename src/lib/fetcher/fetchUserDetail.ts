@@ -13,7 +13,7 @@ interface UserDetails {
 }
 
 export async function fetchUserDetail(
-    kakaoId: number | string,
+    kakaoId: string | number | undefined,
 ): Promise<UserDetails> {
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/profile/${kakaoId}`,

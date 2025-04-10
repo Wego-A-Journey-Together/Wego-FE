@@ -26,7 +26,7 @@ export default function AuthNav({ kakaoId, nickname }: AuthNavProps) {
         '/icon/profile/defaultProfile.svg',
     );
     useEffect(() => {
-        if (!kakaoId) return;
+        if (!kakaoId && process.env.NODE_ENV === 'development') return;
         (async () => {
             try {
                 const user = await fetchUserDetail(kakaoId);
