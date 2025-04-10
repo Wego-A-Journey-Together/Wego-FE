@@ -1,6 +1,7 @@
 import CommentBundle from '@/components/comment/CommentBundle';
+import FetchMoreComments from '@/components/comment/FetchMoreComments';
 import PostInput from '@/components/detail/PostInput';
-import { SpringCommentResponse } from '@/lib/fetcher/fetchInitialComments';
+import { SpringCommentResponse } from '@/lib/fetcher/fetchComments';
 
 /**
  * 첫 페이지는 서버사이드 랜더링으로 불러와서 내려줍니다.
@@ -44,6 +45,8 @@ export default function PostComment({
                     {/*글이 없는 경우 100% 신규 부모댓글 이므로 null , api 스펙이 null 명시되어 있습니다.*/}
                 </>
             )}
+            {/*SSR 결과가 마지막 페이지가 아니라면 실행*/}
+            {!firstCommentBundle.last && <FetchMoreComments postId={postId} />}
             <PostInput postId={postId} parentId={null} variant={'Comment'} />
         </div>
     );
