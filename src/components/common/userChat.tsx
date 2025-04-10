@@ -51,12 +51,23 @@ export default function UserChat({
 
     // WebSocket 연결 설정
     useEffect(() => {
-        const token = localStorage.getItem('accessToken');
+        // 쿠키에서 토큰 가져오기
+        const getCookie = (name: string): string | null => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2)
+                return parts.pop()?.split(';').shift() || null;
+            return null;
+        };
+
+        const token = getCookie('accessToken');
         if (!token || !roomId) {
-            console.log('WebSocket 연결 조건 미충족:', { token, roomId });
+            console.log('WebSocket 연결 조건 미충족:', {
+                token: token ? '존재' : 'null',
+                roomId,
+            });
             return;
         }
-
         const client = new Client({
             brokerURL: 'ws://localhost:8080/ws/chat/websocket',
             connectHeaders: {
@@ -115,7 +126,14 @@ export default function UserChat({
             return;
         }
 
-        const token = localStorage.getItem('accessToken');
+        const getCookie = (name: string) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop()?.split(';').shift();
+            return null;
+        };
+
+        const token = getCookie('accessToken');
         if (!token) {
             setError('인증 토큰이 없습니다.');
             return;
