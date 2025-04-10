@@ -11,6 +11,8 @@ import { useEffect, useState } from 'react';
 export default function RecruitFooter({ post }: { post: DetailPost }) {
     const [showChat, setShowChat] = useState(false);
     const [creatorKakaoId, setCreatorKakaoId] = useState<string | null>(null);
+    const [roomId, setRoomId] = useState<number | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchCreatorInfo = async () => {
@@ -50,12 +52,77 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
         fetchCreatorInfo();
     }, [post.id]);
 
-    const toggleChat = () => {
+    // 채팅방 생성 함수 추가
+    const createChatRoom = async (opponentId: string) => {
+        try {
+            setIsLoading(true);
+            const token = localStorage.getItem('accessToken');
+
+            if (!token) {
+                alert('인증 토큰이 존재하지 않습니다.');
+                return null;
+            }
+
+            const NEXT_PUBLIC_NEST_BFF_URL =
+                process.env.NEXT_PUBLIC_NEST_BFF_URL;
+
+            console.log('채팅방 생성 시도:', {
+                url: `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
+                opponentKakaoId: opponentId,
+            });
+
+            const response = await fetch(
+                `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        opponentKakaoId: opponentId,
+                    }),
+                },
+            );
+
+            console.log('채팅방 생성 응답 상태:', response.status);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('채팅방 생성 실패:', errorText);
+                return null;
+            }
+
+            const data = await response.json();
+            console.log('채팅방 생성 성공:', data);
+            return data.roomId;
+        } catch (error) {
+            console.error('채팅방 생성 중 오류:', error);
+            return null;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const toggleChat = async () => {
         const token = localStorage.getItem('accessToken');
 
         if (!token) {
             alert('인증 토큰이 존재하지 않습니다.');
             return;
+        }
+
+        if (creatorKakaoId && !roomId) {
+            // 채팅방 먼저 생성 시도
+            const newRoomId = await createChatRoom(creatorKakaoId);
+            if (newRoomId) {
+                setRoomId(newRoomId);
+                console.log('룸 ID 설정됨:', newRoomId);
+            } else {
+                console.error('채팅방 생성 실패');
+                alert('채팅방 생성에 실패했습니다.');
+                return;
+            }
         }
 
         setShowChat((prev) => !prev);
@@ -81,6 +148,7 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
                             variant="skyblueOutline"
                             className="h-9 w-[100px]"
                             onClick={toggleChat}
+                            disabled={!isLoading}
                         >
                             <Image
                                 src="/icon/detail/chatIcon.svg"
@@ -107,6 +175,7 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
                         onClose={toggleChat}
                         postId={post.id}
                         opponentKakaoId={creatorKakaoId || null}
+                        roomId={roomId || undefined}
                     />
                 </SheetContent>
             </Sheet>
