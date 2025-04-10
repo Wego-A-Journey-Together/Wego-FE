@@ -1,6 +1,7 @@
 'use client';
 
 import SingleComment from '@/components/comment/SingleComment';
+import PostInput from '@/components/detail/PostInput';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 
@@ -32,6 +33,7 @@ export default function CommentBundle({
     postId: number;
 }) {
     const [isReplyOpen, setIsReplyOpen] = useState(false);
+    const [isReplyInputOpen, setIsReplyInputOpen] = useState(false);
 
     const replies = bundle.replies;
 
@@ -46,24 +48,36 @@ export default function CommentBundle({
                     writer: bundle.writer,
                     parentId: null,
                 }}
-                postId={postId}
                 variant="Parent"
+                setIsReplyInputOpen={setIsReplyInputOpen}
+                setIsReplyOpen={setIsReplyOpen}
             />
-
             {/* 답글 목록 */}
             {replies.length > 0 && (
                 <div>
                     <button
                         type={'button'}
-                        onClick={() => setIsReplyOpen((prev) => !prev)}
+                        onClick={() => {
+                            setIsReplyOpen((prev) => !prev);
+                            setIsReplyInputOpen((prev) => !prev);
+                        }}
+                        className="my-5 flex items-center"
                     >
                         <p className={'text-sky-blue text-xs font-medium'}>
                             답글 {replies.length}개
                         </p>
                         {isReplyOpen ? (
-                            <ChevronDown className={'h-[3.75px] w-[7.5px]'} />
+                            <ChevronDown
+                                size={10}
+                                strokeWidth={3}
+                                className="text-sky-blue ml-1.5 scale-x-[1.3]"
+                            />
                         ) : (
-                            <ChevronUp className={'h-[3.75px] w-[7.5px]'} />
+                            <ChevronUp
+                                size={10}
+                                strokeWidth={3}
+                                className="text-sky-blue ml-1.5 scale-x-[1.3]"
+                            />
                         )}
                     </button>
                     {isReplyOpen &&
@@ -78,12 +92,20 @@ export default function CommentBundle({
                                     parentId: reply.parentId || bundle.id,
                                 }}
                                 variant="Reply"
-                                postId={postId}
+                                setIsReplyInputOpen={setIsReplyInputOpen}
+                                setIsReplyOpen={setIsReplyOpen}
                             />
                         ))}
                 </div>
             )}
-
+            {isReplyInputOpen && (
+                <PostInput
+                    postId={postId}
+                    parentId={bundle.id}
+                    variant={'Reply'}
+                    setIsReplyInputOpen={setIsReplyInputOpen}
+                />
+            )}
             {/* 세퍼레이터 */}
             <div className="mt-5 h-px w-full bg-[#e9e9e9]" />
         </div>
