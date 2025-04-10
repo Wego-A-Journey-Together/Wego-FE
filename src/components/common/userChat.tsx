@@ -14,6 +14,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import ChatNotice from './ChatNotice';
 import ChatRoom from './ChatRoom';
+import { Client } from '@stomp/stompjs';
 
 interface UserChatProps {
     userName: string;
@@ -44,8 +45,35 @@ export default function UserChat({
     const [roomId, setRoomId] = useState<number | undefined>(initialRoomId);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [stompClient, setStompClient] = useState<Client | null>(null);
 
     const { kakaoId } = useSession();
+
+    // WebSocket 연결 설정
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (!token || !roomId) return;
+
+        const client = new Client({
+            brokerURL: `${process.env.NEXT_PUBLIC_NEST_BFF_URL?.replace('http', 'ws')}/ws/chat/websocket`,
+            connectHeaders: {
+                Authorization: `Bearer ${token}`,
+            },
+            onConnect: () => {
+                console.log('WebSocket 연결 성공');
+            },
+            onDisconnect: () => {
+                console.log('WebSocket 연결 해제');
+            },
+        });
+
+        client.activate();
+        setStompClient(client);
+
+        return () => {
+            client.deactivate();
+        };
+    }, [roomId]);
 
     useEffect(() => {
         console.log('유저 챗 컴포넌트 마운트 확인:', {
@@ -136,50 +164,18 @@ export default function UserChat({
 
     // 메시지 전송 함수
     const sendMessage = async () => {
-        if (!message.trim() || !roomId || !kakaoId) return;
+        if (!message.trim() || !roomId || !kakaoId || !stompClient) return;
 
         try {
-            // 채팅방이 없으면 생성
-            let currentRoomId = roomId;
-            if (!currentRoomId) {
-                if (!opponentKakaoId) {
-                    throw new Error('상대방 정보가 없습니다.');
-                }
-                currentRoomId = await createOrGetChatRoom();
-                if (!currentRoomId) return;
-            }
+            stompClient.publish({
+                destination: '/app/chat.sendMessage',
+                body: JSON.stringify({
+                    roomId: roomId,
+                    message: message,
+                    sentAt: new Date().toISOString()
+                })
+            });
 
-            // 토큰 가져오기
-            const token = localStorage.getItem('accessToken');
-            if (!token) {
-                throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
-            }
-
-            // WebSocket으로 메시지 전송
-            const NEXT_PUBLIC_NEST_BFF_URL =
-                process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
-
-            // 메시지 전송 API 호출
-            const response = await fetch(
-                `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${currentRoomId}/messages`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({
-                        message: message,
-                    }),
-                    credentials: 'include',
-                },
-            );
-
-            if (!response.ok) {
-                throw new Error('메시지 전송에 실패했습니다.');
-            }
-
-            // 메시지 입력 후 입력창 초기화
             setMessage('');
         } catch (error) {
             console.error('메시지 전송 오류:', error);
