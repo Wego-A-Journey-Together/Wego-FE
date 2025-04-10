@@ -68,6 +68,10 @@ export default function PostInput({
                     type="button"
                     variant="ghost"
                     className="h-[37px] w-[85px] rounded-lg text-sm font-semibold text-[#666666]"
+                    onClick={() => {
+                        setIsReplyInputOpen?.(false);
+                        setContent('');
+                    }}
                 >
                     취소
                 </Button>

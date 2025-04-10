@@ -69,19 +69,17 @@ export default function SingleComment({
                         <p className={`text-xs font-normal text-[#666666]`}>
                             {dateFormat(content.createdAt)}
                         </p>
-                        {/*부모 댓글인 경우에만 답글 가능*/}
-                        {variant === 'Parent' && (
-                            <button
-                                className={`cursor-pointer text-xs font-medium text-[#666666]`}
-                                type="button"
-                                onClick={() => {
-                                    setIsReplyOpen(true);
-                                    setIsReplyInputOpen(true);
-                                }}
-                            >
-                                답글달기
-                            </button>
-                        )}
+
+                        <button
+                            className={`cursor-pointer text-xs font-medium text-[#666666]`}
+                            type="button"
+                            onClick={() => {
+                                setIsReplyOpen(true);
+                                setIsReplyInputOpen(true);
+                            }}
+                        >
+                            답글달기
+                        </button>
                     </div>
                 </div>
             </div>
