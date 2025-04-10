@@ -12,6 +12,7 @@ import { useSession } from '@/hooks/useSession';
 import { Client } from '@stomp/stompjs';
 import { Calendar, MoreHorizontal, Star, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import SockJS from 'sockjs-client';
 
 import ChatNotice from './ChatNotice';
 import ChatRoom from './ChatRoom';
@@ -26,7 +27,7 @@ interface UserChatProps {
     onParticipate?: () => void;
     roomId?: number;
     postId?: number;
-    opponentKakaoId?: string | null; // 상대방 카카오 ID
+    opponentKakaoId?: string | null;
 }
 
 export default function UserChat({
@@ -51,55 +52,79 @@ export default function UserChat({
 
     // WebSocket 연결 설정
     useEffect(() => {
+        let mounted = true;
         if (!roomId) return;
 
-        const token = document.cookie.split('accessToken=')[1]?.split(';')[0];
-        console.log('Extracted token:', token);
-
-        const client = new Client({
-            brokerURL: 'wss://gateway.wego-travel.click/ws/chat/websocket',
-            connectHeaders: {
-                Authorization: `Bearer ${token}`,
-            },
-            reconnectDelay: 5000,
-            heartbeatIncoming: 4000,
-            heartbeatOutgoing: 4000,
-            onConnect: () => {
-                console.log('WebSocket connected successfully');
-                setStompClient(client);
-                setError(null);
-                // 채팅방 구독
-                client.subscribe(`/topic/chatroom/${roomId}`, (message) => {
-                    const receivedMessage = JSON.parse(message.body);
-                    console.log('Received message:', receivedMessage);
+        const connectWebSocket = async () => {
+            try {
+                const res = await fetch('/api/auth/ws-token', {
+                    credentials: 'include',
                 });
-            },
-            onStompError: (frame) => {
-                console.error('STOMP error:', frame);
-                setError(
-                    `WebSocket 연결 오류: ${frame.headers?.message || '알 수 없는 오류'}`,
-                );
-                setStompClient(null);
-            },
-        });
 
-        try {
-            client.activate();
-        } catch (err) {
-            console.error('WebSocket connection error:', err);
-            setError('WebSocket 연결에 실패했습니다.');
-            setStompClient(null);
-        }
+                if (!res.ok) {
+                    throw new Error('Failed to get WebSocket token');
+                }
+
+                const { wsToken } = await res.json();
+
+                const SOCKET_URL =
+                    process.env.NEXT_PUBLIC_NEST_BFF_URL ||
+                    'http://localhost:3000';
+
+                const client = new Client({
+                    webSocketFactory: () =>
+                        new SockJS(`${SOCKET_URL}/ws/chat/websocket`),
+                    connectHeaders: {
+                        Authorization: `Bearer ${wsToken}`,
+                    },
+                    reconnectDelay: 5000,
+                    heartbeatIncoming: 4000,
+                    heartbeatOutgoing: 4000,
+                    onConnect: () => {
+                        if (!mounted) return;
+                        setStompClient(client);
+                        setError(null);
+                        client.subscribe(
+                            `/topic/chatroom/${roomId}`,
+                            (message) => {
+                                if (!mounted) return;
+                                const receivedMessage = JSON.parse(
+                                    message.body,
+                                );
+                                console.log(
+                                    'Received message:',
+                                    receivedMessage,
+                                );
+                            },
+                        );
+                    },
+                    onStompError: () => {
+                        if (!mounted) return;
+                        setError('WebSocket 연결 오류가 발생했습니다.');
+                        setStompClient(null);
+                    },
+                });
+
+                client.activate();
+            } catch (err) {
+                if (!mounted) return;
+                console.error('WebSocket connection error:', err);
+                setError('WebSocket 연결에 실패했습니다.');
+            }
+        };
+
+        connectWebSocket();
 
         return () => {
-            if (client.active) {
-                client.deactivate();
+            mounted = false;
+            if (stompClient?.active) {
+                stompClient.deactivate();
                 setStompClient(null);
             }
         };
-    }, [roomId]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [roomId]); // stompClient intentionally excluded
 
-    // 메시지 전송 함수
     const sendMessage = async () => {
         if (!message.trim() || !roomId || !stompClient?.active) return;
 
@@ -143,9 +168,7 @@ export default function UserChat({
         postId,
     ]);
 
-    // 채팅방 생성 또는 기존 채팅방 가져오기
     const createOrGetChatRoom = useCallback(async () => {
-        // 디버깅용 로그
         console.log('createOrGetChatRoom 호출됨', { opponentKakaoId, kakaoId });
 
         if (!opponentKakaoId) {
@@ -166,7 +189,6 @@ export default function UserChat({
             const NEXT_PUBLIC_NEST_BFF_URL =
                 process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
 
-            // 채팅방 생성 또는 기존 채팅방 가져오기 API 호출
             const response = await fetch(
                 `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
                 {
@@ -197,14 +219,12 @@ export default function UserChat({
         }
     }, [opponentKakaoId, kakaoId]);
 
-    // 초기 채팅방 설정 (의존성 배열 업데이트)
     useEffect(() => {
         if (!roomId && opponentKakaoId) {
             createOrGetChatRoom();
         }
     }, [roomId, opponentKakaoId, createOrGetChatRoom]);
 
-    // 엔터키로 메시지 전송
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -214,7 +234,6 @@ export default function UserChat({
 
     return (
         <div className="bg-background-light flex h-full flex-col">
-            {/* 채팅창 헤더 */}
             <SheetHeader className="flex h-[72px] w-full flex-row items-center justify-between px-5 py-2.5">
                 <button
                     className="flex h-6 w-6 cursor-pointer items-center justify-center"
@@ -225,15 +244,11 @@ export default function UserChat({
                 </button>
 
                 <div className="inline-flex items-center gap-1">
-                    {/* 유저 아이디 */}
                     <SheetTitle className="m-0 text-[15px] font-semibold text-black">
                         {userName}
                     </SheetTitle>
-
                     <div className="inline-flex items-center gap-1 rounded-[50px] bg-[#ffd8001a] px-2 py-1 text-[#614e03]">
                         <Star className="h-4 w-4 fill-[#FFD800] text-[#FFD800]" />
-
-                        {/* 유저 평점 */}
                         <span className="text-xs font-medium">
                             {userRating}
                         </span>
@@ -247,7 +262,7 @@ export default function UserChat({
                     <MoreHorizontal className="h-5 w-5 cursor-pointer text-[#333333]" />
                 </button>
             </SheetHeader>
-            {/* 게시글 제목, 상태, 참여하기 버튼 섹션 */}
+
             <section className="flex w-full flex-col gap-2.5 border-b px-5 py-4">
                 <div className="flex w-full items-center justify-between">
                     <div className="flex w-[365px] flex-col gap-[3px]">
@@ -259,13 +274,12 @@ export default function UserChat({
                             </SheetDescription>
                         </div>
                     </div>
-
                     <Button className="px-[30px] py-2" onClick={onParticipate}>
                         참여하기
                     </Button>
                 </div>
             </section>
-            {/* 채팅 말풍선 섹션 */}
+
             <section className="flex-1 overflow-y-auto p-4">
                 {isLoading ? (
                     <div className="flex h-full items-center justify-center">
@@ -281,7 +295,7 @@ export default function UserChat({
                     <ChatNotice />
                 )}
             </section>
-            {/* 메세지 입력 영역 */}
+
             <SheetFooter className="flex flex-col items-center justify-center gap-2.5 bg-white px-2.5 py-5">
                 <div className="w-full rounded-xl border-solid bg-[#f9f9f9]">
                     <div className="p-5">
