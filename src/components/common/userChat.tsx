@@ -30,6 +30,13 @@ interface UserChatProps {
     opponentKakaoId?: string | null;
 }
 
+// 메시지 타입 정의
+interface ChatMessage {
+    roomId: number;
+    message: string;
+    sentAt?: string;
+}
+
 export default function UserChat({
     userName,
     userRating,
@@ -71,19 +78,26 @@ export default function UserChat({
                 const isProduction =
                     typeof window !== 'undefined' &&
                     window.location.hostname !== 'localhost';
-                const protocol =
+
+                // HTTPS 프로토콜 확인
+                const isSecure =
                     typeof window !== 'undefined' &&
-                    window.location.protocol === 'https:'
-                        ? 'https'
-                        : 'http';
+                    window.location.protocol === 'https:';
+
                 const wsBaseUrl = isProduction
-                    ? `${protocol}://gateway.wego-travel.click`
+                    ? `${isSecure ? 'https' : 'http'}://gateway.wego-travel.click`
                     : 'http://localhost:8080';
 
                 console.log('WebSocket URL base:', wsBaseUrl);
+                console.log('Token:', wsToken);
+                console.log('Room ID for subscription:', roomId);
+
+                // SockJS 인스턴스 생성 시 정확한 경로 지정
+                const sockJsUrl = `${wsBaseUrl}/ws/chat`;
+                console.log('SockJS URL:', sockJsUrl);
 
                 const client = new Client({
-                    webSocketFactory: () => new SockJS(`${wsBaseUrl}/ws/chat`),
+                    webSocketFactory: () => new SockJS(sockJsUrl),
                     connectHeaders: {
                         Authorization: `Bearer ${wsToken}`,
                     },
@@ -100,18 +114,32 @@ export default function UserChat({
                         setError(null);
 
                         // 채팅방 구독
-                        console.log(`Subscribing to /topic/chatroom/${roomId}`);
+                        const subscriptionTopic = `/topic/chatroom/${roomId}`;
+                        console.log(`Subscribing to ${subscriptionTopic}`);
+
                         client.subscribe(
-                            `/topic/chatroom/${roomId}`,
+                            subscriptionTopic,
                             (message) => {
                                 if (!mounted) return;
-                                const receivedMessage = JSON.parse(
-                                    message.body,
-                                );
-                                console.log(
-                                    'Received message:',
-                                    receivedMessage,
-                                );
+                                try {
+                                    const receivedMessage = JSON.parse(
+                                        message.body,
+                                    );
+                                    console.log(
+                                        'Received message:',
+                                        receivedMessage,
+                                    );
+                                } catch (err) {
+                                    console.error(
+                                        'Error parsing message:',
+                                        err,
+                                        message.body,
+                                    );
+                                }
+                            },
+                            // 구독 헤더 추가
+                            {
+                                Authorization: `Bearer ${wsToken}`,
                             },
                         );
                     },
@@ -136,6 +164,14 @@ export default function UserChat({
                         console.log('WebSocket closed:', event);
                         if (event.code !== 1000) {
                             setError(`WebSocket 연결 종료: 코드 ${event.code}`);
+
+                            // 1002 에러 상세 디버깅
+                            if (event.code === 1002) {
+                                console.error(
+                                    '프로토콜 오류 발생, 상세 정보:',
+                                    event,
+                                );
+                            }
                         }
                     },
                 });
@@ -163,18 +199,24 @@ export default function UserChat({
         };
     }, [roomId]);
 
-    const sendMessage = async () => {
+    const sendMessage = useCallback(() => {
         if (!message.trim() || !roomId || !stompClient?.active) return;
 
         try {
             console.log('Sending message:', message);
+            console.log('Room ID for sending:', roomId);
+
+            // 메시지 페이로드 구조 확인 - 디버거 이미지와 일치하도록
+            const payload: ChatMessage = {
+                roomId: roomId,
+                message: message.trim(),
+            };
+
+            console.log('Message payload:', payload);
 
             stompClient.publish({
                 destination: '/app/chat.sendMessage',
-                body: JSON.stringify({
-                    roomId: roomId,
-                    message: message.trim(),
-                }),
+                body: JSON.stringify(payload),
                 headers: {
                     'content-type': 'application/json',
                 },
@@ -186,7 +228,7 @@ export default function UserChat({
                 `메시지 전송 실패: ${err instanceof Error ? err.message : '알 수 없는 오류'}`,
             );
         }
-    };
+    }, [message, roomId, stompClient]);
 
     useEffect(() => {
         console.log('유저 챗 컴포넌트 마운트 확인:', {
