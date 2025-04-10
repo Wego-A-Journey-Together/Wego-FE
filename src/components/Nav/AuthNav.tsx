@@ -8,18 +8,37 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 import { useLocale } from '@/hooks/useLocale';
+import { fetchUserDetail } from '@/lib/fetcher/fetchUserDetail';
 import { useAppSelector } from '@/redux/hooks';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 interface AuthNavProps {
-    kakaoId?: string;
+    kakaoId?: number;
     nickname?: string;
 }
 
 export default function AuthNav({ kakaoId, nickname }: AuthNavProps) {
     const { t } = useLocale();
     const locale = useAppSelector((state) => state.locale.current);
+    const [thumbnailUrl, setThumbnailUrl] = useState<string>(
+        '/icon/profile/defaultProfile.svg',
+    );
+    useEffect(() => {
+        if (!kakaoId) return;
+        (async () => {
+            try {
+                const user = await fetchUserDetail(kakaoId);
+                setThumbnailUrl(
+                    user.thumbnailUrl || '/icon/profile/defaultProfile.svg',
+                );
+            } catch {
+                setThumbnailUrl('/icon/profile/defaultProfile.svg');
+            }
+        })();
+    }, [kakaoId]);
+
     return (
         <div
             className={
@@ -47,7 +66,7 @@ export default function AuthNav({ kakaoId, nickname }: AuthNavProps) {
                         aria-label={t.gnb.pAria}
                     >
                         <Image
-                            src={'/icon/profile/defaultProfile.svg'}
+                            src={thumbnailUrl}
                             alt={'프로필 이미지'}
                             width={32}
                             height={32}
