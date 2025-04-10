@@ -12,6 +12,9 @@ export async function GET() {
     try {
         return NextResponse.json({ wsToken: accessToken.value });
     } catch (err) {
-        return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+        return NextResponse.json(
+            { error: `Invalid token ${err}` },
+            { status: 401 },
+        );
     }
 }
