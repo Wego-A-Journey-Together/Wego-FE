@@ -12,7 +12,6 @@ import { useSession } from '@/hooks/useSession';
 import { Client } from '@stomp/stompjs';
 import { Calendar, MoreHorizontal, Star, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import SockJS from 'sockjs-client';
 
 import ChatNotice from './ChatNotice';
 import ChatRoom from './ChatRoom';
@@ -56,7 +55,6 @@ export default function UserChat({
 
     const { kakaoId } = useSession();
 
-    // WebSocket 연결 설정
     useEffect(() => {
         let mounted = true;
         if (!roomId) return;
@@ -69,10 +67,11 @@ export default function UserChat({
                 if (!res.ok) throw new Error('Failed to get WebSocket token');
 
                 const { wsToken } = await res.json();
-                const sockJsUrl = 'https://gateway.wego-travel.click/ws/chat';
+                const wsUrl =
+                    'wss://gateway.wego-travel.click/ws/chat/websocket';
 
                 const client = new Client({
-                    webSocketFactory: () => new SockJS(sockJsUrl),
+                    brokerURL: wsUrl,
                     connectHeaders: {
                         Authorization: `Bearer ${wsToken}`,
                     },
