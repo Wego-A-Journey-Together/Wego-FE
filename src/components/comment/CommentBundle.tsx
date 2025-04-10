@@ -1,6 +1,6 @@
 'use client';
 
-import SingleComment from '@/components/detail/SingleComment';
+import SingleComment from '@/components/comment/SingleComment';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 
@@ -24,7 +24,13 @@ export interface Comment {
  * @param initialComments
  * @constructor
  */
-export default function CommentBundle({ bundle }: { bundle: Comment }) {
+export default function CommentBundle({
+    bundle,
+    postId,
+}: {
+    bundle: Comment;
+    postId: number;
+}) {
     const [isReplyOpen, setIsReplyOpen] = useState(false);
 
     const replies = bundle.replies;
@@ -40,6 +46,7 @@ export default function CommentBundle({ bundle }: { bundle: Comment }) {
                     writer: bundle.writer,
                     parentId: null,
                 }}
+                postId={postId}
                 variant="Parent"
             />
 
@@ -71,6 +78,7 @@ export default function CommentBundle({ bundle }: { bundle: Comment }) {
                                     parentId: reply.parentId || bundle.id,
                                 }}
                                 variant="Reply"
+                                postId={postId}
                             />
                         ))}
                 </div>

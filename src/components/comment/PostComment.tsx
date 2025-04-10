@@ -1,4 +1,4 @@
-import CommentBundle from '@/components/detail/CommentBundle';
+import CommentBundle from '@/components/comment/CommentBundle';
 import PostInput from '@/components/detail/PostInput';
 import { SpringCommentResponse } from '@/lib/fetcher/fetchInitialComments';
 
@@ -25,7 +25,11 @@ export default function PostComment({
             </h2>
             {!!firstCommentBundle && initialComments.length > 0 ? (
                 initialComments.map((set, setIndex) => (
-                    <CommentBundle key={setIndex} bundle={set} />
+                    <CommentBundle
+                        key={setIndex}
+                        bundle={set}
+                        postId={postId}
+                    />
                 ))
             ) : (
                 <>
@@ -38,9 +42,9 @@ export default function PostComment({
                         <br /> 첫 댓글을 작성해 주세요
                     </div>
                     {/*글이 없는 경우 100% 신규 부모댓글 이므로 null , api 스펙이 null 명시되어 있습니다.*/}
-                    <PostInput postId={postId} parentId={null} />
                 </>
             )}
+            <PostInput postId={postId} parentId={null} variant={'Comment'} />
         </div>
     );
 }
