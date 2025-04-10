@@ -45,7 +45,7 @@ export default function FetchMoreComments({ postId }: { postId: number }) {
             {!isAllLoaded ? (
                 <button
                     onClick={handleLoadMore}
-                    className="my-12.5 flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-[#f5f6f7] px-5 py-0 text-[#666666]"
+                    className="mx-auto my-12.5 flex h-12 w-fit cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-[#f5f6f7] px-5 py-0 text-[#666666]"
                 >
                     <p className="text-base leading-normal font-semibold whitespace-nowrap">
                         {isLoading ? (
@@ -59,7 +59,7 @@ export default function FetchMoreComments({ postId }: { postId: number }) {
             ) : (
                 <button
                     onClick={toggleFold}
-                    className="my-12.5 flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-[#f5f6f7] px-5 py-0 text-[#666666]"
+                    className="mx-auto my-12.5 flex h-12 w-fit cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-[#f5f6f7] px-5 py-0 text-[#666666]"
                 >
                     <p className="text-base leading-normal font-semibold whitespace-nowrap">
                         {isFolded ? '댓글 펼치기' : '댓글 접기'}
