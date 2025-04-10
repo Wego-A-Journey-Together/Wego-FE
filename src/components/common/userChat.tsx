@@ -51,74 +51,36 @@ export default function UserChat({
 
     // WebSocket 연결 설정
     useEffect(() => {
-        // 쿠키에서 토큰 가져오기
-        const getCookie = (name: string): string | null => {
-            // 전체 쿠키 문자열을 로그로 확인
-            console.log('전체 쿠키:', document.cookie);
-
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-
-            // 파싱 과정 디버깅
-            console.log('쿠키 파싱:', {
-                cookieParts: parts,
-                hasToken: parts.length === 2,
-            });
-
-            if (parts.length === 2) {
-                const token = parts.pop()?.split(';').shift();
-                console.log('찾은 토큰:', token);
-                return token || null;
-            }
-            return null;
-        };
-
-        const token = getCookie('accessToken') || getCookie('token');
-
-        if (!token || !roomId) {
-            console.log('WebSocket 연결 조건 미충족:', {
-                token: token ? '존재' : 'null',
-                roomId,
-                allCookies: document.cookie,
-            });
-            return;
-        }
+        if (!roomId) return;
 
         const client = new Client({
-            brokerURL: 'ws://localhost:8080/ws/chat/websocket',
+            brokerURL:
+                process.env.NEXT_PUBLIC_WEBSOCKET_URL ||
+                'ws://localhost:8080/ws/chat/websocket',
             connectHeaders: {
-                Authorization: `Bearer ${token}`,
-            },
-            debug: function (str) {
-                console.log('STOMP: ' + str);
+                Authorization: `Bearer ${document.cookie.split('accessToken=')[1]?.split(';')[0]}`,
             },
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
             onConnect: () => {
-                console.log('WebSocket 연결 성공');
-                setStompClient(client); // 연결 성공 후 stompClient 설정
+                setStompClient(client);
                 setError(null);
                 client.subscribe(`/topic/chatroom/${roomId}`, (message) => {
                     const receivedMessage = JSON.parse(message.body);
-                    console.log('새 메시지 수신:', receivedMessage);
+                    console.log('Received message:', receivedMessage);
                 });
             },
-            onStompError: (frame) => {
-                console.error(
-                    'Broker reported error:',
-                    frame.headers['message'],
-                );
-                console.error('Additional details:', frame.body);
+            onStompError: () => {
                 setError('WebSocket 연결 오류가 발생했습니다.');
-                setStompClient(null); // 에러 발생 시 stompClient 초기화
+                setStompClient(null);
             },
         });
 
         try {
             client.activate();
-        } catch (error) {
-            console.error('WebSocket 연결 실패:', error);
+        } catch (err) {
+            console.error('WebSocket connection error:', err);
             setError('WebSocket 연결에 실패했습니다.');
             setStompClient(null);
         }
@@ -126,34 +88,14 @@ export default function UserChat({
         return () => {
             if (client.active) {
                 client.deactivate();
-                setStompClient(null); // cleanup 시 stompClient 초기화
+                setStompClient(null);
             }
         };
     }, [roomId]);
 
     // 메시지 전송 함수
     const sendMessage = async () => {
-        if (!message.trim() || !roomId || !stompClient?.active) {
-            console.log('메시지 전송 조건 미충족:', {
-                messageEmpty: !message.trim(),
-                roomId,
-                stompClientActive: stompClient?.active,
-            });
-            return;
-        }
-
-        const getCookie = (name: string) => {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop()?.split(';').shift();
-            return null;
-        };
-
-        const token = getCookie('accessToken');
-        if (!token) {
-            setError('인증 토큰이 없습니다.');
-            return;
-        }
+        if (!message.trim() || !roomId || !stompClient?.active) return;
 
         try {
             stompClient.publish({
@@ -163,13 +105,12 @@ export default function UserChat({
                     message: message.trim(),
                 }),
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     'content-type': 'application/json',
                 },
             });
             setMessage('');
-        } catch (error) {
-            console.error('메시지 전송 오류:', error);
+        } catch (err) {
+            console.error('Message sending error:', err);
             setError('메시지를 전송하는데 실패했습니다.');
         }
     };
