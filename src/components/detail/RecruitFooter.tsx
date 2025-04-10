@@ -10,14 +10,40 @@ import { useEffect, useState } from 'react';
 
 export default function RecruitFooter({ post }: { post: DetailPost }) {
     const [showChat, setShowChat] = useState(false);
+    const [creatorKakaoId, setCreatorKakaoId] = useState<string | null>(null);
 
     useEffect(() => {
-        console.log('RecruitFooter post data:', {
-            userId: post.userId,
-            userName: post.userName,
-            title: post.title,
-        });
-    }, [post]);
+        const fetchCreatorInfo = async () => {
+            try {
+                const NEXT_PUBLIC_NEST_BFF_URL =
+                    process.env.NEXT_PUBLIC_NEST_BFF_URL ||
+                    'http://localhost:3000';
+                const response = await fetch(
+                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/${post.id}`,
+                );
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch gathering details');
+                }
+
+                const data = await response.json();
+                console.log('Gathering creator info:', data.creator);
+
+                if (data.creator && data.creator.kakaoId) {
+                    // Convert to string as the API might return it as a number
+                    setCreatorKakaoId(String(data.creator.kakaoId));
+                    console.log(
+                        'Set creator kakaoId:',
+                        String(data.creator.kakaoId),
+                    );
+                }
+            } catch (error) {
+                console.error('Error fetching creator info:', error);
+            }
+        };
+
+        fetchCreatorInfo();
+    }, [post.id]);
 
     const toggleChat = () => {
         setShowChat((prev) => !prev);
@@ -68,7 +94,7 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
                         endDate={post.filter.endDate}
                         onClose={toggleChat}
                         postId={post.id}
-                        opponentKakaoId={post.userId}
+                        opponentKakaoId={creatorKakaoId || null}
                     />
                 </SheetContent>
             </Sheet>

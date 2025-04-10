@@ -25,7 +25,7 @@ interface UserChatProps {
     onParticipate?: () => void;
     roomId?: number;
     postId?: number;
-    opponentKakaoId?: string; // 상대방 카카오 ID
+    opponentKakaoId?: string | null; // 상대방 카카오 ID
 }
 
 export default function UserChat({
@@ -275,8 +275,7 @@ export default function UserChat({
                                 {isLoading ? 'true' : 'false'}, roomId=
                                 {roomId ? roomId.toString() : 'undefined'},
                                 kakaoId={kakaoId || 'undefined'},
-                                opponentKakaoId=
-                                {opponentKakaoId || 'undefined'}
+                                opponentKakaoId={opponentKakaoId}
                             </div>
 
                             <Input
@@ -291,9 +290,7 @@ export default function UserChat({
                                 <Button
                                     className="px-5 py-2"
                                     onClick={sendMessage}
-                                    disabled={
-                                        isLoading || !message.trim() || !roomId
-                                    }
+                                    disabled={isLoading || !roomId}
                                 >
                                     전송
                                 </Button>
