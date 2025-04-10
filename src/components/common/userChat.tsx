@@ -12,6 +12,7 @@ import { useSession } from '@/hooks/useSession';
 import { Client } from '@stomp/stompjs';
 import { Calendar, MoreHorizontal, Star, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import SockJS from 'sockjs-client';
 
 import ChatNotice from './ChatNotice';
 import ChatRoom from './ChatRoom';
@@ -51,49 +52,74 @@ export default function UserChat({
 
     // WebSocket 연결 설정
     useEffect(() => {
+        let mounted = true;
         if (!roomId) return;
 
-        const token = document.cookie.split('accessToken=')[1]?.split(';')[0];
-        console.log('Extracted token:', token);
-
-        const client = new Client({
-            brokerURL: 'wss://gateway.wego-travel.click/ws/chat/websocket',
-            connectHeaders: {
-                Authorization: `Bearer ${token}`,
-            },
-            reconnectDelay: 5000,
-            heartbeatIncoming: 4000,
-            heartbeatOutgoing: 4000,
-            onConnect: () => {
-                console.log('WebSocket connected successfully');
-                setStompClient(client);
-                setError(null);
-                // 채팅방 구독
-                client.subscribe(`/topic/chatroom/${roomId}`, (message) => {
-                    const receivedMessage = JSON.parse(message.body);
-                    console.log('Received message:', receivedMessage);
+        const connectWebSocket = async () => {
+            try {
+                // WebSocket 토큰 가져오기
+                const res = await fetch('/api/auth/ws-token', {
+                    credentials: 'include',
                 });
-            },
-            onStompError: (frame) => {
-                console.error('STOMP error:', frame);
-                setError(
-                    `WebSocket 연결 오류: ${frame.headers?.message || '알 수 없는 오류'}`,
-                );
-                setStompClient(null);
-            },
-        });
 
-        try {
-            client.activate();
-        } catch (err) {
-            console.error('WebSocket connection error:', err);
-            setError('WebSocket 연결에 실패했습니다.');
-            setStompClient(null);
-        }
+                if (!res.ok) {
+                    throw new Error('Failed to get WebSocket token');
+                }
+
+                const { wsToken } = await res.json();
+
+                const SOCKET_URL =
+                    process.env.NEXT_PUBLIC_NEST_BFF_URL ||
+                    'http://localhost:3000';
+
+                const client = new Client({
+                    webSocketFactory: () =>
+                        new SockJS(`${SOCKET_URL}/ws/chat/websocket`),
+                    connectHeaders: {
+                        Authorization: `Bearer ${wsToken}`,
+                    },
+                    reconnectDelay: 5000,
+                    heartbeatIncoming: 4000,
+                    heartbeatOutgoing: 4000,
+                    onConnect: () => {
+                        if (!mounted) return;
+                        setStompClient(client);
+                        setError(null);
+                        client.subscribe(
+                            `/topic/chatroom/${roomId}`,
+                            (message) => {
+                                if (!mounted) return;
+                                const receivedMessage = JSON.parse(
+                                    message.body,
+                                );
+                                console.log(
+                                    'Received message:',
+                                    receivedMessage,
+                                );
+                            },
+                        );
+                    },
+                    onStompError: () => {
+                        if (!mounted) return;
+                        setError('WebSocket 연결 오류가 발생했습니다.');
+                        setStompClient(null);
+                    },
+                });
+
+                client.activate();
+            } catch (err) {
+                if (!mounted) return;
+                console.error('WebSocket connection error:', err);
+                setError('WebSocket 연결에 실패했습니다.');
+            }
+        };
+
+        connectWebSocket();
 
         return () => {
-            if (client.active) {
-                client.deactivate();
+            mounted = false;
+            if (stompClient?.active) {
+                stompClient.deactivate();
                 setStompClient(null);
             }
         };

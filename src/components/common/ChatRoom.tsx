@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Client } from '@stomp/stompjs';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 
 import ChatNotice from './ChatNotice';
@@ -51,91 +51,7 @@ export default function ChatRoom({ roomId, kakaoId }: ChatRoomProps) {
     const stompClient = useRef<Client | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // STOMP 클라이언트 연결 설정
-    useEffect(() => {
-        // localStorage에서 토큰 가져오기
-        const token = localStorage.getItem('accessToken');
-
-        // 토큰이 없는 경우 처리
-        if (!token) {
-            setError('인증 토큰이 없습니다. 다시 로그인해주세요.');
-            setIsLoading(false);
-            return;
-        }
-
-        const SOCKET_URL =
-            process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
-
-        // STOMP 클라이언트 생성
-        const client = new Client({
-            webSocketFactory: () =>
-                new SockJS(`${SOCKET_URL}/ws/chat/websocket`),
-            connectHeaders: {
-                Authorization: `Bearer ${token}`,
-            },
-            debug: (str) => {
-                console.log('STOMP 디버그:', str);
-            },
-            reconnectDelay: 5000,
-            heartbeatIncoming: 4000,
-            heartbeatOutgoing: 4000,
-        });
-
-        // 연결 성공 콜백
-        client.onConnect = () => {
-            setIsConnected(true);
-
-            // 채팅방 구독
-            client.subscribe(`/topic/chatroom/${roomId}`, (message) => {
-                const receivedMessage = JSON.parse(message.body);
-
-                // 받은 메시지를 Message 타입으로 변환
-                const formattedMessage: Message = {
-                    messageId: Date.now(),
-                    text: receivedMessage.message || '',
-                    messageFrom:
-                        receivedMessage.senderId === kakaoId
-                            ? 'writer'
-                            : 'user',
-                    timestamp: formatTime(
-                        receivedMessage.sentAt || new Date().toISOString(),
-                    ),
-                };
-
-                setMessages((prevMessages) => [
-                    ...prevMessages,
-                    formattedMessage,
-                ]);
-
-                // 메시지 읽음 처리
-                markMessagesAsRead();
-            });
-
-            // 이전 메시지 불러오기
-            fetchMessages();
-        };
-
-        // 연결 오류 콜백
-        client.onStompError = (frame) => {
-            console.error('STOMP 에러:', frame);
-            setError('채팅 연결에 문제가 발생했습니다.');
-            setIsLoading(false);
-        };
-
-        // 연결 시작
-        client.activate();
-        stompClient.current = client;
-
-        // 컴포넌트 언마운트 시 정리
-        return () => {
-            if (client.active) {
-                client.deactivate();
-            }
-        };
-    }, [roomId, kakaoId]);
-
-    // 메시지 읽음 처리
-    const markMessagesAsRead = async () => {
+    const markMessagesAsRead = useCallback(async () => {
         try {
             const token = localStorage.getItem('accessToken');
             if (!token) {
@@ -160,10 +76,9 @@ export default function ChatRoom({ roomId, kakaoId }: ChatRoomProps) {
         } catch (error) {
             console.error('메시지 읽음 처리에 실패했습니다.', error);
         }
-    };
+    }, [roomId]);
 
-    // 메시지 불러오기
-    const fetchMessages = async () => {
+    const fetchMessages = useCallback(async () => {
         try {
             setIsLoading(true);
 
@@ -215,7 +130,96 @@ export default function ChatRoom({ roomId, kakaoId }: ChatRoomProps) {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [roomId, kakaoId]);
+
+    // STOMP 클라이언트 연결 설정
+    useEffect(() => {
+        let mounted = true;
+        
+        const connectWebSocket = async () => {
+            try {
+                // WebSocket 토큰 가져오기
+                const res = await fetch('/api/auth/ws-token', {
+                    credentials: 'include',
+                });
+
+                if (!res.ok) {
+                    throw new Error('WebSocket 토큰을 가져오는데 실패했습니다.');
+                }
+
+                const { wsToken } = await res.json();
+                
+                const SOCKET_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
+
+                const client = new Client({
+                    webSocketFactory: () => new SockJS(`${SOCKET_URL}/ws/chat/websocket`),
+                    connectHeaders: {
+                        Authorization: `Bearer ${wsToken}`,
+                    },
+                    reconnectDelay: 5000,
+                    heartbeatIncoming: 4000,
+                    heartbeatOutgoing: 4000,
+                });
+
+                client.onConnect = () => {
+                    if (!mounted) return;
+                    setIsConnected(true);
+
+                    client.subscribe(`/topic/chatroom/${roomId}`, (message) => {
+                        if (!mounted) return;
+                        const receivedMessage = JSON.parse(message.body);
+
+                        // 받은 메시지를 Message 타입으로 변환
+                        const formattedMessage: Message = {
+                            messageId: Date.now(),
+                            text: receivedMessage.message || '',
+                            messageFrom:
+                                receivedMessage.senderId === kakaoId
+                                    ? 'writer'
+                                    : 'user',
+                            timestamp: formatTime(
+                                receivedMessage.sentAt || new Date().toISOString(),
+                            ),
+                        };
+
+                        setMessages((prevMessages) => [
+                            ...prevMessages,
+                            formattedMessage,
+                        ]);
+
+                        // 메시지 읽음 처리
+                        markMessagesAsRead();
+                    });
+
+                    fetchMessages();
+                };
+
+                client.onStompError = (frame) => {
+                    if (!mounted) return;
+                    console.error('STOMP 에러:', frame);
+                    setError('채팅 연결에 문제가 발생했습니다.');
+                    setIsLoading(false);
+                };
+
+                client.activate();
+                stompClient.current = client;
+
+            } catch (err) {
+                if (!mounted) return;
+                console.error('WebSocket 연결 오류:', err);
+                setError('WebSocket 연결에 실패했습니다.');
+            }
+        };
+
+        connectWebSocket();
+
+        return () => {
+            mounted = false;
+            if (stompClient.current?.active) {
+                stompClient.current.deactivate();
+            }
+        };
+    }, [roomId, fetchMessages, markMessagesAsRead]);
 
     // 메시지 전송
     const sendMessage = async (e?: React.FormEvent) => {
