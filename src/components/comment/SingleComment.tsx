@@ -1,7 +1,7 @@
 'use client';
 
 import Replies from '@/components/Icons/Replies';
-import { dateFormat } from '@/lib';
+import { cn, dateFormat } from '@/lib';
 import Image from 'next/image';
 import React from 'react';
 
@@ -36,7 +36,7 @@ export default function SingleComment({
 }: SingleCommentProps) {
     return (
         <div>
-            <div className="flex gap-2.5">
+            <div className={cn('flex gap-2.5', variant === 'Reply' && 'mt-5')}>
                 {variant === 'Reply' && <Replies className={'mt-2 shrink-0'} />}
                 {/*유저 정보 섹션*/}
                 <div>
