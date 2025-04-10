@@ -16,6 +16,7 @@ import SockJS from 'sockjs-client';
 
 import ChatNotice from './ChatNotice';
 import ChatRoom from './ChatRoom';
+import LoadingThreeDots from './LoadingThreeDots';
 
 interface UserChatProps {
     userName: string;
@@ -30,7 +31,6 @@ interface UserChatProps {
     opponentKakaoId?: string | null;
 }
 
-// 메시지 타입 정의
 interface ChatMessage {
     roomId: number;
     message: string;
@@ -47,7 +47,6 @@ export default function UserChat({
     onParticipate,
     roomId: initialRoomId,
     opponentKakaoId,
-    postId,
 }: UserChatProps) {
     const [message, setMessage] = useState('');
     const [roomId, setRoomId] = useState<number | undefined>(initialRoomId);
@@ -67,56 +66,25 @@ export default function UserChat({
                 const res = await fetch('/api/auth/ws-token', {
                     credentials: 'include',
                 });
-
-                if (!res.ok) {
-                    throw new Error('Failed to get WebSocket token');
-                }
+                if (!res.ok) throw new Error('Failed to get WebSocket token');
 
                 const { wsToken } = await res.json();
-
-                // 환경에 따른 웹소켓 URL 설정
-                const isProduction =
-                    typeof window !== 'undefined' &&
-                    window.location.hostname !== 'localhost';
-
-                // HTTPS 프로토콜 확인
-                const isSecure =
-                    typeof window !== 'undefined' &&
-                    window.location.protocol === 'https:';
-
-                const wsBaseUrl = isProduction
-                    ? `${isSecure ? 'https' : 'http'}://gateway.wego-travel.click`
-                    : 'http://localhost:8080';
-
-                console.log('WebSocket URL base:', wsBaseUrl);
-                console.log('Token:', wsToken);
-                console.log('Room ID for subscription:', roomId);
-
-                // SockJS 인스턴스 생성 시 정확한 경로 지정
-                const sockJsUrl = `${wsBaseUrl}/ws/chat`;
-                console.log('SockJS URL:', sockJsUrl);
+                const sockJsUrl = 'https://gateway.wego-travel.click/ws/chat';
 
                 const client = new Client({
                     webSocketFactory: () => new SockJS(sockJsUrl),
                     connectHeaders: {
                         Authorization: `Bearer ${wsToken}`,
                     },
+                    debug: (str) => console.log('STOMP Debug:', str),
                     reconnectDelay: 5000,
                     heartbeatIncoming: 4000,
                     heartbeatOutgoing: 4000,
-                    debug: function (str) {
-                        console.log('STOMP Debug:', str);
-                    },
                     onConnect: () => {
                         if (!mounted) return;
-                        console.log('WebSocket connected successfully!');
                         setStompClient(client);
                         setError(null);
-
-                        // 채팅방 구독
                         const subscriptionTopic = `/topic/chatroom/${roomId}`;
-                        console.log(`Subscribing to ${subscriptionTopic}`);
-
                         client.subscribe(
                             subscriptionTopic,
                             (message) => {
@@ -137,7 +105,6 @@ export default function UserChat({
                                     );
                                 }
                             },
-                            // 구독 헤더 추가
                             {
                                 Authorization: `Bearer ${wsToken}`,
                             },
@@ -164,19 +131,10 @@ export default function UserChat({
                         console.log('WebSocket closed:', event);
                         if (event.code !== 1000) {
                             setError(`WebSocket 연결 종료: 코드 ${event.code}`);
-
-                            // 1002 에러 상세 디버깅
-                            if (event.code === 1002) {
-                                console.error(
-                                    '프로토콜 오류 발생, 상세 정보:',
-                                    event,
-                                );
-                            }
                         }
                     },
                 });
 
-                console.log('Activating STOMP client...');
                 client.activate();
             } catch (err) {
                 if (!mounted) return;
@@ -192,7 +150,6 @@ export default function UserChat({
         return () => {
             mounted = false;
             if (stompClient?.active) {
-                console.log('Deactivating STOMP client...');
                 stompClient.deactivate();
                 setStompClient(null);
             }
@@ -201,25 +158,15 @@ export default function UserChat({
 
     const sendMessage = useCallback(() => {
         if (!message.trim() || !roomId || !stompClient?.active) return;
-
         try {
-            console.log('Sending message:', message);
-            console.log('Room ID for sending:', roomId);
-
-            // 메시지 페이로드 구조 확인 - 디버거 이미지와 일치하도록
             const payload: ChatMessage = {
-                roomId: roomId,
+                roomId,
                 message: message.trim(),
             };
-
-            console.log('Message payload:', payload);
-
             stompClient.publish({
                 destination: '/app/chat.sendMessage',
                 body: JSON.stringify(payload),
-                headers: {
-                    'content-type': 'application/json',
-                },
+                headers: { 'content-type': 'application/json' },
             });
             setMessage('');
         } catch (err) {
@@ -230,85 +177,26 @@ export default function UserChat({
         }
     }, [message, roomId, stompClient]);
 
-    useEffect(() => {
-        console.log('유저 챗 컴포넌트 마운트 확인:', {
-            userName,
-            userRating,
-            title,
-            startDate,
-            endDate,
-            initialRoomId,
-            opponentKakaoId,
-            postId,
-        });
-    }, [
-        userName,
-        userRating,
-        title,
-        startDate,
-        endDate,
-        initialRoomId,
-        opponentKakaoId,
-        postId,
-    ]);
-
     const createOrGetChatRoom = useCallback(async () => {
-        console.log('createOrGetChatRoom 호출됨', { opponentKakaoId, kakaoId });
-
-        if (!opponentKakaoId) {
-            console.error('상대방 카카오 ID가 없습니다.');
-            setError('상대방 정보가 없습니다.');
+        if (!opponentKakaoId || !kakaoId) {
+            setError('상대방 또는 내 정보가 없습니다.');
             return;
         }
-
-        if (!kakaoId) {
-            console.error('내 카카오 ID가 없습니다. 로그인이 필요합니다.');
-            setError('로그인이 필요합니다.');
-            return;
-        }
-
         try {
             setIsLoading(true);
-
-            const NEXT_PUBLIC_NEST_BFF_URL =
+            const baseUrl =
                 process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
-
-            console.log('채팅방 생성 시도:', {
-                url: `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
-                opponentKakaoId: opponentKakaoId,
+            const res = await fetch(`${baseUrl}/api/chat/rooms`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ opponentKakaoId }),
+                credentials: 'include',
             });
-
-            const response = await fetch(
-                `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        opponentKakaoId: opponentKakaoId,
-                    }),
-                    credentials: 'include',
-                },
-            );
-
-            console.log('채팅방 생성 응답 상태:', response.status);
-
-            if (!response.ok) {
-                throw new Error(
-                    `채팅방 생성 실패: ${response.status} ${response.statusText}`,
-                );
-            }
-
-            const data = await response.json();
-            console.log('채팅방 생성 성공:', data);
-
+            if (!res.ok) throw new Error(`채팅방 생성 실패: ${res.status}`);
+            const data = await res.json();
             setRoomId(data.roomId);
-            console.log('룸 ID 설정됨:', data.roomId);
-
             return data.roomId;
         } catch (error) {
-            console.error('채팅방 생성 오류:', error);
             setError(
                 `채팅방 생성 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`,
             );
@@ -334,16 +222,11 @@ export default function UserChat({
     return (
         <div className="bg-background-light flex h-full flex-col">
             <SheetHeader className="flex h-[72px] w-full flex-row items-center justify-between px-5 py-2.5">
-                <button
-                    className="flex h-6 w-6 cursor-pointer items-center justify-center"
-                    onClick={onClose}
-                    aria-label="창 닫기"
-                >
+                <button onClick={onClose} aria-label="창 닫기">
                     <X className="h-4 w-4" />
                 </button>
-
                 <div className="inline-flex items-center gap-1">
-                    <SheetTitle className="m-0 text-[15px] font-semibold text-black">
+                    <SheetTitle className="text-[15px] font-semibold text-black">
                         {userName}
                     </SheetTitle>
                     <div className="inline-flex items-center gap-1 rounded-[50px] bg-[#ffd8001a] px-2 py-1 text-[#614e03]">
@@ -353,13 +236,7 @@ export default function UserChat({
                         </span>
                     </div>
                 </div>
-
-                <button
-                    className="flex h-6 w-6 items-center justify-center"
-                    aria-label="MoreHorizontal options"
-                >
-                    <MoreHorizontal className="h-5 w-5 cursor-pointer text-[#333333]" />
-                </button>
+                <MoreHorizontal className="h-5 w-5 cursor-pointer text-[#333333]" />
             </SheetHeader>
 
             <section className="flex w-full flex-col gap-2.5 border-b px-5 py-4">
@@ -368,25 +245,21 @@ export default function UserChat({
                         <h2 className="text-base font-semibold">{title}</h2>
                         <div className="flex items-center gap-[3px]">
                             <Calendar className="h-4 w-4 text-[#666666]" />
-                            <SheetDescription className="m-0 text-sm font-normal whitespace-nowrap text-[#666666]">
+                            <SheetDescription className="text-sm font-normal text-[#666666]">
                                 {`${startDate} - ${endDate}`}
                             </SheetDescription>
                         </div>
                     </div>
-                    <Button className="px-[30px] py-2" onClick={onParticipate}>
-                        참여하기
-                    </Button>
+                    <Button onClick={onParticipate}>참여하기</Button>
                 </div>
             </section>
 
             <section className="flex-1 overflow-y-auto p-4">
                 {isLoading ? (
-                    <div className="flex h-full items-center justify-center">
-                        <p>로딩 중...</p>
-                    </div>
+                    <LoadingThreeDots />
                 ) : error ? (
                     <div className="flex h-full items-center justify-center text-red-500">
-                        <p>{error}</p>
+                        {error}
                     </div>
                 ) : roomId ? (
                     <ChatRoom roomId={roomId} kakaoId={kakaoId || undefined} />
@@ -399,14 +272,6 @@ export default function UserChat({
                 <div className="w-full rounded-xl border-solid bg-[#f9f9f9]">
                     <div className="p-5">
                         <div className="flex flex-col gap-10">
-                            <div className="mb-2 text-xs text-gray-500">
-                                Debug: isLoading=
-                                {isLoading ? 'true' : 'false'}, roomId=
-                                {roomId ? roomId.toString() : 'undefined'},
-                                kakaoId={kakaoId || 'undefined'},
-                                opponentKakaoId={opponentKakaoId}
-                            </div>
-
                             <Input
                                 placeholder="메세지를 입력하세요"
                                 className="border-none bg-transparent text-base leading-[20.8px] font-normal text-[#999999] shadow-none focus-visible:ring-0"
