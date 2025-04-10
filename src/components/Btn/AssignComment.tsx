@@ -9,8 +9,9 @@ interface AssignCommentProps {
     content: string;
     parentId: number | null;
     postId: number;
-    setContent: React.Dispatch<React.SetStateAction<string>>;
     variant: 'Comment' | 'Reply';
+    setContent: React.Dispatch<React.SetStateAction<string>>;
+    setIsReplyInputOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function AssignCommentBtn({
@@ -19,6 +20,7 @@ export default function AssignCommentBtn({
     postId,
     setContent,
     variant,
+    setIsReplyInputOpen,
 }: AssignCommentProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -58,8 +60,10 @@ export default function AssignCommentBtn({
         });
         setContent('');
         setLoading(false);
+        setIsReplyInputOpen?.(false);
         router.refresh();
     };
+
     return (
         <Button
             className="h-[37px] w-[92px] rounded-lg bg-[#999999] font-semibold text-white hover:bg-[#888888]"

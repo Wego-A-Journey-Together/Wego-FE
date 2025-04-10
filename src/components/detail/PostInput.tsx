@@ -5,7 +5,7 @@ import Replies from '@/components/Icons/Replies';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 /**
  * 필드가 하나라 RHF 보다는 useState 로 입력값 관리 하였습니다.
@@ -14,10 +14,12 @@ export default function PostInput({
     parentId,
     postId,
     variant,
+    setIsReplyInputOpen,
 }: {
     parentId: number | null;
     postId: number;
     variant: 'Comment' | 'Reply';
+    setIsReplyInputOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
     const [content, setContent] = useState('');
     return (
@@ -26,7 +28,7 @@ export default function PostInput({
             className={cn(
                 `mt-2.5 flex w-auto flex-col gap-2 rounded-2xl border p-4`,
                 variant === 'Reply'
-                    ? 'ml-10 flex-row items-center border-[#dcdcdc] bg-[#fafafa]'
+                    ? 'ml-5 flex-row items-center border-[#dcdcdc] bg-[#fafafa]'
                     : 'bg-white',
             )}
         >
@@ -63,6 +65,7 @@ export default function PostInput({
                     postId={postId}
                     setContent={setContent}
                     variant={variant}
+                    setIsReplyInputOpen={setIsReplyInputOpen}
                 />
             </section>
         </div>

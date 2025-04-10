@@ -1,10 +1,9 @@
 'use client';
 
 import Replies from '@/components/Icons/Replies';
-import PostInput from '@/components/detail/PostInput';
 import { dateFormat } from '@/lib';
 import Image from 'next/image';
-import { useState } from 'react';
+import React from 'react';
 
 interface SingleCommentProps {
     content: {
@@ -18,7 +17,8 @@ interface SingleCommentProps {
         parentId: number | null;
     };
     variant: 'Parent' | 'Reply';
-    postId: number;
+    setIsReplyInputOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsReplyOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
@@ -31,15 +31,15 @@ interface SingleCommentProps {
 export default function SingleComment({
     content,
     variant,
-    postId,
+    setIsReplyInputOpen,
+    setIsReplyOpen,
 }: SingleCommentProps) {
-    const [isReplyInputOpen, setIsReplyInputOpen] = useState(false);
     return (
         <div>
             <div className="flex gap-2.5">
+                {variant === 'Reply' && <Replies className={'mt-2 shrink-0'} />}
+                {/*유저 정보 섹션*/}
                 <div>
-                    {variant === 'Reply' && <Replies className={'shrink-0'} />}
-                    {/*유저 정보 섹션*/}
                     <div className="flex flex-1 items-center gap-3">
                         {/*유저 이미지*/}
                         <div className="relative aspect-square h-8 w-8">
@@ -75,7 +75,8 @@ export default function SingleComment({
                                 className={`cursor-pointer text-xs font-medium text-[#666666]`}
                                 type="button"
                                 onClick={() => {
-                                    setIsReplyInputOpen((prev) => !prev);
+                                    setIsReplyOpen(true);
+                                    setIsReplyInputOpen(true);
                                 }}
                             >
                                 답글달기
@@ -84,13 +85,6 @@ export default function SingleComment({
                     </div>
                 </div>
             </div>
-            {isReplyInputOpen && (
-                <PostInput
-                    postId={postId}
-                    parentId={content.id}
-                    variant={'Reply'}
-                />
-            )}
         </div>
     );
 }
