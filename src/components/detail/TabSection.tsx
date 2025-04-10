@@ -5,7 +5,7 @@ import PostContent from '@/components/detail/PostContent';
 import PostLocation from '@/components/detail/PostLocation';
 import PostReview from '@/components/detail/PostReview';
 import ScrollSpy from '@/components/detail/ScrollSpy';
-import { SpringCommentResponse } from '@/lib/fetcher/fetchInitialComments';
+import { SpringCommentResponse } from '@/lib/fetcher/fetchComments';
 import { DetailPost } from '@/types/DetailPost';
 import { useRef } from 'react';
 

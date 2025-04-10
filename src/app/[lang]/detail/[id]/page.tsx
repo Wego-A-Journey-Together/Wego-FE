@@ -4,8 +4,8 @@ import TabSection from '@/components/detail/TabSection';
 import UserProfile from '@/components/detail/UserProfile';
 import {
     SpringCommentResponse,
-    fetchInitialComments,
-} from '@/lib/fetcher/fetchInitialComments';
+    fetchComments,
+} from '@/lib/fetcher/fetchComments';
 import { fetchPostDetail } from '@/lib/fetcher/fetchPostDetail';
 import { DetailPost } from '@/types/DetailPost';
 import Image from 'next/image';
@@ -25,7 +25,7 @@ export default async function DetailPage({ params }: DetailPageProps) {
     try {
         [post, firstCommentBundle] = await Promise.all([
             fetchPostDetail(id),
-            fetchInitialComments(Number(id)),
+            fetchComments(Number(id)),
         ]);
     } catch (error) {
         if ((error as Error).message === '404') {
