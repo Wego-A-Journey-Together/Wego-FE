@@ -53,12 +53,14 @@ export default function UserChat({
     useEffect(() => {
         if (!roomId) return;
 
+        // 토큰 추출 디버깅
+        const token = document.cookie.split('accessToken=')[1]?.split(';')[0];
+        console.log('Extracted token:', token);
+
         const client = new Client({
-            brokerURL:
-                process.env.NEXT_PUBLIC_WEBSOCKET_URL ||
-                'ws://localhost:8080/ws/chat/websocket',
+            brokerURL: 'ws://localhost:8080/ws/chat/websocket',
             connectHeaders: {
-                Authorization: `Bearer ${document.cookie.split('accessToken=')[1]?.split(';')[0]}`,
+                Authorization: `Bearer ${token}`,
             },
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
