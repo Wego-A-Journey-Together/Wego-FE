@@ -67,19 +67,40 @@ export default function UserChat({
 
                 const { wsToken } = await res.json();
 
+                // 환경에 따른 웹소켓 URL 설정
+                const isProduction =
+                    typeof window !== 'undefined' &&
+                    window.location.hostname !== 'localhost';
+                const protocol =
+                    typeof window !== 'undefined' &&
+                    window.location.protocol === 'https:'
+                        ? 'https'
+                        : 'http';
+                const wsBaseUrl = isProduction
+                    ? `${protocol}://gateway.wego-travel.click`
+                    : 'http://localhost:8080';
+
+                console.log('WebSocket URL base:', wsBaseUrl);
+
                 const client = new Client({
-                    webSocketFactory: () =>
-                        new SockJS('ws://localhost:8080/ws/chat/websocket'),
+                    webSocketFactory: () => new SockJS(`${wsBaseUrl}/ws/chat`),
                     connectHeaders: {
                         Authorization: `Bearer ${wsToken}`,
                     },
                     reconnectDelay: 5000,
                     heartbeatIncoming: 4000,
                     heartbeatOutgoing: 4000,
+                    debug: function (str) {
+                        console.log('STOMP Debug:', str);
+                    },
                     onConnect: () => {
                         if (!mounted) return;
+                        console.log('WebSocket connected successfully!');
                         setStompClient(client);
                         setError(null);
+
+                        // 채팅방 구독
+                        console.log(`Subscribing to /topic/chatroom/${roomId}`);
                         client.subscribe(
                             `/topic/chatroom/${roomId}`,
                             (message) => {
@@ -94,18 +115,39 @@ export default function UserChat({
                             },
                         );
                     },
-                    onStompError: () => {
+                    onStompError: (frame) => {
                         if (!mounted) return;
-                        setError('WebSocket 연결 오류가 발생했습니다.');
+                        console.error('STOMP error:', frame);
+                        setError(
+                            `WebSocket 연결 오류: ${frame.headers.message || '알 수 없는 오류'}`,
+                        );
                         setStompClient(null);
+                    },
+                    onWebSocketError: (event) => {
+                        if (!mounted) return;
+                        console.error('WebSocket error:', event);
+                        setError(
+                            'WebSocket 연결 실패: 서버에 연결할 수 없습니다.',
+                        );
+                        setStompClient(null);
+                    },
+                    onWebSocketClose: (event) => {
+                        if (!mounted) return;
+                        console.log('WebSocket closed:', event);
+                        if (event.code !== 1000) {
+                            setError(`WebSocket 연결 종료: 코드 ${event.code}`);
+                        }
                     },
                 });
 
+                console.log('Activating STOMP client...');
                 client.activate();
             } catch (err) {
                 if (!mounted) return;
                 console.error('WebSocket connection error:', err);
-                setError('WebSocket 연결에 실패했습니다.');
+                setError(
+                    `WebSocket 연결 오류: ${err instanceof Error ? err.message : '알 수 없는 오류'}`,
+                );
             }
         };
 
@@ -114,17 +156,19 @@ export default function UserChat({
         return () => {
             mounted = false;
             if (stompClient?.active) {
+                console.log('Deactivating STOMP client...');
                 stompClient.deactivate();
                 setStompClient(null);
             }
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [roomId]); // stompClient intentionally excluded
+    }, [roomId]);
 
     const sendMessage = async () => {
         if (!message.trim() || !roomId || !stompClient?.active) return;
 
         try {
+            console.log('Sending message:', message);
+
             stompClient.publish({
                 destination: '/app/chat.sendMessage',
                 body: JSON.stringify({
@@ -138,7 +182,9 @@ export default function UserChat({
             setMessage('');
         } catch (err) {
             console.error('Message sending error:', err);
-            setError('메시지를 전송하는데 실패했습니다.');
+            setError(
+                `메시지 전송 실패: ${err instanceof Error ? err.message : '알 수 없는 오류'}`,
+            );
         }
     };
 
@@ -185,6 +231,11 @@ export default function UserChat({
             const NEXT_PUBLIC_NEST_BFF_URL =
                 process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
 
+            console.log('채팅방 생성 시도:', {
+                url: `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
+                opponentKakaoId: opponentKakaoId,
+            });
+
             const response = await fetch(
                 `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
                 {
@@ -199,16 +250,26 @@ export default function UserChat({
                 },
             );
 
+            console.log('채팅방 생성 응답 상태:', response.status);
+
             if (!response.ok) {
-                throw new Error('채팅방을 생성하는데 실패했습니다.');
+                throw new Error(
+                    `채팅방 생성 실패: ${response.status} ${response.statusText}`,
+                );
             }
 
             const data = await response.json();
+            console.log('채팅방 생성 성공:', data);
+
             setRoomId(data.roomId);
+            console.log('룸 ID 설정됨:', data.roomId);
+
             return data.roomId;
         } catch (error) {
             console.error('채팅방 생성 오류:', error);
-            setError('채팅방을 생성하는데 실패했습니다.');
+            setError(
+                `채팅방 생성 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`,
+            );
             return null;
         } finally {
             setIsLoading(false);
