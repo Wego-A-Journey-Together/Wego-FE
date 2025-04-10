@@ -16,10 +16,16 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
         const fetchCreatorInfo = async () => {
             try {
                 const NEXT_PUBLIC_NEST_BFF_URL =
-                    process.env.NEXT_PUBLIC_NEST_BFF_URL ||
-                    'http://localhost:3000';
+                    process.env.NEXT_PUBLIC_NEST_BFF_URL;
+
+                const token = localStorage.getItem('accessToken');
                 const response = await fetch(
                     `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/${post.id}`,
+                    {
+                        headers: {
+                            Authorization: token ? `Bearer ${token}` : '',
+                        },
+                    },
                 );
 
                 if (!response.ok) {
@@ -30,7 +36,6 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
                 console.log('Gathering creator info:', data.creator);
 
                 if (data.creator && data.creator.kakaoId) {
-                    // Convert to string as the API might return it as a number
                     setCreatorKakaoId(String(data.creator.kakaoId));
                     console.log(
                         'Set creator kakaoId:',
@@ -46,6 +51,13 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
     }, [post.id]);
 
     const toggleChat = () => {
+        const token = localStorage.getItem('accessToken');
+
+        if (!token) {
+            alert('인증 토큰이 존재하지 않습니다.');
+            return;
+        }
+
         setShowChat((prev) => !prev);
     };
 
