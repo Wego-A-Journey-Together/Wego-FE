@@ -67,8 +67,7 @@ export default function UserChat({
                 if (!res.ok) throw new Error('Failed to get WebSocket token');
 
                 const { wsToken } = await res.json();
-                const wsUrl =
-                    'wss://gateway.wego-travel.click/ws/chat/websocket';
+                const wsUrl = 'wss://gateway.wego-travel.click/ws/chat';
 
                 const client = new Client({
                     brokerURL: wsUrl,
