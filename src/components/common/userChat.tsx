@@ -9,12 +9,12 @@ import {
     SheetTitle,
 } from '@/components/ui/sheet';
 import { useSession } from '@/hooks/useSession';
+import { Client } from '@stomp/stompjs';
 import { Calendar, MoreHorizontal, Star, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
 import ChatNotice from './ChatNotice';
 import ChatRoom from './ChatRoom';
-import { Client } from '@stomp/stompjs';
 
 interface UserChatProps {
     userName: string;
@@ -61,6 +61,12 @@ export default function UserChat({
             },
             onConnect: () => {
                 console.log('WebSocket 연결 성공');
+
+                // 채팅방 메시지 구독
+                client.subscribe(`/topic/chat.room.${roomId}`, (message) => {
+                    const receivedMessage = JSON.parse(message.body);
+                    console.log('새 메시지 수신:', receivedMessage);
+                });
             },
             onDisconnect: () => {
                 console.log('WebSocket 연결 해제');
@@ -172,8 +178,8 @@ export default function UserChat({
                 body: JSON.stringify({
                     roomId: roomId,
                     message: message,
-                    sentAt: new Date().toISOString()
-                })
+                    sentAt: new Date().toISOString(),
+                }),
             });
 
             setMessage('');
