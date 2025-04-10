@@ -10,6 +10,11 @@ export type SpringCommentResponse = {
     last: boolean;
 };
 
+/**
+ * <server only>
+ * 게시글 기준 초기 댓글 SSR 하는 유틸함수
+ * @param postId
+ */
 export async function fetchInitialComments(
     postId: number,
 ): Promise<SpringCommentResponse> {

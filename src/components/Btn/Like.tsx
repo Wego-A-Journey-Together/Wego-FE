@@ -31,7 +31,7 @@ export default function Like({ id, className }: LikeProps) {
             if (!res.ok) throw new Error('찜 상태 조회 실패');
             return res.json(); //불리언 타입
         },
-        enabled: isAuthenticated, // 로그인 안된 사람은 쿼리 방지
+        enabled: isAuthenticated && process.env.NODE_ENV !== 'development', // 로그인 안된 사람은 쿼리 방지
     });
     /**
      * mutationFn 에 해당합니다. 백엔드에 찜할 포스트의 아이디를 연결합니다.
