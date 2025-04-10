@@ -103,10 +103,9 @@ export default function UserChat({
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify({
-                        opponentKakaoId: opponentKakaoId, // 상대방 카카오 ID 전송
+                        opponentKakaoId: opponentKakaoId,
                     }),
                     credentials: 'include',
                 },
