@@ -67,13 +67,9 @@ export default function UserChat({
 
                 const { wsToken } = await res.json();
 
-                const SOCKET_URL =
-                    process.env.NEXT_PUBLIC_NEST_BFF_URL ||
-                    'http://localhost:3000';
-
                 const client = new Client({
                     webSocketFactory: () =>
-                        new SockJS(`${SOCKET_URL}/ws/chat/websocket`),
+                        new SockJS('ws://localhost:8080/ws/chat/websocket'),
                     connectHeaders: {
                         Authorization: `Bearer ${wsToken}`,
                     },
