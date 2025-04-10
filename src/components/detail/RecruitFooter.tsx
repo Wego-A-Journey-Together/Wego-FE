@@ -12,7 +12,7 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
     const [showChat, setShowChat] = useState(false);
     const [creatorKakaoId, setCreatorKakaoId] = useState<string | null>(null);
     const [roomId, setRoomId] = useState<number | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchCreatorInfo = async () => {
@@ -148,7 +148,6 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
                             variant="skyblueOutline"
                             className="h-9 w-[100px]"
                             onClick={toggleChat}
-                            disabled={!isLoading}
                         >
                             <Image
                                 src="/icon/detail/chatIcon.svg"
