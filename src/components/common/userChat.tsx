@@ -59,27 +59,80 @@ export default function UserChat({
             connectHeaders: {
                 Authorization: `Bearer ${token}`,
             },
+            debug: function (str) {
+                console.log('STOMP: ' + str);
+            },
+            reconnectDelay: 5000,
+            heartbeatIncoming: 4000,
+            heartbeatOutgoing: 4000,
             onConnect: () => {
                 console.log('WebSocket 연결 성공');
-
                 // 채팅방 메시지 구독
                 client.subscribe(`/topic/chat.room.${roomId}`, (message) => {
                     const receivedMessage = JSON.parse(message.body);
                     console.log('새 메시지 수신:', receivedMessage);
                 });
             },
+            onStompError: (frame) => {
+                console.error(
+                    'Broker reported error: ' + frame.headers['message'],
+                );
+                console.error('Additional details: ' + frame.body);
+                setError('WebSocket 연결 오류가 발생했습니다.');
+            },
             onDisconnect: () => {
                 console.log('WebSocket 연결 해제');
             },
         });
 
-        client.activate();
-        setStompClient(client);
+        try {
+            client.activate();
+            setStompClient(client);
+        } catch (error) {
+            console.error('WebSocket 연결 실패:', error);
+            setError('WebSocket 연결에 실패했습니다.');
+        }
 
         return () => {
-            client.deactivate();
+            if (client.active) {
+                client.deactivate();
+            }
         };
     }, [roomId]);
+
+    // 메시지 전송 함수
+    const sendMessage = async () => {
+        if (!message.trim() || !roomId || !kakaoId || !stompClient) return;
+
+        try {
+            if (!stompClient.active) {
+                throw new Error('WebSocket이 연결되어 있지 않습니다.');
+            }
+
+            console.log('메시지 전송 시도:', {
+                roomId,
+                message,
+                kakaoId,
+            });
+
+            stompClient.publish({
+                destination: '/app/chat.sendMessage',
+                body: JSON.stringify({
+                    roomId: roomId,
+                    message: message,
+                    sentAt: new Date().toISOString(),
+                }),
+                headers: {
+                    'content-type': 'application/json',
+                },
+            });
+
+            setMessage('');
+        } catch (error) {
+            console.error('메시지 전송 오류:', error);
+            setError('메시지를 전송하는데 실패했습니다.');
+        }
+    };
 
     useEffect(() => {
         console.log('유저 챗 컴포넌트 마운트 확인:', {
@@ -122,10 +175,6 @@ export default function UserChat({
 
         try {
             setIsLoading(true);
-            const token = localStorage.getItem('accessToken');
-            if (!token) {
-                throw new Error('인증 토큰이 없습니다. 로그인이 필요합니다.');
-            }
 
             const NEXT_PUBLIC_NEST_BFF_URL =
                 process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
@@ -167,27 +216,6 @@ export default function UserChat({
             createOrGetChatRoom();
         }
     }, [roomId, opponentKakaoId, createOrGetChatRoom]);
-
-    // 메시지 전송 함수
-    const sendMessage = async () => {
-        if (!message.trim() || !roomId || !kakaoId || !stompClient) return;
-
-        try {
-            stompClient.publish({
-                destination: '/app/chat.sendMessage',
-                body: JSON.stringify({
-                    roomId: roomId,
-                    message: message,
-                    sentAt: new Date().toISOString(),
-                }),
-            });
-
-            setMessage('');
-        } catch (error) {
-            console.error('메시지 전송 오류:', error);
-            setError('메시지를 전송하는데 실패했습니다.');
-        }
-    };
 
     // 엔터키로 메시지 전송
     const handleKeyPress = (e: React.KeyboardEvent) => {
