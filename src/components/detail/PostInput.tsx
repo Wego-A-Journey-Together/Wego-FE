@@ -4,7 +4,10 @@ import AssignComment from '@/components/Btn/AssignComment';
 import Replies from '@/components/Icons/Replies';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { useSession } from '@/hooks/useSession';
 import { cn } from '@/lib';
+import { useAppDispatch } from '@/redux/hooks';
+import { openLoginModal } from '@/redux/slices/modalSlice';
 import React, { useState } from 'react';
 
 /**
@@ -22,6 +25,8 @@ export default function PostInput({
     setIsReplyInputOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
     const [content, setContent] = useState('');
+    const dispatch = useAppDispatch();
+    const { isAuthenticated } = useSession();
     return (
         // 댓글 반복문에서 마진 40px + 10px =50px
         <div
@@ -41,12 +46,20 @@ export default function PostInput({
                         : 'min-h-[80px] text-base',
                 )}
                 placeholder={
-                    variant === 'Reply'
-                        ? '답글을 남겨 보세요'
-                        : '댓글을 남겨 주세요'
+                    isAuthenticated
+                        ? variant === 'Reply'
+                            ? '답글을 남겨 보세요'
+                            : '댓글을 남겨 주세요'
+                        : '로그인이 필요한 서비스 입니다.'
                 }
                 onChange={(e) => setContent(e.target.value)}
                 value={content}
+                onFocus={(e) => {
+                    if (!isAuthenticated) {
+                        e.target.blur();
+                        dispatch(openLoginModal());
+                    }
+                }}
             />
             {/*버튼 그룹*/}
             <section className={`flex justify-end gap-2`}>
