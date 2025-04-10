@@ -20,13 +20,10 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
                 const NEXT_PUBLIC_NEST_BFF_URL =
                     process.env.NEXT_PUBLIC_NEST_BFF_URL;
 
-                const token = localStorage.getItem('accessToken');
                 const response = await fetch(
                     `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/${post.id}`,
                     {
-                        headers: {
-                            Authorization: token ? `Bearer ${token}` : '',
-                        },
+                        credentials: 'include',
                     },
                 );
 
@@ -56,12 +53,6 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
     const createChatRoom = async (opponentId: string) => {
         try {
             setIsLoading(true);
-            const token = localStorage.getItem('accessToken');
-
-            if (!token) {
-                alert('인증 토큰이 존재하지 않습니다.');
-                return null;
-            }
 
             const NEXT_PUBLIC_NEST_BFF_URL =
                 process.env.NEXT_PUBLIC_NEST_BFF_URL;
@@ -75,10 +66,7 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
                 `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
                 {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
+                    credentials: 'include',
                     body: JSON.stringify({
                         opponentKakaoId: opponentId,
                     }),
@@ -105,15 +93,7 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
     };
 
     const toggleChat = async () => {
-        const token = localStorage.getItem('accessToken');
-
-        if (!token) {
-            alert('인증 토큰이 존재하지 않습니다.');
-            return;
-        }
-
         if (creatorKakaoId && !roomId) {
-            // 채팅방 먼저 생성 시도
             const newRoomId = await createChatRoom(creatorKakaoId);
             if (newRoomId) {
                 setRoomId(newRoomId);
