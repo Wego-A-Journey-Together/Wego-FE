@@ -54,7 +54,7 @@ export default function FetchMoreComments({ postId }: { postId: number }) {
                             '댓글 더보기'
                         )}
                     </p>
-                    <ChevronDown />
+                    {!isLoading && <ChevronDown />}
                 </button>
             ) : (
                 <button
