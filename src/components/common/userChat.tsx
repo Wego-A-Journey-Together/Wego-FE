@@ -70,6 +70,8 @@ export default function UserChat({
             heartbeatOutgoing: 4000,
             onConnect: () => {
                 console.log('WebSocket 연결 성공');
+                setStompClient(client); // 연결 성공 후 stompClient 설정
+                setError(null);
                 client.subscribe(`/topic/chatroom/${roomId}`, (message) => {
                     const receivedMessage = JSON.parse(message.body);
                     console.log('새 메시지 수신:', receivedMessage);
@@ -82,21 +84,22 @@ export default function UserChat({
                 );
                 console.error('Additional details:', frame.body);
                 setError('WebSocket 연결 오류가 발생했습니다.');
+                setStompClient(null); // 에러 발생 시 stompClient 초기화
             },
         });
 
         try {
             client.activate();
-            setStompClient(client);
-            setError(null); // 연결 성공시 에러 초기화
         } catch (error) {
             console.error('WebSocket 연결 실패:', error);
             setError('WebSocket 연결에 실패했습니다.');
+            setStompClient(null);
         }
 
         return () => {
             if (client.active) {
                 client.deactivate();
+                setStompClient(null); // cleanup 시 stompClient 초기화
             }
         };
     }, [roomId]);
