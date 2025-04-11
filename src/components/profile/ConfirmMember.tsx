@@ -7,6 +7,7 @@ import {
     acceptMultipleMembers,
     blockMultipleMembers,
 } from '@/lib/service/gatheringApi';
+import { ageLabelMap, genderLabelMap } from '@/lib/utils/enumMapper';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
