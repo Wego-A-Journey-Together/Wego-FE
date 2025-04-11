@@ -67,6 +67,14 @@ export default function UserChat({
                 if (!res.ok) throw new Error('Failed to get WebSocket token');
 
                 const { wsToken } = await res.json();
+                console.log('WS Token:', wsToken);
+                console.log(
+                    'Browser AccessToken:',
+                    document.cookie
+                        .split(';')
+                        .find((c) => c.trim().startsWith('accessToken='))
+                        ?.split('=')[1],
+                );
 
                 const client = new Client({
                     brokerURL:
