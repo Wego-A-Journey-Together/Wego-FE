@@ -3,6 +3,7 @@
 import LoadingThreeDots from '@/components/common/LoadingThreeDots';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib';
 import {
     acceptMultipleMembers,
     blockMultipleMembers,
@@ -22,7 +23,7 @@ interface RawMember {
         gender: string;
         ageGroup: string;
     };
-    status: 'APPLYING' | 'APPROVED';
+    status: 'APPLYING' | 'APPROVED' | 'BLOCKED';
 }
 
 interface MemberType {
@@ -33,6 +34,7 @@ interface MemberType {
     age: string;
     gender: string;
     isApproved: boolean;
+    isBlocked?: boolean;
 }
 
 interface ConfirmMemberProps {
@@ -70,7 +72,13 @@ export default function ConfirmMember({
 
                 const data: RawMember[] = await res.json();
 
-                const mapped: MemberType[] = data.map((m) => ({
+                const filtered = data.filter((m) =>
+                    currentTabIndex === 0
+                        ? m.status === 'APPLYING' || m.status === 'BLOCKED'
+                        : m.status === 'APPROVED',
+                );
+
+                const mapped: MemberType[] = filtered.map((m) => ({
                     id: m.userId,
                     profileImage: m.user.thumbnailUrl,
                     userName: m.user.nickname,
@@ -78,6 +86,7 @@ export default function ConfirmMember({
                     age: m.user.ageGroup,
                     gender: m.user.gender,
                     isApproved: m.status === 'APPROVED',
+                    isBlocked: m.status === 'BLOCKED',
                 }));
                 setMembers(mapped);
             } catch {
@@ -98,12 +107,14 @@ export default function ConfirmMember({
         );
     };
 
-    // 전체 체크박스 선택 함수
+    // 전체 체크박스 선택 함수 , BlOCK 유저는 미포함 로직 추가했습니다.
     const toggleSelectAll = () => {
         setSelectedMembers((prev) =>
-            members.length > 0 && prev.length === members.length
+            members.length > 0 &&
+            prev.filter((id) => !members.find((m) => m.id === id)?.isBlocked)
+                .length === members.filter((m) => !m.isBlocked).length
                 ? []
-                : members.map((m) => m.id),
+                : members.filter((m) => !m.isBlocked).map((m) => m.id),
         );
     };
 
@@ -210,6 +221,7 @@ export default function ConfirmMember({
                                                         member.id,
                                                     )
                                                 }
+                                                disabled={member.isBlocked}
                                             />
                                             <div className="h-[50px] w-[50px] overflow-hidden rounded-full">
                                                 <Image
@@ -220,7 +232,14 @@ export default function ConfirmMember({
                                                     className="object-cover"
                                                 />
                                             </div>
-                                            <div className="flex flex-col">
+                                            <div
+                                                className={cn(
+                                                    'flex flex-col',
+                                                    member.isBlocked
+                                                        ? 'opacity-40 grayscale'
+                                                        : '',
+                                                )}
+                                            >
                                                 <h1 className="text-[15px] font-semibold text-black">
                                                     {member.userName}
                                                 </h1>
