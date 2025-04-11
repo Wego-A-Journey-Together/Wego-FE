@@ -71,7 +71,7 @@ export default function UserChat({
 
                 const client = new Client({
                     brokerURL:
-                        'ws://gateway.wego-travel.click/ws/chat/websocket',
+                        'wss://gateway.wego-travel.click/ws/chat/websocket',
                     connectHeaders: {
                         Authorization: `Bearer ${wsToken}`,
                     },
