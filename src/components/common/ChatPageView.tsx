@@ -21,6 +21,20 @@ interface ChatPageViewProps {
     kakaoId?: string;
 }
 
+interface RoomData {
+    roomId: number;
+    opponentNickname: string;
+    opponentRating: number;
+    lastMessage: string;
+    unreadCount: number;
+
+    gathering?: {
+        title: string;
+        startDate: string;
+        endDate: string;
+    };
+}
+
 export default function ChatPageView({
     userName,
     userRating,
@@ -35,7 +49,7 @@ export default function ChatPageView({
     const params = useParams();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [roomData, setRoomData] = useState<any>(null);
+    const [roomData, setRoomData] = useState<RoomData | null>(null);
 
     const userKakaoId = kakaoId || (params.kakaoId as string);
     const roomIdValue = roomId || parseInt(params.roomId as string, 10);
@@ -119,12 +133,12 @@ export default function ChatPageView({
                 <div className="flex w-full items-center justify-between">
                     <div className="flex flex-1 flex-col gap-[3px] pr-2">
                         <h2 className="text-base font-semibold">
-                            {roomData?.title || title}
+                            {roomData?.gathering?.title || title}
                         </h2>
                         <div className="flex items-center gap-[3px]">
                             <Calendar className="h-4 w-4 text-[#666666]" />
                             <p className="m-0 text-sm font-normal whitespace-nowrap text-[#666666]">
-                                {`${roomData?.startDate || startDate} - ${roomData?.endDate || endDate}`}
+                                {`${roomData?.gathering?.startDate || startDate} - ${roomData?.gathering?.endDate || endDate}`}
                             </p>
                         </div>
                     </div>
