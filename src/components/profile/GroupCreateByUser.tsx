@@ -3,22 +3,23 @@
 import Tab from '@/components/common/Tab';
 import ConfirmMember from '@/components/profile/ConfirmMember';
 import { Button } from '@/components/ui/button';
+import useSelectMyGathering from '@/hooks/useSelectMyGathering';
+import { useAppSelector } from '@/redux/hooks';
 import { ChevronDown, ChevronUp, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
-import { TrendingPost } from '../../../public/data/trending';
-
-export default function GroupCreateByUser({
-    posts,
-}: {
-    posts: TrendingPost[];
-}) {
+export default function GroupCreateByUser() {
     const [selectedTabs, setSelectedTabs] = useState<Record<number, number>>(
         {},
     );
-
     const [openTabs, setOpenTabs] = useState<Record<number, boolean>>({});
+
+    // 커스텀 훅에서 내가 만든 동행과 유저 정보를 한번에 끌어오기
+    const { groupPosts } = useSelectMyGathering();
+
+    // 로그인된 유저만 접근 가능해서 이게 null 일순 없어서 notnull 했습니다
+    const host = useAppSelector((state) => state.user.info!.nickname);
 
     const toggleTab = (postId: number) => {
         setOpenTabs((prev) => ({
@@ -26,21 +27,6 @@ export default function GroupCreateByUser({
             [postId]: !prev[postId],
         }));
     };
-
-    const groupPosts = posts.map((post) => ({
-        id: post.id,
-        title: post.title,
-        status: post.isGroupOpen ? '모집중' : '동행마감',
-        date: `${post.startDate} - ${post.endDate}`,
-        age: post.ageRange,
-        gender: post.preferredGender,
-        participants: `${post.currentMembers}명 / ${post.maxMembers}명`,
-        host: post.userName,
-        image: post.imageSrc,
-        isDeleted: false,
-        members: post.participants,
-        location: post.location,
-    }));
 
     const getTabItems = (post: {
         members: {
@@ -94,7 +80,7 @@ export default function GroupCreateByUser({
                                         </div>
                                         <div className="flex items-center gap-1 text-sm text-[#666666]">
                                             <span className="font-medium text-black">
-                                                {post.host}
+                                                {host}
                                             </span>
                                         </div>
                                     </div>
