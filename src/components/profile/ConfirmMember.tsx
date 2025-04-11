@@ -3,8 +3,13 @@
 import LoadingThreeDots from '@/components/common/LoadingThreeDots';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+    acceptMultipleMembers,
+    blockMultipleMembers,
+} from '@/lib/service/gatheringApi';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface MemberType {
     id: number;
@@ -18,186 +23,256 @@ interface MemberType {
 
 interface ConfirmMemberProps {
     currentTabIndex: number;
-    members?: MemberType[];
-    gatheringId?: number;
+    gatheringId: number;
 }
 
 export default function ConfirmMember({
-    members: initialMembers,
     currentTabIndex,
     gatheringId,
 }: ConfirmMemberProps) {
-    const [members, setMembers] = useState<MemberType[]>(initialMembers || []);
+    const [members, setMembers] = useState<MemberType[]>([]);
+    const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     useEffect(() => {
-        const fetchMembers = async (id: number) => {
+        if (!gatheringId) return;
+        const fetchMembers = async () => {
             setLoading(true);
-            setError(null);
-
             try {
-                // 현재 탭 인덱스에 따라 다른 API 엔드포인트를 호출합니다.
-                // 탭0: 확정 대기중, 탭 1: 참여 확정 멤버
                 const NEXT_PUBLIC_NEST_BFF_URL =
                     process.env.NEXT_PUBLIC_NEST_BFF_URL;
                 const endpoint =
                     currentTabIndex === 0
-                        ? `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/appliers/${id}`
-                        : `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/participants/${id}`;
+                        ? `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/appliers/${gatheringId}`
+                        : `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/participants/${gatheringId}`;
+                const res = await fetch(endpoint);
+                if (!res.ok)
+                    throw new Error('참여자 목록을 불러오는데 실패했습니다');
 
-                const response = await fetch(endpoint);
-
-                if (!response.ok) {
-                    throw new Error(
-                        `${currentTabIndex === 0 ? '신청자' : '참여자'} 목록을 불러오는데 에러가 발생했습니다: ${response.status}`,
-                    );
-                }
-
-                const data = await response.json();
+                const data = await res.json();
                 setMembers(data);
-            } catch (err) {
-                console.error(
-                    `${currentTabIndex === 0 ? '신청자' : '참여자'} 목록을 불러오는데 에러가 발생했습니다:`,
-                    err,
-                );
-                setError(
-                    err instanceof Error
-                        ? err.message
-                        : `${currentTabIndex === 0 ? '신청자' : '참여자'} 목록을 불러오는데 에러가 발생했습니다.`,
-                );
+            } catch {
+                setError('데이터를 불러오는 중 오류 발생');
             } finally {
                 setLoading(false);
             }
         };
+        void fetchMembers();
+    }, [gatheringId, currentTabIndex]);
 
-        if (initialMembers && initialMembers.length > 0) {
-            setMembers(initialMembers);
+    // 개별 선택 토글부분 함수
+    const toggleSelectMember = (memberId: number) => {
+        setSelectedMembers((prev) =>
+            prev.includes(memberId)
+                ? prev.filter((id) => id !== memberId)
+                : [...prev, memberId],
+        );
+    };
+
+    // 전체 체크박스 선택 함수
+    const toggleSelectAll = () => {
+        setSelectedMembers((prev) =>
+            members.length > 0 && prev.length === members.length
+                ? []
+                : members.map((m) => m.id),
+        );
+    };
+
+    const handleAcceptSelected = async () => {
+        if (selectedMembers.length === 0) {
+            toast.error('멤버 수락 실패', {
+                description: '선택된 멤버가 없습니다.',
+                action: {
+                    label: '닫기',
+                    onClick: () => {},
+                },
+            });
             return;
         }
-
-        if (gatheringId) {
-            fetchMembers(gatheringId);
+        setIsProcessing(true);
+        try {
+            await acceptMultipleMembers(gatheringId, selectedMembers);
+            toast.success('참여 확정 완료', {
+                description: '선택한 멤버들의 참여가 확정되었습니다.',
+                action: {
+                    label: '닫기',
+                    onClick: () => {},
+                },
+            });
+            setSelectedMembers([]);
+        } catch (error) {
+            console.error(error);
+            toast.error('참여 확정 실패', {
+                description: '참여 확정 중 오류가 발생했습니다.',
+                action: {
+                    label: '닫기',
+                    onClick: () => {},
+                },
+            });
+        } finally {
+            setIsProcessing(false);
         }
-    }, [gatheringId, initialMembers, currentTabIndex]);
+    };
+
+    const handleBlockSelected = async () => {
+        if (selectedMembers.length === 0) {
+            toast.error('멤버 거절 실패', {
+                description: '선택된 멤버가 없습니다.',
+                action: {
+                    label: '닫기',
+                    onClick: () => {},
+                },
+            });
+            return;
+        }
+        setIsProcessing(true);
+        try {
+            await blockMultipleMembers(gatheringId, selectedMembers);
+            toast.success('거절 완료', {
+                description: '선택한 멤버들이 거절되었습니다.',
+                action: {
+                    label: '닫기',
+                    onClick: () => {},
+                },
+            });
+            setSelectedMembers([]);
+        } catch (error) {
+            console.error(error);
+            toast.error('거절 실패', {
+                description: '거절 처리 중 오류가 발생했습니다.',
+                action: {
+                    label: '닫기',
+                    onClick: () => {},
+                },
+            });
+        } finally {
+            setIsProcessing(false);
+        }
+    };
 
     return (
         <div className="mt-5">
             {loading && <LoadingThreeDots />}
-
             {error && (
                 <div className="py-6 text-center text-rose-500">{error}</div>
             )}
 
-            <div className="text-gray-700">
-                {!loading && !error && members && members.length > 0
-                    ? members.map((member, idx) => {
-                          return (
-                              <div key={member.id} className="mb-4">
-                                  {/*-------------------------------------------------*/}
-                                  {/*체크박스, 유저아이콘,문의버튼 한 줄에 해당*/}
-                                  {/*-------------------------------------------------*/}
-                                  <div className="flex items-center justify-between gap-2">
-                                      <div className="flex items-center justify-between gap-3">
-                                          <div className="flex items-center justify-between gap-3">
-                                              <Checkbox
-                                                  className={'h-6 w-6'}
-                                                  iconSize={
-                                                      'size-5.5 stroke-[4px]'
-                                                  }
-                                              />
-                                              <div className="h-[50px] w-[50px] overflow-hidden rounded-full">
-                                                  <Image
-                                                      src={member.profileImage}
-                                                      alt="유저 프로필 이미지"
-                                                      width={50}
-                                                      height={50}
-                                                      className="z-0 h-full w-full object-cover"
-                                                  />
-                                              </div>
-                                              {/* 유저 정보 */}
-                                              <div className="flex flex-col items-start gap-1.5">
-                                                  <h1 className="w-full text-[15px] font-semibold text-black">
-                                                      {member.userName}
-                                                  </h1>
-                                                  <div className="flex items-center gap-2 rounded-[24.53px] bg-[#e5e8ea] px-3 py-1.5">
-                                                      <p className="text-xs text-[#666666]">
-                                                          {member.statusMessage}
-                                                      </p>
-                                                      <div className="h-1.5 w-px bg-gray-300" />
-                                                      <p className="text-xs text-[#666666]">
-                                                          {member.age}
-                                                      </p>
-                                                      <div className="h-1.5 w-px bg-gray-300" />
-                                                      <p className="text-xs text-[#666666]">
-                                                          {member.gender}
-                                                      </p>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <Button
-                                          variant={'outline'}
-                                          className="h-10 w-[130px] border-[#0ac7e4] text-sm font-semibold text-[#0ac7e4]"
-                                      >
-                                          <Image
-                                              src="/icon/detail/chatIcon.svg"
-                                              alt="chat"
-                                              width={16}
-                                              height={16}
-                                              className="mr-1.5"
-                                          />
-                                          문의 확인하기
-                                      </Button>
-                                  </div>
+            {!loading && !error && (
+                <>
+                    {members.length === 0 ? (
+                        <div className="py-6 text-center text-gray-500">
+                            {currentTabIndex === 0
+                                ? '참여 신청한 멤버가 없어요'
+                                : '참여 확정된 멤버가 없어요'}
+                        </div>
+                    ) : (
+                        <>
+                            {members.map((member, idx) => (
+                                <div key={member.id} className="mb-4">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <div className="flex items-center gap-3">
+                                            <Checkbox
+                                                className="h-6 w-6"
+                                                checked={selectedMembers.includes(
+                                                    member.id,
+                                                )}
+                                                onCheckedChange={() =>
+                                                    toggleSelectMember(
+                                                        member.id,
+                                                    )
+                                                }
+                                            />
+                                            <div className="h-[50px] w-[50px] overflow-hidden rounded-full">
+                                                <Image
+                                                    src={member.profileImage}
+                                                    alt="유저 프로필 이미지"
+                                                    width={50}
+                                                    height={50}
+                                                    className="object-cover"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <h1 className="text-[15px] font-semibold text-black">
+                                                    {member.userName}
+                                                </h1>
+                                                <div className="flex items-center gap-2 rounded bg-[#e5e8ea] px-3 py-1.5 text-xs text-[#666666]">
+                                                    <span>
+                                                        {member.statusMessage}
+                                                    </span>
+                                                    <div className="h-1.5 w-px bg-gray-300" />
+                                                    <span>{member.age}</span>
+                                                    <div className="h-1.5 w-px bg-gray-300" />
+                                                    <span>{member.gender}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <Button
+                                            variant="outline"
+                                            className="h-10 w-[130px] text-sm font-semibold"
+                                        >
+                                            <Image
+                                                src="/icon/detail/chatIcon.svg"
+                                                alt="chat"
+                                                width={16}
+                                                height={16}
+                                                className="mr-1.5"
+                                            />
+                                            문의 확인하기
+                                        </Button>
+                                    </div>
+                                    {idx < members.length - 1 && (
+                                        <div className="my-4 h-px w-full bg-[#eaeaea]" />
+                                    )}
+                                </div>
+                            ))}
 
-                                  {idx < members.length - 1 && (
-                                      <div className="my-4 h-px w-full bg-[#eaeaea]" />
-                                  )}
-                              </div>
-                          );
-                      })
-                    : !loading &&
-                      !error && (
-                          <div className="py-6 text-center text-gray-500">
-                              {currentTabIndex === 0
-                                  ? '참여 신청한 멤버가 없어요'
-                                  : '참여 확정된 멤버가 없어요'}
-                          </div>
-                      )}
-            </div>
-            {/* 하단 체크박스 및 버튼 그룹 */}
-            <div className="mt-11 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Checkbox className={'h-6 w-6'} />
-                    <p className={'text-base text-black'}>전체 선택</p>
-                </div>
-                {currentTabIndex === 0 ? (
-                    <div className="flex gap-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-10 w-[100px] border-[#d9d9d9] text-xs text-[#666666] hover:border-rose-500 hover:text-rose-500"
-                        >
-                            거절하기
-                        </Button>
-                        <Button
-                            size="sm"
-                            className="h-10 w-[130px] text-xs font-semibold"
-                        >
-                            참여 확정하기
-                        </Button>
-                    </div>
-                ) : (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-10 w-[100px] border-[#d9d9d9] text-xs text-[#666666] hover:border-rose-500 hover:text-rose-500"
-                    >
-                        거절하기
-                    </Button>
-                )}
-            </div>
+                            <div className="mt-11 flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <Checkbox
+                                        className="h-6 w-6"
+                                        checked={
+                                            members.length > 0 &&
+                                            selectedMembers.length ===
+                                                members.length
+                                        }
+                                        onCheckedChange={toggleSelectAll}
+                                    />
+                                    <p className="text-base text-black">
+                                        전체 선택
+                                    </p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={handleBlockSelected}
+                                        disabled={isProcessing}
+                                        className="h-10 w-[100px] border-[#d9d9d9] text-xs text-[#666666] hover:border-rose-500 hover:text-rose-500"
+                                    >
+                                        {isProcessing
+                                            ? '처리 중...'
+                                            : '거절하기'}
+                                    </Button>
+                                    {currentTabIndex === 0 && (
+                                        <Button
+                                            size="sm"
+                                            onClick={handleAcceptSelected}
+                                            disabled={isProcessing}
+                                            className="h-10 w-[130px] text-xs font-semibold"
+                                        >
+                                            {isProcessing
+                                                ? '처리 중...'
+                                                : '참여 확정하기'}
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </>
+            )}
         </div>
     );
 }

@@ -15,15 +15,6 @@ interface GroupPost {
     participants: string;
     image: string;
     isDeleted: boolean;
-    members: {
-        id: number;
-        userName: string;
-        profileImage: string;
-        statusMessage: string;
-        isApproved: boolean;
-        gender: string;
-        age: string;
-    }[];
 }
 
 /**
@@ -60,21 +51,6 @@ export default function useSelectMyGathering() {
                                 participants: `${appliers.filter((a) => a.status === 'ACCEPTED').length}명 / 20명`, //todo: api에 최대 인원이 안들어오네요
                                 image: post.thumbnailUrl,
                                 isDeleted: false, // todo
-                                members: appliers
-                                    .filter(
-                                        (a) =>
-                                            a.status === 'APPLYING' ||
-                                            a.status === 'ACCEPTED',
-                                    )
-                                    .map((a) => ({
-                                        id: a.userId,
-                                        userName: a.user.nickname,
-                                        profileImage: a.user.thumbnailUrl,
-                                        statusMessage: a.user.statusMessage,
-                                        isApproved: a.status === 'ACCEPTED', // ACCEPTED 면 true, APPLYING 이면 false BLOCKED 는 제외
-                                        age: a.user.ageGroup,
-                                        gender: a.user.gender,
-                                    })),
                             };
                         } catch (err) {
                             console.error(
