@@ -47,7 +47,10 @@ export default function ConfirmMember({
                     currentTabIndex === 0
                         ? `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/appliers/${gatheringId}`
                         : `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/participants/${gatheringId}`;
-                const res = await fetch(endpoint);
+                const res = await fetch(endpoint, {
+                    credentials: 'include',
+                });
+
                 if (!res.ok)
                     throw new Error('참여자 목록을 불러오는데 실패했습니다');
 
