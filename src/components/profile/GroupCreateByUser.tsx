@@ -4,6 +4,7 @@ import Tab from '@/components/common/Tab';
 import ConfirmMember from '@/components/profile/ConfirmMember';
 import { Button } from '@/components/ui/button';
 import useSelectMyGathering from '@/hooks/useSelectMyGathering';
+import { cn } from '@/lib';
 import { ageLabelMap, genderLabelMap } from '@/lib/utils/enumMapper';
 import { ChevronDown, ChevronUp, XIcon } from 'lucide-react';
 import Image from 'next/image';
@@ -50,7 +51,14 @@ export default function GroupCreateByUser() {
                                 </div>
                                 <div className="flex flex-grow flex-col gap-2">
                                     <div className="flex items-center gap-2">
-                                        <span className="rounded-full bg-[#e5e8ea] px-2 py-1 text-xs font-medium text-[#666666]">
+                                        <span
+                                            className={cn(
+                                                'rounded-full px-2 py-1 text-xs font-medium text-white',
+                                                post.status
+                                                    ? 'bg-[#FB9C57]'
+                                                    : 'bg-[#999999]',
+                                            )}
+                                        >
                                             {post.status
                                                 ? '동행 구함'
                                                 : '동행 마감'}
