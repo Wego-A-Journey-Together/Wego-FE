@@ -68,17 +68,10 @@ export default function UserChat({
 
                 const { wsToken } = await res.json();
                 console.log('WS Token:', wsToken);
-                console.log(
-                    'Browser AccessToken:',
-                    document.cookie
-                        .split(';')
-                        .find((c) => c.trim().startsWith('accessToken='))
-                        ?.split('=')[1],
-                );
 
                 const client = new Client({
                     brokerURL:
-                        'wss://gateway.wego-travel.click/ws/chat/websocket',
+                        'ws://gateway.wego-travel.click/ws/chat/websocket',
                     connectHeaders: {
                         Authorization: `Bearer ${wsToken}`,
                     },
