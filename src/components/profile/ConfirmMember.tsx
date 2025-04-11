@@ -23,7 +23,7 @@ interface RawMember {
         gender: string;
         ageGroup: string;
     };
-    status: 'APPLYING' | 'APPROVED' | 'BLOCKED';
+    status: 'APPLYING' | 'ACCEPTED' | 'BLOCKED';
 }
 
 interface MemberType {
@@ -75,7 +75,7 @@ export default function ConfirmMember({
                 const filtered = data.filter((m) =>
                     currentTabIndex === 0
                         ? m.status === 'APPLYING' || m.status === 'BLOCKED'
-                        : m.status === 'APPROVED',
+                        : m.status === 'ACCEPTED',
                 );
 
                 const mapped: MemberType[] = filtered.map((m) => ({
@@ -85,7 +85,7 @@ export default function ConfirmMember({
                     statusMessage: m.user.statusMessage,
                     age: m.user.ageGroup,
                     gender: m.user.gender,
-                    isApproved: m.status === 'APPROVED',
+                    isApproved: m.status === 'ACCEPTED',
                     isBlocked: m.status === 'BLOCKED',
                 }));
                 setMembers(mapped);

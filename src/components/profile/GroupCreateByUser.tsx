@@ -60,8 +60,8 @@ export default function GroupCreateByUser() {
                                             )}
                                         >
                                             {post.status
-                                                ? '동행 구함'
-                                                : '동행 마감'}
+                                                ? '동행 마감'
+                                                : '동행 구함'}
                                         </span>
                                         <h3 className="text-lg font-semibold text-black">
                                             {post.title}
