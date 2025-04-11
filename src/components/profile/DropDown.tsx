@@ -11,6 +11,8 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
+import useFetchMyJoin from '@/hooks/useFetchMyJoin';
+import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -39,29 +41,14 @@ const CATEGORIES = {
     },
 } as const;
 
-// 각 탭에서 렌더링할 컴포넌트
-const TAB_CONTENTS = {
-    journey: {
-        participating: (
-            <MyGroupPost posts={trendingPost} cancelRecruit={true} />
-        ),
-        ended: <MyGroupPost posts={trendingPost} />,
-        my: <GroupCreateByUser />,
-        comments: <Comments />,
-    },
-    sogam: {
-        received: <ReceivedReview />,
-        writable: <MyGroupPost posts={trendingPost} />,
-        written: <MyReview user={trendingPost[0]} />,
-    },
-};
-
 type CategoryId = keyof typeof CATEGORIES;
 
 export default function DropDown() {
     const [categoryId, setCategoryId] = useState<CategoryId>('journey');
     const [tabIndex, setTabIndex] = useState(0);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+    // 커스텀 훅으로 동행데이터 불러오기
+    const { upcoming, closed, isLoading } = useFetchMyJoin();
 
     // 현재 선택된 카테고리
     const currentCategory = CATEGORIES[categoryId];
@@ -101,6 +88,27 @@ export default function DropDown() {
     const getCategoryDisplayText = (catId: CategoryId) => {
         const category = CATEGORIES[catId];
         return category.label;
+    };
+
+    // 각 탭에서 렌더링할 컴포넌트를 동적으로 정의
+    const TAB_CONTENTS = {
+        journey: {
+            participating: isLoading ? (
+                <div className="flex items-center justify-center py-10">
+                    <Loader2 className={'text-sky-blue animate-spin'} />
+                </div>
+            ) : (
+                <MyGroupPost posts={upcoming} cancelRecruit={true} />
+            ),
+            ended: <MyGroupPost posts={closed} />,
+            my: <GroupCreateByUser />,
+            comments: <Comments />,
+        },
+        sogam: {
+            received: <ReceivedReview />,
+            writable: <MyGroupPost posts={trendingPost} />,
+            written: <MyReview user={trendingPost[0]} />,
+        },
     };
 
     // 현재 탭 컨텐츠 렌더링
