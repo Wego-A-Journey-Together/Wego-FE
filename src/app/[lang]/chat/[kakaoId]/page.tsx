@@ -1,13 +1,7 @@
 import ChatPreview from '@/components/chat/ChatPreview';
-import getCurrentUser from '@/lib/getCurrentUser';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-
-type Params = { kakaoId: string };
-
-interface ChatPageProps {
-    params: Promise<Params>;
-}
+import { redirect } from 'next/navigation';
 
 interface ChatRoom {
     roomId: number;
@@ -19,60 +13,46 @@ interface ChatRoom {
     userIcon?: string;
 }
 
-export default async function Chat({ params }: ChatPageProps) {
+interface ChatPageProps {
+    params: Promise<{
+        kakaoId: string;
+        lang: string;
+    }>;
+}
+
+export default async function ChatPage({ params }: ChatPageProps) {
     const { kakaoId } = await params;
-    const currentUser = await getCurrentUser();
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('accessToken');
     const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
-    let chatData: ChatRoom[] = [];
-    let errorMessage: string | null = null;
 
-    // kakaoId 타입 변환 - 문자열로 확실하게 변환
-    const currentUserKakaoId = currentUser?.kakaoId?.toString();
-    const requestedKakaoId = kakaoId?.toString();
-
-    // 더 유연한 비교 (숫자 문자열로 변환 후 비교)
-    if (
-        !currentUser ||
-        !currentUserKakaoId ||
-        currentUserKakaoId !== requestedKakaoId
-    ) {
-        notFound();
+    if (!accessToken || !NEXT_PUBLIC_NEST_BFF_URL) {
+        redirect('/');
     }
 
-    try {
-        if (!NEXT_PUBLIC_NEST_BFF_URL) {
-            throw new Error('API URL이 설정되지 않았습니다.');
-        }
+    const res = await fetch(`${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`, {
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken.value}`,
+        },
+        cache: 'no-store',
+    });
 
-        const res = await fetch(`${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`, {
-            credentials: 'include',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            cache: 'no-store',
-        });
+    if (!res.ok) {
+        return (
+            <div className="py-10 text-center text-red-500">
+                서버 오류가 발생했습니다 ({res.status})
+            </div>
+        );
+    }
 
-        if (!res.ok) {
-            errorMessage = `데이터를 불러오는데 실패했습니다.`;
-        } else {
-            const responseData = await res.json();
-            // API 응답이 배열인지 확인
-            chatData = Array.isArray(responseData) ? responseData : [];
+    const chatData: ChatRoom[] = await res.json();
 
-            // 필요한 경우 데이터 가공 (ChatPreview 컴포넌트에 맞게)
-            chatData = chatData.map((room) => ({
-                ...room,
-                name: room.opponentNickname,
-                message: room.lastMessage,
-                unreadChat: room.unreadCount,
-                time: room.time || '',
-                location: room.location || '',
-                userIcon: room.userIcon || '',
-            }));
-        }
-    } catch (error) {
-        errorMessage = `알 수 없는 오류 발생 ${error}`;
+    // 자신의 대화 목록만 접근 가능
+    const currentUserKakaoId = cookieStore.get('kakaoId')?.value;
+    if (!currentUserKakaoId || currentUserKakaoId !== kakaoId) {
+        redirect('/');
     }
 
     const HEADER_HEIGHT = 72;
@@ -87,22 +67,15 @@ export default async function Chat({ params }: ChatPageProps) {
                     <h1 className="text-xl font-semibold">대화 목록</h1>
                 </header>
 
-                {/* 채팅 목록 */}
                 <div className="overflow-y-auto px-4">
-                    {errorMessage ? (
-                        <div className="py-10 text-center">
-                            <p className="mb-2 text-red-500">
-                                서버 오류가 발생했습니다
-                            </p>
-                        </div>
-                    ) : chatData.length === 0 ? (
+                    {chatData.length === 0 ? (
                         <div className="py-10 text-center text-gray-500">
                             아직 대화 목록이 없습니다.
                         </div>
                     ) : (
                         <ul className="list-none space-y-[30px] p-0">
-                            {chatData.map((chat, i) => (
-                                <li key={i}>
+                            {chatData.map((chat) => (
+                                <li key={chat.roomId}>
                                     <Link
                                         href={`/chat/${kakaoId}/rooms/${chat.roomId}`}
                                     >
