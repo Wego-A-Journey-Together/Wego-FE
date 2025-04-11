@@ -1,7 +1,11 @@
+'use client';
+
 import ChatPreview from '@/components/chat/ChatPreview';
-import { cookies } from 'next/headers';
+import LoadingThreeDots from '@/components/common/LoadingThreeDots';
+import { useSession } from '@/hooks/useSession';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface ChatRoom {
     roomId: number;
@@ -13,49 +17,96 @@ interface ChatRoom {
     userIcon?: string;
 }
 
-interface ChatPageProps {
-    params: Promise<{
-        kakaoId: string;
-        lang: string;
-    }>;
-}
-
-export default async function ChatPage({ params }: ChatPageProps) {
-    const { kakaoId } = await params;
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('accessToken');
+export default function Chat() {
+    const params = useParams();
+    const kakaoId = params?.kakaoId as string;
+    const session = useSession();
+    const router = useRouter();
     const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
 
-    if (!accessToken || !NEXT_PUBLIC_NEST_BFF_URL) {
-        redirect('/');
-    }
+    const [chatData, setChatData] = useState<ChatRoom[]>([]);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [sessionVerified, setSessionVerified] = useState(false);
 
-    const res = await fetch(`${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`, {
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken.value}`,
-        },
-        cache: 'no-store',
-    });
+    useEffect(() => {
+        if (!session) return;
 
-    if (!res.ok) {
+        const currentUserKakaoId = session?.kakaoId?.toString();
+        const requestedKakaoId = kakaoId?.toString();
+
+        if (
+            !session.isAuthenticated ||
+            !currentUserKakaoId ||
+            currentUserKakaoId !== requestedKakaoId
+        ) {
+            router.push('/404');
+        } else {
+            setSessionVerified(true);
+        }
+    }, [session, kakaoId, router]);
+
+    useEffect(() => {
+        if (!sessionVerified) return;
+
+        const fetchChatRooms = async () => {
+            try {
+                if (!NEXT_PUBLIC_NEST_BFF_URL) {
+                    throw new Error('API URL이 설정되지 않았습니다.');
+                }
+
+                const res = await fetch(
+                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
+                    {
+                        credentials: 'include',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        cache: 'no-store',
+                    },
+                );
+
+                if (!res.ok) {
+                    setErrorMessage('데이터를 불러오는데 실패했습니다.');
+                } else {
+                    const responseData = await res.json();
+                    const rooms = Array.isArray(responseData)
+                        ? responseData
+                        : [];
+
+                    const formattedRooms = rooms.map((room) => ({
+                        ...room,
+                        name: room.opponentNickname,
+                        message: room.lastMessage,
+                        unreadChat: room.unreadCount,
+                        time: room.time || '',
+                        location: room.location || '',
+                        userIcon: room.userIcon || '',
+                    }));
+
+                    setChatData(formattedRooms);
+                }
+            } catch (error) {
+                setErrorMessage(`데이터를 불러오는데 실패했습니다. ${error}`);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchChatRooms();
+    }, [sessionVerified, NEXT_PUBLIC_NEST_BFF_URL]);
+
+    const HEADER_HEIGHT = 72;
+
+    if (isLoading) {
         return (
-            <div className="py-10 text-center text-red-500">
-                서버 오류가 발생했습니다 ({res.status})
+            <div className="py-10 text-center">
+                <LoadingThreeDots />
             </div>
         );
     }
 
-    const chatData: ChatRoom[] = await res.json();
-
-    // 자신의 대화 목록만 접근 가능
-    const currentUserKakaoId = cookieStore.get('kakaoId')?.value;
-    if (!currentUserKakaoId || currentUserKakaoId !== kakaoId) {
-        redirect('/');
-    }
-
-    const HEADER_HEIGHT = 72;
     return (
         <>
             <div className="fixed inset-x-0 top-0 -z-10 h-full bg-[#F5F6F7]" />
@@ -68,7 +119,11 @@ export default async function ChatPage({ params }: ChatPageProps) {
                 </header>
 
                 <div className="overflow-y-auto px-4">
-                    {chatData.length === 0 ? (
+                    {errorMessage ? (
+                        <div className="py-10 text-center text-gray-500">
+                            데이터를 불러오는데 실패했습니다.
+                        </div>
+                    ) : chatData.length === 0 ? (
                         <div className="py-10 text-center text-gray-500">
                             아직 대화 목록이 없습니다.
                         </div>
