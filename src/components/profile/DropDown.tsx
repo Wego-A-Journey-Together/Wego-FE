@@ -46,7 +46,7 @@ const TAB_CONTENTS = {
             <MyGroupPost posts={trendingPost} cancelRecruit={true} />
         ),
         ended: <MyGroupPost posts={trendingPost} />,
-        my: <GroupCreateByUser posts={trendingPost} />,
+        my: <GroupCreateByUser />,
         comments: <Comments />,
     },
     sogam: {
