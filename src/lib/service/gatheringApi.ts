@@ -2,7 +2,7 @@ export async function acceptMember(gatheringId: number, userId: number) {
     const response = await fetch(
         `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/${gatheringId}/accept/${userId}`,
         {
-            method: 'POST',
+            method: 'PATCH',
             credentials: 'include',
         },
     );
@@ -18,7 +18,7 @@ export async function blockMember(gatheringId: number, userId: number) {
     const response = await fetch(
         `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/${gatheringId}/block/${userId}`,
         {
-            method: 'POST',
+            method: 'PATCH',
             credentials: 'include',
         },
     );
