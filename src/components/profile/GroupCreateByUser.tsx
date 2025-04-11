@@ -4,6 +4,7 @@ import Tab from '@/components/common/Tab';
 import ConfirmMember from '@/components/profile/ConfirmMember';
 import { Button } from '@/components/ui/button';
 import useSelectMyGathering from '@/hooks/useSelectMyGathering';
+import { ageLabelMap, genderLabelMap } from '@/lib/utils/enumMapper';
 import { ChevronDown, ChevronUp, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -61,9 +62,14 @@ export default function GroupCreateByUser() {
                                     <div className="flex flex-wrap gap-2 text-sm text-[#666666]">
                                         <span>{post.date}</span>
                                         <span>•</span>
-                                        <span>{post.age}</span>
+                                        <span>
+                                            {ageLabelMap[post.age] ?? post.age}
+                                        </span>
                                         <span>•</span>
-                                        <span>{post.gender}</span>
+                                        <span>
+                                            {genderLabelMap[post.gender] ??
+                                                post.gender}
+                                        </span>
                                         <span>•</span>
                                         <span>{post.participants}</span>
                                     </div>
