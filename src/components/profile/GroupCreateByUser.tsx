@@ -54,7 +54,7 @@ export default function GroupCreateByUser() {
                                         <span
                                             className={cn(
                                                 'rounded-full px-2 py-1 text-xs font-medium text-white',
-                                                post.status
+                                                !post.status
                                                     ? 'bg-[#FB9C57]'
                                                     : 'bg-[#999999]',
                                             )}
