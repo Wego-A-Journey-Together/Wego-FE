@@ -228,9 +228,17 @@ export default function ConfirmMember({
                                                         {member.statusMessage}
                                                     </span>
                                                     <div className="h-1.5 w-px bg-gray-300" />
-                                                    <span>{member.age}</span>
+                                                    <span>
+                                                        {ageLabelMap[
+                                                            member.age
+                                                        ] ?? member.age}
+                                                    </span>
                                                     <div className="h-1.5 w-px bg-gray-300" />
-                                                    <span>{member.gender}</span>
+                                                    <span>
+                                                        {genderLabelMap[
+                                                            member.gender
+                                                        ] ?? member.gender}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
