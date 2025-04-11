@@ -45,7 +45,7 @@ export default function AuthNav({ kakaoId, nickname }: AuthNavProps) {
                 'flex flex-col items-center gap-1 text-center text-base font-semibold text-[#666666] md:ml-5 md:flex-row md:gap-7.5'
             }
         >
-            <Link href={'#'} className={'cursor-pointer'}>
+            <Link href={'/liked'} className={'cursor-pointer'}>
                 {t.gnb.book}
             </Link>
             <Link href={`/chat/${kakaoId}`} className={'cursor-pointer'}>
