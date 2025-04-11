@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Client } from '@stomp/stompjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import SockJS from 'sockjs-client';
 
 import ChatNotice from './ChatNotice';
 import LoadingThreeDots from './LoadingThreeDots';
@@ -46,48 +45,14 @@ export default function ChatRoom({ roomId, kakaoId }: ChatRoomProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [newMessage, setNewMessage] = useState('');
-    const [isSending, setIsSending] = useState(false);
-    const [isConnected, setIsConnected] = useState(false);
-    const stompClient = useRef<Client | null>(null);
+    const [stompClient, setStompClient] = useState<Client | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
-    const markMessagesAsRead = useCallback(async () => {
-        try {
-            const token = localStorage.getItem('accessToken');
-            if (!token) {
-                console.error('인증 토큰이 없습니다.');
-                return;
-            }
-
-            const NEXT_PUBLIC_NEST_BFF_URL =
-                process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
-
-            await fetch(
-                `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/read`,
-                {
-                    method: 'PATCH',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                },
-            );
-        } catch (error) {
-            console.error('메시지 읽음 처리에 실패했습니다.', error);
-        }
-    }, [roomId]);
-
+    // 메시지 목록 가져오기
     const fetchMessages = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            // 토큰 가져오기
-            const token = localStorage.getItem('accessToken');
-            if (!token) {
-                throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
-            }
-
             const NEXT_PUBLIC_NEST_BFF_URL =
                 process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
 
@@ -97,7 +62,6 @@ export default function ChatRoom({ roomId, kakaoId }: ChatRoomProps) {
                     credentials: 'include',
                     headers: {
                         Accept: 'application/json',
-                        Authorization: `Bearer ${token}`,
                     },
                 },
             );
@@ -110,10 +74,9 @@ export default function ChatRoom({ roomId, kakaoId }: ChatRoomProps) {
             console.log('받은 메시지 데이터:', data);
 
             // 받은 메시지를 Message 타입으로 변환
-            const formattedMessages: Message[] = data.map((msg) => ({
-                messageId: Date.now() + Math.random(),
+            const formattedMessages: Message[] = data.map((msg, index) => ({
+                messageId: index,
                 text: msg.message || '',
-
                 // 메시지 발신자 구분 (kakaoId가 있는 경우)
                 messageFrom:
                     kakaoId && msg.senderId === kakaoId ? 'writer' : 'user',
@@ -121,9 +84,6 @@ export default function ChatRoom({ roomId, kakaoId }: ChatRoomProps) {
             }));
 
             setMessages(formattedMessages);
-
-            // 메시지 읽음 처리
-            markMessagesAsRead();
         } catch (err) {
             console.error('메시지 로딩 오류:', err);
             setError('메시지를 불러오는데 문제가 발생했습니다.');
@@ -132,82 +92,154 @@ export default function ChatRoom({ roomId, kakaoId }: ChatRoomProps) {
         }
     }, [roomId, kakaoId]);
 
-    // STOMP 클라이언트 연결 설정
+    // 메시지 전송
+    const sendMessage = useCallback(() => {
+        if (!newMessage.trim() || !roomId || !stompClient?.active) return;
+
+        try {
+            const payload = {
+                roomId,
+                message: newMessage.trim(),
+            };
+
+            stompClient.publish({
+                destination: '/app/chat.sendMessage',
+                body: JSON.stringify(payload),
+                headers: { 'content-type': 'application/json' },
+            });
+
+            // 메시지 전송 후 입력창 초기화
+            setNewMessage('');
+
+            // UI에 내 메시지 추가 (WebSocket으로 다시 받기 전에)
+            const now = new Date().toISOString();
+            const newMsg: Message = {
+                messageId: Date.now(),
+                text: newMessage.trim(),
+                messageFrom: 'writer',
+                timestamp: formatTime(now),
+            };
+            setMessages((prev) => [...prev, newMsg]);
+        } catch (err) {
+            console.error('메시지 전송 오류:', err);
+            setError('메시지 전송에 실패했습니다.');
+        }
+    }, [newMessage, roomId, stompClient]);
+
+    // 엔터키로 메시지 전송
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    };
+
+    // WebSocket 연결 설정
     useEffect(() => {
         let mounted = true;
-        
+        if (!roomId) return;
+
         const connectWebSocket = async () => {
             try {
-                // WebSocket 토큰 가져오기
                 const res = await fetch('/api/auth/ws-token', {
                     credentials: 'include',
                 });
-
-                if (!res.ok) {
-                    throw new Error('WebSocket 토큰을 가져오는데 실패했습니다.');
-                }
+                if (!res.ok) throw new Error('Failed to get WebSocket token');
 
                 const { wsToken } = await res.json();
-                
-                const SOCKET_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
+                const wsUrl =
+                    'wss://gateway.wego-travel.click/ws/chat/websocket';
 
                 const client = new Client({
-                    webSocketFactory: () => new SockJS(`${SOCKET_URL}/ws/chat/websocket`),
+                    brokerURL: wsUrl,
                     connectHeaders: {
                         Authorization: `Bearer ${wsToken}`,
                     },
+                    debug: (str) => console.log('STOMP Debug:', str),
                     reconnectDelay: 5000,
                     heartbeatIncoming: 4000,
                     heartbeatOutgoing: 4000,
+                    onConnect: () => {
+                        if (!mounted) return;
+                        setStompClient(client);
+                        setError(null);
+                        const subscriptionTopic = `/topic/chatroom/${roomId}`;
+                        client.subscribe(
+                            subscriptionTopic,
+                            (message) => {
+                                if (!mounted) return;
+                                try {
+                                    const receivedMessage = JSON.parse(
+                                        message.body,
+                                    );
+                                    console.log(
+                                        'Received message:',
+                                        receivedMessage,
+                                    );
+
+                                    // 받은 메시지를 UI에 추가
+                                    const newMsg: Message = {
+                                        messageId: Date.now(),
+                                        text: receivedMessage.message || '',
+                                        messageFrom:
+                                            receivedMessage.senderId === kakaoId
+                                                ? 'writer'
+                                                : 'user',
+                                        timestamp: formatTime(
+                                            receivedMessage.sentAt ||
+                                                new Date().toISOString(),
+                                        ),
+                                    };
+
+                                    setMessages((prev) => [...prev, newMsg]);
+                                } catch (err) {
+                                    console.error(
+                                        'Error parsing message:',
+                                        err,
+                                        message.body,
+                                    );
+                                }
+                            },
+                            {
+                                Authorization: `Bearer ${wsToken}`,
+                            },
+                        );
+
+                        // 연결 후 메시지 목록 가져오기
+                        fetchMessages();
+                    },
+                    onStompError: (frame) => {
+                        if (!mounted) return;
+                        console.error('STOMP error:', frame);
+                        setError(
+                            `WebSocket 연결 오류: ${frame.headers.message || '알 수 없는 오류'}`,
+                        );
+                        setStompClient(null);
+                    },
+                    onWebSocketError: (event) => {
+                        if (!mounted) return;
+                        console.error('WebSocket error:', event);
+                        setError(
+                            'WebSocket 연결 실패: 서버에 연결할 수 없습니다.',
+                        );
+                        setStompClient(null);
+                    },
+                    onWebSocketClose: (event) => {
+                        if (!mounted) return;
+                        console.log('WebSocket closed:', event);
+                        if (event.code !== 1000) {
+                            setError(`WebSocket 연결 종료: 코드 ${event.code}`);
+                        }
+                    },
                 });
 
-                client.onConnect = () => {
-                    if (!mounted) return;
-                    setIsConnected(true);
-
-                    client.subscribe(`/topic/chatroom/${roomId}`, (message) => {
-                        if (!mounted) return;
-                        const receivedMessage = JSON.parse(message.body);
-
-                        // 받은 메시지를 Message 타입으로 변환
-                        const formattedMessage: Message = {
-                            messageId: Date.now(),
-                            text: receivedMessage.message || '',
-                            messageFrom:
-                                receivedMessage.senderId === kakaoId
-                                    ? 'writer'
-                                    : 'user',
-                            timestamp: formatTime(
-                                receivedMessage.sentAt || new Date().toISOString(),
-                            ),
-                        };
-
-                        setMessages((prevMessages) => [
-                            ...prevMessages,
-                            formattedMessage,
-                        ]);
-
-                        // 메시지 읽음 처리
-                        markMessagesAsRead();
-                    });
-
-                    fetchMessages();
-                };
-
-                client.onStompError = (frame) => {
-                    if (!mounted) return;
-                    console.error('STOMP 에러:', frame);
-                    setError('채팅 연결에 문제가 발생했습니다.');
-                    setIsLoading(false);
-                };
-
                 client.activate();
-                stompClient.current = client;
-
             } catch (err) {
                 if (!mounted) return;
-                console.error('WebSocket 연결 오류:', err);
-                setError('WebSocket 연결에 실패했습니다.');
+                console.error('WebSocket connection error:', err);
+                setError(
+                    `WebSocket 연결 오류: ${err instanceof Error ? err.message : '알 수 없는 오류'}`,
+                );
             }
         };
 
@@ -215,149 +247,100 @@ export default function ChatRoom({ roomId, kakaoId }: ChatRoomProps) {
 
         return () => {
             mounted = false;
-            if (stompClient.current?.active) {
-                stompClient.current.deactivate();
+            if (stompClient?.active) {
+                stompClient.deactivate();
+                setStompClient(null);
             }
         };
-    }, [roomId, fetchMessages, markMessagesAsRead]);
+    }, [roomId, kakaoId, fetchMessages]);
 
-    // 메시지 전송
-    const sendMessage = async (e?: React.FormEvent) => {
-        if (e) e.preventDefault();
-        if (!newMessage.trim()) return;
+    // 메시지 목록이 변경될 때마다 스크롤을 맨 아래로 이동
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
 
-        try {
-            setIsSending(true);
-
-            // 토큰 가져오기
-            const token = localStorage.getItem('accessToken');
-            if (!token) {
-                throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
-            }
-
-            const now = new Date();
-            const currentTime = formatTime(now.toISOString());
-
-            // 보낸 메세지 데이터
-            const tempMessage: Message = {
-                messageId: Date.now(),
-                text: newMessage,
-                messageFrom: 'writer',
-                timestamp: currentTime,
-            };
-
-            setMessages((prev) => [...prev, tempMessage]);
-
-            // WebSocket으로 메시지 전송
-            if (isConnected && stompClient.current) {
-                // 백엔드용 메시지
-                const messageToSend = {
-                    roomId: roomId,
-                    message: newMessage,
-                };
-
-                stompClient.current.publish({
-                    destination: `/app/chat.sendMessage`,
-                    body: JSON.stringify(messageToSend),
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-            }
-
-            setNewMessage('');
-        } catch (err) {
-            console.error('메시지 전송 오류:', err);
-        } finally {
-            setIsSending(false);
-        }
-    };
-
+    // 로딩 중일 때 표시
     if (isLoading) {
-        return <LoadingThreeDots />;
-    }
-
-    if (error) {
         return (
-            <div className="flex justify-center p-4 text-red-500">{error}</div>
+            <div className="flex h-full items-center justify-center">
+                <LoadingThreeDots />
+            </div>
         );
     }
 
-    // 엔터로 메세지 입력
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            sendMessage();
-        }
-    };
+    // 에러 발생 시 표시
+    if (error) {
+        return (
+            <div className="flex h-full flex-col items-center justify-center gap-4 text-red-500">
+                <p>{error}</p>
+                <Button onClick={() => window.location.reload()}>
+                    다시 시도하기
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <div className="flex h-full flex-col">
-            <div className="flex-1 overflow-y-auto">
+            {/* 메시지 목록 */}
+            <div className="flex-1 overflow-y-auto pb-4">
                 {messages.length === 0 ? (
                     <ChatNotice />
                 ) : (
-                    messages.map((chatData) => (
-                        <div
-                            key={chatData.messageId}
-                            className={`mb-4 flex ${
-                                chatData.messageFrom === 'writer'
-                                    ? 'justify-end pr-5'
-                                    : 'justify-start pl-5'
-                            }`}
-                        >
-                            {chatData.messageFrom === 'user' && (
-                                <div className="mr-2.5 h-[30px] w-[30px] rounded-full bg-gray-200"></div>
-                            )}
+                    <div className="flex flex-col gap-4">
+                        {messages.map((msg) => (
                             <div
-                                className={`flex items-end gap-1.5 ${
-                                    chatData.messageFrom === 'writer'
-                                        ? 'flex-row-reverse'
-                                        : 'flex-row'
+                                key={msg.messageId}
+                                className={`flex ${
+                                    msg.messageFrom === 'writer'
+                                        ? 'justify-end'
+                                        : 'justify-start'
                                 }`}
                             >
                                 <div
-                                    className={`inline-flex max-w-xs items-center justify-center rounded-2xl p-2.5 ${
-                                        chatData.messageFrom === 'writer'
-                                            ? 'bg-[#0ac7e414]'
-                                            : 'bg-[#f5f6f7]'
+                                    className={`max-w-[70%] rounded-2xl px-4 py-2 ${
+                                        msg.messageFrom === 'writer'
+                                            ? 'bg-[#4D7BFF] text-white'
+                                            : 'bg-[#F0F0F0] text-black'
                                     }`}
                                 >
-                                    <p className="m-0 text-sm">
-                                        {chatData.text}
+                                    <p className="break-words">{msg.text}</p>
+                                    <p
+                                        className={`mt-1 text-right text-xs ${
+                                            msg.messageFrom === 'writer'
+                                                ? 'text-gray-200'
+                                                : 'text-gray-500'
+                                        }`}
+                                    >
+                                        {msg.timestamp}
                                     </p>
                                 </div>
-                                <span className="text-xs text-[#999999]">
-                                    {chatData.timestamp}
-                                </span>
                             </div>
-                        </div>
-                    ))
+                        ))}
+                        <div ref={messagesEndRef} />
+                    </div>
                 )}
-                <div ref={messagesEndRef} />
             </div>
 
-            {/* 메시지 입력 폼 */}
-            <form
-                onSubmit={sendMessage}
-                className="mt-auto flex items-center gap-2 border-t p-4"
-            >
+            {/* 메시지 입력 영역 */}
+            <div className="mt-4 flex items-center gap-2 border-t pt-4">
                 <Input
-                    type="text"
+                    ref={inputRef}
+                    className="flex-1"
                     placeholder="메시지를 입력하세요..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    className="flex-1"
-                    disabled={isSending || !isConnected}
+                    onKeyDown={handleKeyPress}
+                    disabled={!stompClient?.active}
                 />
                 <Button
-                    type="submit"
-                    disabled={isSending || !newMessage.trim() || !isConnected}
+                    className="h-10 w-10 rounded-full p-0"
+                    onClick={sendMessage}
+                    disabled={!newMessage.trim() || !stompClient?.active}
                 >
-                    {isSending ? '전송 중...' : '전송'}
+                    <span>전송</span>
                 </Button>
-            </form>
+            </div>
         </div>
     );
 }
