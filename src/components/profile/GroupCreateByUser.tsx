@@ -4,7 +4,6 @@ import Tab from '@/components/common/Tab';
 import ConfirmMember from '@/components/profile/ConfirmMember';
 import { Button } from '@/components/ui/button';
 import useSelectMyGathering from '@/hooks/useSelectMyGathering';
-import { useAppSelector } from '@/redux/hooks';
 import { ChevronDown, ChevronUp, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -16,7 +15,6 @@ export default function GroupCreateByUser() {
     const [openTabs, setOpenTabs] = useState<Record<number, boolean>>({});
 
     const { groupPosts } = useSelectMyGathering();
-    const host = useAppSelector((state) => state.user.info!.nickname);
 
     const toggleTab = (postId: number) => {
         setOpenTabs((prev) => ({
@@ -52,7 +50,9 @@ export default function GroupCreateByUser() {
                                 <div className="flex flex-grow flex-col gap-2">
                                     <div className="flex items-center gap-2">
                                         <span className="rounded-full bg-[#e5e8ea] px-2 py-1 text-xs font-medium text-[#666666]">
-                                            {post.status}
+                                            {post.status
+                                                ? '동행 구함'
+                                                : '동행 마감'}
                                         </span>
                                         <h3 className="text-lg font-semibold text-black">
                                             {post.title}
@@ -66,11 +66,6 @@ export default function GroupCreateByUser() {
                                         <span>{post.gender}</span>
                                         <span>•</span>
                                         <span>{post.participants}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1 text-sm text-[#666666]">
-                                        <span className="font-medium text-black">
-                                            {host}
-                                        </span>
                                     </div>
                                 </div>
                                 <div className="flex flex-shrink-0 flex-col items-center gap-2">

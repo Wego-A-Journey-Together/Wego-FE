@@ -11,6 +11,19 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
+interface RawMember {
+    userId: number;
+    user: {
+        kakaoId: number;
+        nickname: string;
+        thumbnailUrl: string;
+        statusMessage: string;
+        gender: string;
+        ageGroup: string;
+    };
+    status: 'APPLYING' | 'APPROVED';
+}
+
 interface MemberType {
     id: number;
     profileImage: string;
@@ -54,8 +67,18 @@ export default function ConfirmMember({
                 if (!res.ok)
                     throw new Error('참여자 목록을 불러오는데 실패했습니다');
 
-                const data = await res.json();
-                setMembers(data);
+                const data: RawMember[] = await res.json();
+
+                const mapped: MemberType[] = data.map((m) => ({
+                    id: m.userId,
+                    profileImage: m.user.thumbnailUrl,
+                    userName: m.user.nickname,
+                    statusMessage: m.user.statusMessage,
+                    age: m.user.ageGroup,
+                    gender: m.user.gender,
+                    isApproved: m.status === 'APPROVED',
+                }));
+                setMembers(mapped);
             } catch {
                 setError('데이터를 불러오는 중 오류 발생');
             } finally {
