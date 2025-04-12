@@ -5,12 +5,18 @@ import ConfirmMember from '@/components/profile/ConfirmMember';
 import { Button } from '@/components/ui/button';
 import useSelectMyGathering from '@/hooks/useSelectMyGathering';
 import { cn } from '@/lib';
+import fetchDeletePost from '@/lib/fetcher/fetchDeletePost';
 import { ageLabelMap, genderLabelMap } from '@/lib/utils/enumMapper';
-import { ChevronDown, ChevronUp, XIcon } from 'lucide-react';
+import { ChevronDown, ChevronUp, Loader2, XIcon } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export default function GroupCreateByUser() {
+    const router = useRouter();
+    const [loadingEditId, setLoadingEditId] = useState<number | null>(null);
+    const [loadingDeleteId, setLoadingDeleteId] = useState<number | null>(null);
     const [selectedTabs, setSelectedTabs] = useState<Record<number, number>>(
         {},
     );
@@ -26,6 +32,40 @@ export default function GroupCreateByUser() {
     };
 
     const getTabItems = () => ['확정 대기중', '참여 확정'];
+
+    //--------수정하기, 게시글 숨기기 등 서비스 로직 -------------
+    const handleEdit = (postId: number) => {
+        setLoadingEditId(postId);
+        router.push(`/write/${postId}`);
+        // router.push 이후 코드가 실행되긴 하지만, 실제로는 페이지 이동으로 사라질 것
+    };
+
+    const handleDelete = async (postId: number) => {
+        setLoadingDeleteId(postId);
+        const res = await fetchDeletePost(postId);
+
+        if (!res) {
+            toast('글 숨기기 실패', {
+                description: '잠시 후 다시 시도해 주세요',
+                action: {
+                    label: '닫기',
+                    onClick: () => {},
+                },
+            });
+        } else {
+            toast('글 숨기기 완료', {
+                description: '성공적으로 삭제 되었습니다.',
+                action: {
+                    label: '닫기',
+                    onClick: () => {},
+                },
+            });
+            router.refresh(); // 서버 데이터 반영
+        }
+
+        setLoadingDeleteId(null);
+    };
+    //---------------------------------------------------
 
     return (
         <div className="mt-12.5 flex w-full flex-col gap-5">
@@ -84,16 +124,38 @@ export default function GroupCreateByUser() {
                                 </div>
                                 <div className="flex flex-shrink-0 flex-col items-center gap-2">
                                     <Button
+                                        type="button"
                                         variant="outline"
-                                        className="h-10 w-[130px]"
+                                        className={cn(
+                                            'h-10 w-[130px]',
+                                            loadingEditId === post.id &&
+                                                'opacity-50',
+                                        )}
+                                        onClick={() => handleEdit(post.id)}
+                                        disabled={loadingEditId === post.id}
                                     >
-                                        수정하기
+                                        {loadingEditId === post.id ? (
+                                            <Loader2 className="animate-spin" />
+                                        ) : (
+                                            '수정하기'
+                                        )}
                                     </Button>
                                     <Button
+                                        type="button"
                                         variant="ghost"
-                                        className="text-sm text-[#999999]"
+                                        className={cn(
+                                            'flex items-center justify-center text-sm text-[#999999]',
+                                            loadingDeleteId === post.id &&
+                                                'text-sky-blue',
+                                        )}
+                                        onClick={() => handleDelete(post.id)}
+                                        disabled={loadingDeleteId === post.id}
                                     >
-                                        게시글 숨기기
+                                        {loadingDeleteId === post.id ? (
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                            '게시글 숨기기'
+                                        )}
                                     </Button>
                                 </div>
                             </div>
