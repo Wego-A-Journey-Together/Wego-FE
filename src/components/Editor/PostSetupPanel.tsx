@@ -257,7 +257,7 @@ export default function PostSetupPanel() {
                         동행 테마
                     </h2>
                     <Select
-                        value={groupTheme}
+                        value={watch('filter.groupTheme')}
                         onValueChange={(value) =>
                             setValue('filter.groupTheme', value)
                         }
@@ -311,11 +311,18 @@ export default function PostSetupPanel() {
                                 key={option.id}
                                 className="h-[44px]"
                                 variant={
-                                    selectedGender === option.id
+                                    watch('filter.gender') === option.id
                                         ? 'selected'
                                         : 'outline'
                                 }
-                                onClick={() => handleGenderToggle(option.id)}
+                                onClick={() =>
+                                    setValue(
+                                        'filter.gender',
+                                        watch('filter.gender') === option.id
+                                            ? ''
+                                            : option.id,
+                                    )
+                                }
                             >
                                 {option.label}
                             </Button>
@@ -333,11 +340,18 @@ export default function PostSetupPanel() {
                                 key={age.id}
                                 className="h-[44px]"
                                 variant={
-                                    selectedAge === age.id
+                                    watch('filter.age') === age.id
                                         ? 'selected'
                                         : 'outline'
                                 }
-                                onClick={() => handleAgeToggle(age.id)}
+                                onClick={() =>
+                                    setValue(
+                                        'filter.age',
+                                        watch('filter.age') === age.id
+                                            ? null
+                                            : age.id,
+                                    )
+                                }
                             >
                                 {age.label}
                             </Button>

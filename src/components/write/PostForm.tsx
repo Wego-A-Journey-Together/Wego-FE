@@ -58,7 +58,10 @@ export default function PostForm({
     const onSubmit = async (data: PostFormValues) => {
         // 직렬화된 JSON 문자열 확인
 
-        const submissionData = { ...data };
+        const submissionData = {
+            ...data,
+            content: JSON.stringify(data.content),
+        };
 
         // 데이터를 복사해 마감시간을 UTC 형식으로 변환
         if (data.filter.deadlineDate && data.filter.deadlineTime) {
@@ -277,7 +280,7 @@ export default function PostForm({
                                                 const serialJSON =
                                                     JSON.stringify(content);
                                                 console.log(serialJSON);
-                                                field.onChange(serialJSON);
+                                                field.onChange(content);
                                             }}
                                             contentType="json" // JSON 사용 설정
                                         />
