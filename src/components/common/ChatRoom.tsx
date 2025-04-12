@@ -38,9 +38,24 @@ type Message = {
 interface ChatRoomProps {
     roomId: number;
     kakaoId?: string;
+    messages?: {
+        roomId: number;
+        message: string;
+        sentAt?: string;
+        senderId?: string;
+        nickname?: string;
+    }[];
+    onSendMessage?: () => void;
 }
 
-export default function ChatRoom({ roomId, kakaoId }: ChatRoomProps) {
+export default function ChatRoom({
+    roomId,
+    kakaoId,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    messages: initialMessages = [],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onSendMessage,
+}: ChatRoomProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
