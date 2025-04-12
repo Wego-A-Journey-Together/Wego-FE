@@ -3,7 +3,7 @@ import UserChat from '@/components/common/userChat';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { PostContentProps } from '@/types/PostContent';
+import { MyJoin } from '@/hooks/useFetchMyJoin';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -11,7 +11,7 @@ import NoContentGuide from './NoContentGuide';
 import ReviewEditor from './ReviewEditor';
 
 interface MyGroupPostProps {
-    posts: PostContentProps['post'][];
+    posts: MyJoin[];
     cancelRecruit?: boolean;
 }
 
@@ -31,12 +31,13 @@ export default function MyGroupPost({
     };
 
     if (posts.length === 0) return <NoContentGuide />;
+    const now = new Date();
 
     return (
         <div className="flex w-full flex-col gap-5">
             {posts.map((post) => (
                 <div
-                    key={post.id}
+                    key={post.gatheringId}
                     className="relative overflow-visible rounded-xl border-none bg-[#f5f6f7] p-[30px] shadow-none"
                 >
                     {/* 게시글 */}
@@ -45,7 +46,7 @@ export default function MyGroupPost({
                             <Image
                                 className="rounded-lg object-cover"
                                 alt={post.title}
-                                src={post.imageSrc}
+                                src={post.thumbnailUrl}
                                 fill
                                 sizes="80px"
                             />
@@ -54,10 +55,14 @@ export default function MyGroupPost({
                             <div className="flex items-center gap-2">
                                 <Badge
                                     variant={
-                                        post.isGroupOpen ? 'default' : 'disable'
+                                        new Date(post.endAt) > now
+                                            ? 'default'
+                                            : 'disable'
                                     }
                                 >
-                                    {post.isGroupOpen ? '모집 중' : '모집 마감'}
+                                    {new Date(post.endAt) > now
+                                        ? '모집 중'
+                                        : '모집 마감'}
                                 </Badge>
 
                                 <h3 className="text-lg font-semibold text-black">
@@ -67,10 +72,10 @@ export default function MyGroupPost({
 
                             {/* 모임 세부 정보 */}
                             <div className="flex flex-wrap items-center gap-2 text-sm">
-                                {post.startDate} - {post.endDate} ({'n'}
+                                {post.startAt} - {post.endAt} ({'n'}
                                 일)
                                 <Divider />
-                                {post.age}
+                                {post.preferredAge}
                                 <Divider />
                                 {post.preferredGender}
                                 <Divider />
@@ -78,27 +83,27 @@ export default function MyGroupPost({
                                     <span
                                         // 모집 인원이 다 찼을 때 black으로 글자 색상 처리
                                         className={
-                                            post.currentMembers ===
-                                            post.maxMembers
+                                            post.currentParticipants ===
+                                            post.maxParticipants
                                                 ? ''
                                                 : 'text-[#666666]'
                                         }
                                     >
-                                        {post.currentMembers}명 /{' '}
+                                        {post.currentParticipants}명 /{' '}
                                     </span>
-                                    {post.maxMembers}명
+                                    {post.maxParticipants}명
                                 </span>
                             </div>
                             <div className="flex items-center gap-1 text-sm">
                                 <div className="relative h-5 w-5">
                                     <Image
-                                        src={post.profileImage}
+                                        src={post.host.thumbnailUrl}
                                         width={20}
                                         height={20}
                                         alt="유저 아이콘 이미지"
                                     />
                                 </div>
-                                {post.userName}
+                                {post.host.nickname}
                             </div>
                         </div>
 
@@ -106,7 +111,7 @@ export default function MyGroupPost({
                             {/* 문의 버튼과 채팅창 모달 */}
                             <Button
                                 variant={'skyblueOutline'}
-                                onClick={() => toggleChat(post.id)}
+                                onClick={() => toggleChat(post.gatheringId)}
                                 className="w-full"
                             >
                                 <Image
@@ -120,20 +125,24 @@ export default function MyGroupPost({
                             </Button>
 
                             <Sheet
-                                open={activeChatId === post.id}
-                                onOpenChange={() => toggleChat(post.id)}
+                                open={activeChatId === post.gatheringId}
+                                onOpenChange={() =>
+                                    toggleChat(post.gatheringId)
+                                }
                             >
                                 <SheetContent
                                     side="right"
                                     className="p-0 sm:max-w-[580px]"
                                 >
                                     <UserChat
-                                        userName={post.userName}
-                                        userRating={post.rating}
+                                        userName={post.host.nickname}
+                                        userRating={4.5} //todo: 이건 추가로 불러와야 할 것 같습니다.
                                         title={post.title}
-                                        startDate={post.startDate}
-                                        endDate={post.endDate}
-                                        onClose={() => toggleChat(post.id)}
+                                        startDate={post.startAt}
+                                        endDate={post.endAt}
+                                        onClose={() =>
+                                            toggleChat(post.gatheringId)
+                                        }
                                     />
                                 </SheetContent>
                             </Sheet>

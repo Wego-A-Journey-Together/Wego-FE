@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-interface MyJoin {
+export interface MyJoin {
     gatheringId: number;
     title: string;
     thumbnailUrl: string;
@@ -10,6 +10,12 @@ interface MyJoin {
     endAt: string;
     preferredGender: string;
     preferredAge: string;
+    maxParticipants: number;
+    currentParticipants: number;
+    host: {
+        nickname: string;
+        thumbnailUrl: string;
+    };
 }
 
 export default function useFetchMyJoin() {
