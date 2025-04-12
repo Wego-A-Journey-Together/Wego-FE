@@ -131,7 +131,7 @@ export default function ChatRoom({
             const newMsg: Message = {
                 messageId: Date.now(),
                 text: newMessage.trim(),
-                messageFrom: 'writer',
+                messageFrom: 'user', // 내가 보낸 메시지는 'user'로 변경
                 timestamp: formatTime(now),
             };
             setMessages((prev) => [...prev, newMsg]);
@@ -196,10 +196,11 @@ export default function ChatRoom({
                                     const newMsg: Message = {
                                         messageId: Date.now(),
                                         text: receivedMessage.message || '',
+                                        // 메시지 발신자 구분 수정
                                         messageFrom:
                                             receivedMessage.senderId === kakaoId
-                                                ? 'writer'
-                                                : 'user',
+                                                ? 'user' // 내 메시지
+                                                : 'writer', // 글 작성자(상대방) 메시지
                                         timestamp: formatTime(
                                             receivedMessage.sentAt ||
                                                 new Date().toISOString(),
@@ -315,7 +316,7 @@ export default function ChatRoom({
                                 <div
                                     className={`max-w-[70%] rounded-2xl px-4 py-2 ${
                                         msg.messageFrom === 'writer'
-                                            ? 'bg-[#4D7BFF] text-white'
+                                            ? 'bg-sky-blue text-white'
                                             : 'bg-[#F0F0F0] text-black'
                                     }`}
                                 >
@@ -337,25 +338,27 @@ export default function ChatRoom({
                 )}
             </div>
 
-            {/* 메시지 입력 영역 */}
-            <div className="mt-4 flex items-center gap-2 border-t pt-4">
-                <Input
-                    ref={inputRef}
-                    className="flex-1"
-                    placeholder="메시지를 입력하세요..."
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyDown={handleKeyPress}
-                    disabled={!stompClient?.active}
-                />
-                <Button
-                    className="h-10 w-10 rounded-full p-0"
-                    onClick={sendMessage}
-                    disabled={!newMessage.trim() || !stompClient?.active}
-                >
-                    <span>전송</span>
-                </Button>
-            </div>
+            {/* 메시지 입력 영역 - onSendMessage가 제공된 경우 렌더링하지 않음 */}
+            {!onSendMessage && (
+                <div className="mt-4 flex items-center gap-2 border-t pt-4">
+                    <Input
+                        ref={inputRef}
+                        className="flex-1"
+                        placeholder="메시지를 입력하세요..."
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyDown={handleKeyPress}
+                        disabled={!stompClient?.active}
+                    />
+                    <Button
+                        className="h-10 w-10 rounded-full p-0"
+                        onClick={sendMessage}
+                        disabled={!newMessage.trim() || !stompClient?.active}
+                    >
+                        <span>전송</span>
+                    </Button>
+                </div>
+            )}
         </div>
     );
 }
