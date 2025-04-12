@@ -88,15 +88,26 @@ export default function ChatRoom({
             const data: MessageResponse[] = await response.json();
             console.log('받은 메시지 데이터:', data);
 
+            // 시간 기준으로 정렬 (오래된 메시지가 위로, 최신 메시지가 아래로)
+            const sortedData = [...data].sort((a, b) => {
+                const dateA = new Date(a.sentAt || '').getTime();
+                const dateB = new Date(b.sentAt || '').getTime();
+                return dateA - dateB;
+            });
+
             // 받은 메시지를 Message 타입으로 변환
-            const formattedMessages: Message[] = data.map((msg, index) => ({
-                messageId: index,
-                text: msg.message || '',
-                // 메시지 발신자 구분 (kakaoId가 있는 경우)
-                messageFrom:
-                    kakaoId && msg.senderId === kakaoId ? 'writer' : 'user',
-                timestamp: formatTime(msg.sentAt || new Date().toISOString()),
-            }));
+            const formattedMessages: Message[] = sortedData.map(
+                (msg, index) => ({
+                    messageId: index,
+                    text: msg.message || '',
+                    // 메시지 발신자 구분 (kakaoId가 있는 경우)
+                    messageFrom:
+                        kakaoId && msg.senderId === kakaoId ? 'writer' : 'user',
+                    timestamp: formatTime(
+                        msg.sentAt || new Date().toISOString(),
+                    ),
+                }),
+            );
 
             setMessages(formattedMessages);
         } catch (err) {
