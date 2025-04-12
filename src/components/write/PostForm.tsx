@@ -139,7 +139,7 @@ export default function PostForm({
             (async () => {
                 try {
                     const old = await fetch(
-                        `${NEXT_PUBLIC_NEST_BFF_URL}/api/posts/${gatheringId}`,
+                        `${NEXT_PUBLIC_NEST_BFF_URL}/api/detail/${gatheringId}`,
                         {
                             method: 'GET',
                         },
