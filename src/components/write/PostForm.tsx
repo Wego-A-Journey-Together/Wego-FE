@@ -145,28 +145,49 @@ export default function PostForm({
                         },
                     );
                     const data = await old.json();
+
+                    // 응답 데이터 디버깅 (선택적)
+                    console.log('Fetched data for edit:', data);
+
                     form.reset({
                         title: data.title,
-                        content: data.content,
-                        location: data.location,
+                        // content가 이미 JSON 문자열이라면 그대로 사용
+                        content:
+                            typeof data.content === 'string'
+                                ? data.content
+                                : JSON.stringify(data.content),
+                        location: {
+                            placeName: data.location.placeName,
+                            lat: data.location.latitude,
+                            lng: data.location.longitude,
+                        },
                         tags: data.tags || [],
                         thumbnailUrl: data.thumbnailUrl || '',
                         filter: {
-                            startDate: new Date(data.filter.startDate),
-                            endDate: new Date(data.filter.endDate),
-                            groupTheme: data.filter.groupTheme,
-                            groupSize: data.filter.groupSize,
+                            startDate: data.filter.startDate
+                                ? new Date(data.filter.startDate)
+                                : undefined,
+                            endDate: data.filter.endDate
+                                ? new Date(data.filter.endDate)
+                                : undefined,
+                            groupTheme: data.filter.groupTheme || '',
+                            groupSize: data.filter.groupSize || '',
                             gender: data.filter.gender,
                             age: data.filter.age,
-                            deadlineDate: new Date(data.filter.deadlineDate),
+                            deadlineDate: data.filter.deadlineDate
+                                ? new Date(data.filter.deadlineDate)
+                                : undefined,
                             deadlineTime:
                                 data.filter.deadlineDate
                                     ?.split('T')[1]
                                     ?.slice(0, 5) ?? '',
                         },
-                    } as PostFormValues);
+                    });
+
+                    // 디버깅 용 (선택적)
+                    console.log('Form values after reset:', form.getValues());
                 } catch (err) {
-                    console.error(err);
+                    console.error('Error fetching post data:', err);
 
                     toast(t.errorLoading, {
                         description: t.tryagain,
@@ -179,7 +200,7 @@ export default function PostForm({
                 }
             })();
         }
-    }, [isEdit, gatheringId]);
+    }, [isEdit, gatheringId, form, router, t, NEXT_PUBLIC_NEST_BFF_URL]);
 
     /**
      * 취소 누르면 이전 페이지로 사용자 밀어주기
@@ -259,7 +280,11 @@ export default function PostForm({
                                     <FormControl>
                                         {/*Tiptap 에디터 부분*/}
                                         <ContentEditor
-                                            content={field.value}
+                                            content={
+                                                typeof field.value === 'string'
+                                                    ? JSON.parse(field.value)
+                                                    : field.value
+                                            }
                                             onChange={(
                                                 content,
                                                 contentType,
@@ -269,10 +294,12 @@ export default function PostForm({
                                                     return;
 
                                                 // Tiptap 반환값 체크 -> json 방식 채택
-
                                                 const serialJSON =
                                                     JSON.stringify(content);
-                                                console.log(serialJSON);
+                                                console.log(
+                                                    'Editor content changed:',
+                                                    serialJSON,
+                                                );
                                                 field.onChange(serialJSON);
                                             }}
                                             contentType="json" // JSON 사용 설정
