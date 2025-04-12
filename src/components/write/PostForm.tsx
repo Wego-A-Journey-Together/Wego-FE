@@ -23,7 +23,6 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-//배포트리거용 주석
 interface PostFormProps {
     isEdit: boolean;
     gatheringId?: string;
@@ -59,10 +58,7 @@ export default function PostForm({
     const onSubmit = async (data: PostFormValues) => {
         // 직렬화된 JSON 문자열 확인
 
-        const submissionData = {
-            ...data,
-            content: JSON.stringify(data.content),
-        };
+        const submissionData = { ...data };
 
         // 데이터를 복사해 마감시간을 UTC 형식으로 변환
         if (data.filter.deadlineDate && data.filter.deadlineTime) {
@@ -151,12 +147,8 @@ export default function PostForm({
                     const data = await old.json();
                     form.reset({
                         title: data.title,
-                        content: JSON.parse(data.content),
-                        location: {
-                            placeName: data.location.placeName,
-                            lat: data.location.latitude,
-                            lng: data.location.longitude,
-                        },
+                        content: data.content,
+                        location: data.location,
                         tags: data.tags || [],
                         thumbnailUrl: data.thumbnailUrl || '',
                         filter: {
@@ -281,7 +273,7 @@ export default function PostForm({
                                                 const serialJSON =
                                                     JSON.stringify(content);
                                                 console.log(serialJSON);
-                                                field.onChange(content);
+                                                field.onChange(serialJSON);
                                             }}
                                             contentType="json" // JSON 사용 설정
                                         />
