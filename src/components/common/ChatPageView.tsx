@@ -77,6 +77,7 @@ export default function ChatPageView({
                         credentials: 'include',
                         headers: {
                             Accept: 'application/json',
+                            'Content-Type': 'application/json',
                         },
                     },
                 );

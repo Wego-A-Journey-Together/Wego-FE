@@ -24,7 +24,7 @@ interface ChatMessage {
 
 export default function ChatPage() {
     const params = useParams();
-    const roomId = parseInt(params.roomId as string, 10);
+    const roomId = parseInt(params.roomId?.toString() || '0', 10);
     const kakaoId = params.kakaoId as string;
     const router = useRouter();
     const [chatRoomData, setChatRoomData] = useState<ChatRoomData>({
@@ -77,6 +77,11 @@ export default function ChatPage() {
                     `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
                     {
                         credentials: 'include',
+                        headers: {
+                            Authorization: `Bearer ${wsToken}`,
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        },
                     },
                 );
 
@@ -85,6 +90,11 @@ export default function ChatPage() {
                     `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/messages`,
                     {
                         credentials: 'include',
+                        headers: {
+                            Authorization: `Bearer ${wsToken}`,
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        },
                     },
                 );
 
@@ -94,6 +104,11 @@ export default function ChatPage() {
                     {
                         method: 'PATCH',
                         credentials: 'include',
+                        headers: {
+                            Authorization: `Bearer ${wsToken}`,
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        },
                     },
                 );
 
@@ -208,6 +223,11 @@ export default function ChatPage() {
                         {
                             method: 'PATCH',
                             credentials: 'include',
+                            headers: {
+                                Authorization: `Bearer ${wsToken}`,
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                            },
                         },
                     ).catch((err) => console.error('읽음 처리 오류:', err));
                 }
