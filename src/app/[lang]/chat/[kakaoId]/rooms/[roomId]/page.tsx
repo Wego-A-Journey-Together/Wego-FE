@@ -41,7 +41,7 @@ export default function ChatPage() {
     const stompClient = useRef<Client | null>(null);
     const NEXT_PUBLIC_NEST_BFF_URL =
         process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
-    const WS_URL = 'ws://50.19.9.30:8080/ws/chat/websocket';
+    const WS_URL = 'wss://gateway.wego-travel.click/ws/chat/websocket';
 
     // 1. 웹소켓 연결 인증 토큰 가져오기
     useEffect(() => {
@@ -152,9 +152,6 @@ export default function ChatPage() {
             brokerURL: WS_URL,
             connectHeaders: {
                 Authorization: `Bearer ${wsToken}`,
-            },
-            debug: function (str) {
-                console.log('STOMP: ' + str);
             },
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
