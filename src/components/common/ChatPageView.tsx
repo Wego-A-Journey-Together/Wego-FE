@@ -19,6 +19,14 @@ interface ChatPageViewProps {
     onParticipate?: () => void;
     roomId?: number;
     kakaoId?: string;
+    messages?: Array<{
+        roomId: number;
+        message: string;
+        sentAt: string;
+        senderId?: number;
+        nickname?: string;
+    }>;
+    onSendMessage?: (message: string) => void;
 }
 
 interface RoomData {

@@ -2,8 +2,9 @@
 
 import ChatPageView from '@/components/common/ChatPageView';
 import LoadingThreeDots from '@/components/common/LoadingThreeDots';
+import { Client } from '@stomp/stompjs';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface ChatRoomData {
     userName: string;
@@ -13,9 +14,18 @@ interface ChatRoomData {
     endDate: string;
 }
 
+interface ChatMessage {
+    roomId: number;
+    message: string;
+    sentAt: string;
+    senderId?: number;
+    nickname?: string;
+}
+
 export default function ChatPage() {
     const params = useParams();
     const roomId = parseInt(params.roomId as string, 10);
+    const kakaoId = params.kakaoId as string;
     const router = useRouter();
     const [chatRoomData, setChatRoomData] = useState<ChatRoomData>({
         userName: '',
@@ -24,39 +34,104 @@ export default function ChatPage() {
         startDate: '',
         endDate: '',
     });
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [wsToken, setWsToken] = useState<string | null>(null);
+    const stompClient = useRef<Client | null>(null);
+    const NEXT_PUBLIC_NEST_BFF_URL =
+        process.env.NEXT_PUBLIC_NEST_BFF_URL || 'http://localhost:3000';
+    const WS_URL = 'ws://50.19.9.30:8080/ws/chat/websocket';
 
+    // 1. 웹소켓 연결 인증 토큰 가져오기
     useEffect(() => {
-        const fetchChatRoomData = async () => {
+        const fetchWsToken = async () => {
+            try {
+                const response = await fetch('/api/auth/ws-token');
+                if (!response.ok) {
+                    throw new Error('Failed to get WebSocket token');
+                }
+                const data = await response.json();
+                setWsToken(data.wsToken);
+            } catch (err) {
+                console.error('WebSocket token error:', err);
+                setError(
+                    '인증 토큰을 가져오는데 실패했습니다. 다시 로그인해주세요.',
+                );
+            }
+        };
+
+        fetchWsToken();
+    }, []);
+
+    // 2. 채팅방 정보 및 메시지 초기 로딩
+    useEffect(() => {
+        if (!roomId) return;
+
+        const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const NEXT_PUBLIC_NEST_BFF_URL =
-                    process.env.NEXT_PUBLIC_NEST_BFF_URL ||
-                    'http://localhost:3000';
-                const response = await fetch(
-                    // 내가 참여 중인 채팅방 목록 조회
-                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
+
+                // 채팅방 정보 조회
+                const roomResponse = await fetch(
+                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}`,
                     {
                         credentials: 'include',
                     },
                 );
-                if (!response.ok) {
+
+                // 채팅 메시지 목록 조회
+                const messagesResponse = await fetch(
+                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/messages`,
+                    {
+                        credentials: 'include',
+                    },
+                );
+
+                // 읽음 처리 요청
+                await fetch(
+                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/read`,
+                    {
+                        method: 'PATCH',
+                        credentials: 'include',
+                    },
+                );
+
+                if (!roomResponse.ok) {
                     throw new Error(
-                        `채팅방 정보를 가져오는데 실패했습니다: ${response.status}`,
+                        `채팅방 정보를 가져오는데 실패했습니다: ${roomResponse.status}`,
                     );
                 }
 
-                const data = await response.json();
+                if (!messagesResponse.ok) {
+                    throw new Error(
+                        `메시지 목록을 가져오는데 실패했습니다: ${messagesResponse.status}`,
+                    );
+                }
+
+                const roomData = await roomResponse.json();
+                const messagesData = await messagesResponse.json();
+
                 setChatRoomData({
-                    userName: data.opponentNickname || '',
-                    userRating: data.userRating || 0,
-                    title: data.title || '',
-                    startDate: data.startDate || '',
-                    endDate: data.endDate || '',
+                    userName: roomData.opponentNickname || '',
+                    userRating: roomData.userRating || 0,
+                    title: roomData.title || '',
+                    startDate: roomData.startDate || '',
+                    endDate: roomData.endDate || '',
                 });
+
+                // 메시지 시간순으로 정렬 (최신 메시지가 아래에 오도록)
+                const sortedMessages = Array.isArray(messagesData)
+                    ? messagesData.sort(
+                          (a, b) =>
+                              new Date(a.sentAt).getTime() -
+                              new Date(b.sentAt).getTime(),
+                      )
+                    : [];
+
+                setMessages(sortedMessages);
             } catch (err) {
-                console.error('채팅방 정보 로딩 오류:', err);
+                console.error('채팅방 데이터 로딩 오류:', err);
                 setError(
                     err instanceof Error ? err.message : '알 수 없는 오류',
                 );
@@ -65,16 +140,106 @@ export default function ChatPage() {
             }
         };
 
-        if (roomId) {
-            fetchChatRoomData();
+        fetchData();
+    }, [roomId, NEXT_PUBLIC_NEST_BFF_URL]);
+
+    // 3. WebSocket 연결 및 구독 설정
+    useEffect(() => {
+        if (!wsToken || !roomId) return;
+
+        // STOMP 클라이언트 생성
+        const client = new Client({
+            brokerURL: WS_URL,
+            connectHeaders: {
+                Authorization: `Bearer ${wsToken}`,
+            },
+            debug: function (str) {
+                console.log('STOMP: ' + str);
+            },
+            reconnectDelay: 5000,
+            heartbeatIncoming: 4000,
+            heartbeatOutgoing: 4000,
+        });
+
+        // 연결 성공 시 콜백
+        client.onConnect = function () {
+            console.log('Connected to STOMP');
+
+            // 채팅방 구독
+            client.subscribe(`/topic/chatroom/${roomId}`, function (message) {
+                if (message.body) {
+                    const receivedMsg = JSON.parse(message.body);
+                    console.log('Received message:', receivedMsg);
+
+                    // 메시지 추가
+                    setMessages((prev) =>
+                        [...prev, receivedMsg].sort(
+                            (a, b) =>
+                                new Date(a.sentAt).getTime() -
+                                new Date(b.sentAt).getTime(),
+                        ),
+                    );
+
+                    // 읽음 처리
+                    fetch(
+                        `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/read`,
+                        {
+                            method: 'PATCH',
+                            credentials: 'include',
+                        },
+                    ).catch((err) => console.error('읽음 처리 오류:', err));
+                }
+            });
+        };
+
+        // 에러 처리
+        client.onStompError = function (frame) {
+            console.error('STOMP error:', frame.headers['message']);
+            setError('WebSocket 연결 오류가 발생했습니다.');
+        };
+
+        // 연결
+        client.activate();
+        stompClient.current = client;
+
+        // 컴포넌트 언마운트 시 연결 해제
+        return () => {
+            if (client.connected) {
+                client.deactivate();
+            }
+        };
+    }, [wsToken, roomId, NEXT_PUBLIC_NEST_BFF_URL]);
+
+    // 4. 메시지 전송
+    const handleSendMessage = async (message: string) => {
+        if (
+            !message.trim() ||
+            !stompClient.current ||
+            !stompClient.current.connected
+        )
+            return;
+
+        try {
+            stompClient.current.publish({
+                destination: '/app/chat.sendMessage',
+                headers: {
+                    Authorization: `Bearer ${wsToken}`,
+                },
+                body: JSON.stringify({
+                    roomId: roomId,
+                    message: message,
+                }),
+            });
+        } catch (err) {
+            console.error('메시지 전송 오류:', err);
+            alert('메시지 전송에 실패했습니다.');
         }
-    }, [roomId]);
+    };
 
     const handleClose = () => {
         router.back();
     };
 
-    // 컴포넌트 연결하기
     const handleParticipate = () => {
         alert('참여 신청이 완료되었습니다.');
     };
@@ -105,6 +270,9 @@ export default function ChatPage() {
                         onClose={handleClose}
                         onParticipate={handleParticipate}
                         roomId={roomId}
+                        kakaoId={kakaoId}
+                        messages={messages}
+                        onSendMessage={handleSendMessage}
                     />
                 )}
             </main>
