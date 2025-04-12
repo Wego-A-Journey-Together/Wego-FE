@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import KakaoKeywordSearch from '@/components/write/KakaoKeywordSearch';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type SelectedPlace = {
     placeName: string;
@@ -23,6 +23,14 @@ export default function LocationSelector({ field }: Props) {
     const [keyword, setKeyword] = useState<string>('');
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const [locationSelected, setLocationSelected] = useState(false);
+
+    useEffect(() => {
+        if (field.value?.placeName) {
+            setKeyword(field.value.placeName);
+            setSearchKeyword(field.value.placeName);
+            setLocationSelected(true);
+        }
+    }, [field.value]);
 
     // 입력값이 변경될 때마다 검색 키워드 업데이트
     const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {

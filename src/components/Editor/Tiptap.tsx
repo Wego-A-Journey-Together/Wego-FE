@@ -9,7 +9,7 @@ import Link from '@tiptap/extension-link';
 import TextAlign from '@tiptap/extension-text-align';
 import { EditorContent, JSONContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import CustomBulletList from './CustomBulletList';
 import CustomOrderedList from './CustomOrderedList';
@@ -109,6 +109,12 @@ export default function ContentEditor({
 
     // 복사 붙여넣기용 s3 컴포넌트
     usePasteImageUpload(editor, setIsUploading);
+
+    useEffect(() => {
+        if (editor && content) {
+            editor.commands.setContent(content);
+        }
+    }, [editor, content]);
 
     return (
         <div className="relative w-full border-0">
