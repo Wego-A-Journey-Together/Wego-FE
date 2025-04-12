@@ -72,9 +72,9 @@ export default function ChatPage() {
             try {
                 setIsLoading(true);
 
-                // 채팅방 정보 조회
-                const roomResponse = await fetch(
-                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}`,
+                // 채팅방 정보 조회 - 채팅방 목록에서 현재 roomId에 해당하는 방 정보 가져오기
+                const roomsResponse = await fetch(
+                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
                     {
                         credentials: 'include',
                     },
@@ -97,10 +97,36 @@ export default function ChatPage() {
                     },
                 );
 
-                if (!roomResponse.ok) {
-                    throw new Error(
-                        `채팅방 정보를 가져오는데 실패했습니다: ${roomResponse.status}`,
+                // 채팅방 정보 처리
+                let roomData = {
+                    opponentNickname: '',
+                    userRating: 0,
+                    title: '',
+                    startDate: '',
+                    endDate: '',
+                };
+
+                if (!roomsResponse.ok) {
+                    console.log(
+                        `채팅방 목록을 가져오는데 실패했습니다: ${roomsResponse.status}`,
                     );
+                } else {
+                    const roomsList = await roomsResponse.json();
+                    // 현재 roomId와 일치하는 방 찾기
+                    const currentRoom = Array.isArray(roomsList)
+                        ? roomsList.find((room) => room.roomId === roomId)
+                        : null;
+
+                    if (currentRoom) {
+                        roomData = {
+                            opponentNickname:
+                                currentRoom.opponentNickname || '',
+                            userRating: currentRoom.userRating || 0,
+                            title: currentRoom.title || '',
+                            startDate: currentRoom.startDate || '',
+                            endDate: currentRoom.endDate || '',
+                        };
+                    }
                 }
 
                 if (!messagesResponse.ok) {
@@ -109,7 +135,6 @@ export default function ChatPage() {
                     );
                 }
 
-                const roomData = await roomResponse.json();
                 const messagesData = await messagesResponse.json();
 
                 setChatRoomData({
