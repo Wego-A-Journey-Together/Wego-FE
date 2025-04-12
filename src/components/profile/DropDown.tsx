@@ -17,8 +17,6 @@ import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
-import trendingPost from '../../../public/data/trending';
-
 // 카테고리와 탭 정의를 객체로 통합
 const CATEGORIES = {
     journey: {
@@ -110,7 +108,7 @@ export default function DropDown() {
         sogam: {
             received: <ReceivedReview />,
             writable: <MyGroupPost posts={reviewables} />,
-            written: <MyReview user={trendingPost[0]} />,
+            written: <MyReview />,
         },
     };
 
