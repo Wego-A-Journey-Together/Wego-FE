@@ -23,14 +23,19 @@ import { useFormContext } from 'react-hook-form';
 
 export default function PostSetupPanel() {
     const { setValue, watch } = useFormContext<PostFormValues>();
+
+    // 날짜, 시간 등은 이미 제대로 처리되고 있음.
     const startDate = watch('filter.startDate') ?? undefined;
     const endDate = watch('filter.endDate') ?? undefined;
     const deadlineDate = watch('filter.deadlineDate') ?? undefined;
     const deadlineTime = watch('filter.deadlineTime') ?? '';
+
+    // Group, Gender, Age 관련 변수 - 이제 변수로 사용함.
     const groupTheme = watch('filter.groupTheme') ?? '';
     const groupSize = watch('filter.groupSize') ?? '';
     const selectedGender = watch('filter.gender') ?? null;
     const selectedAge = watch('filter.age') ?? null;
+
     const ageGroups = [
         { id: 'notCare', label: '무관' },
         { id: '10s', label: '10대' },
@@ -48,19 +53,10 @@ export default function PostSetupPanel() {
         { id: 'male', label: '남성' },
     ];
 
-    const handleGenderToggle = (id: string) => {
-        const newValue = selectedGender === id ? '' : id;
-        setValue('filter.gender', newValue);
-    };
-
-    const handleAgeToggle = (id: string) => {
-        const newValue = selectedAge === id ? null : id;
-        setValue('filter.age', newValue);
-    };
-
     return (
         <div className="mt-6 flex w-full flex-col items-start gap-8">
             <section className="flex w-full flex-wrap items-start gap-6">
+                {/* 동행 일정 */}
                 <div className="flex flex-col items-start gap-2.5">
                     <h2 className="text-base leading-6 font-bold text-black">
                         동행 일정
@@ -95,16 +91,12 @@ export default function PostSetupPanel() {
                                     onSelect={(date) => {
                                         if (date) {
                                             setValue('filter.startDate', date);
-
-                                            // 시작일이 종료일보다 이후라면 종료일을 시작일로 업데이트
                                             if (endDate && date > endDate) {
                                                 setValue(
                                                     'filter.endDate',
                                                     date,
                                                 );
                                             }
-
-                                            // 시작일이 마감일보다 이후라면 마감일을 시작일로 업데이트
                                             if (
                                                 deadlineDate &&
                                                 date > deadlineDate
@@ -174,6 +166,7 @@ export default function PostSetupPanel() {
                     </div>
                 </div>
 
+                {/* 동행원 모집 마감일 */}
                 <div className="flex flex-col items-start gap-2.5">
                     <h2 className="text-base leading-6 font-bold text-black">
                         동행원 모집 마감일
@@ -252,12 +245,13 @@ export default function PostSetupPanel() {
                     </div>
                 </div>
 
+                {/* 동행 테마 */}
                 <div className="flex flex-col items-start gap-2.5">
-                    <h2 className="text-base leading-6 font-bold text-black">
+                    <h2 className="text-base font-bold text-black">
                         동행 테마
                     </h2>
                     <Select
-                        value={watch('filter.groupTheme')}
+                        value={groupTheme}
                         onValueChange={(value) =>
                             setValue('filter.groupTheme', value)
                         }
@@ -280,8 +274,9 @@ export default function PostSetupPanel() {
             </section>
 
             <section className="flex w-full flex-wrap items-start gap-6">
+                {/* 동행 인원 */}
                 <div className="flex flex-col items-start gap-2.5">
-                    <h2 className="text-base leading-6 font-bold text-black">
+                    <h2 className="text-base font-bold text-black">
                         동행 인원
                     </h2>
                     <Select
@@ -301,8 +296,9 @@ export default function PostSetupPanel() {
                     </Select>
                 </div>
 
+                {/* 선호 성별 */}
                 <div className="flex flex-col items-start gap-2.5">
-                    <h2 className="text-base leading-6 font-bold text-black">
+                    <h2 className="text-base font-bold text-black">
                         선호 성별
                     </h2>
                     <div className="flex gap-2.5">
@@ -311,14 +307,14 @@ export default function PostSetupPanel() {
                                 key={option.id}
                                 className="h-[44px]"
                                 variant={
-                                    watch('filter.gender') === option.id
+                                    selectedGender === option.id
                                         ? 'selected'
                                         : 'outline'
                                 }
                                 onClick={() =>
                                     setValue(
                                         'filter.gender',
-                                        watch('filter.gender') === option.id
+                                        selectedGender === option.id
                                             ? ''
                                             : option.id,
                                     )
@@ -330,8 +326,9 @@ export default function PostSetupPanel() {
                     </div>
                 </div>
 
+                {/* 선호 연령대 */}
                 <div className="flex flex-col items-start gap-2.5">
-                    <h2 className="text-base leading-6 font-bold text-black">
+                    <h2 className="text-base font-bold text-black">
                         선호 연령대
                     </h2>
                     <div className="flex flex-wrap gap-2.5">
@@ -340,16 +337,14 @@ export default function PostSetupPanel() {
                                 key={age.id}
                                 className="h-[44px]"
                                 variant={
-                                    watch('filter.age') === age.id
+                                    selectedAge === age.id
                                         ? 'selected'
                                         : 'outline'
                                 }
                                 onClick={() =>
                                     setValue(
                                         'filter.age',
-                                        watch('filter.age') === age.id
-                                            ? null
-                                            : age.id,
+                                        selectedAge === age.id ? null : age.id,
                                     )
                                 }
                             >

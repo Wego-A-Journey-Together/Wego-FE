@@ -25,11 +25,21 @@ export const PostSchema = z.object({
         lat: z.number(),
         lng: z.number(),
     }),
-    // json 직렬화 과정에서 텍스트가 늘어날 수 있습니다. 115는 ㅈㄱㄴ 부터 허용 범위 입니다. (세 글자)
-    content: z
-        .string()
-        .min(115, { message: '조금 더 작성해 주세요' })
-        .max(20000, { message: '죄송합니다. 본문 길이가 너무 깁니다.' }),
+    content: z.preprocess(
+        // 입력값이 object이면 JSON.stringify()를 해서 문자열로 만들고,
+        // 이미 문자열이면 그대로 사용
+        (val) =>
+            typeof val === 'object' && val !== null
+                ? JSON.stringify(val)
+                : typeof val === 'string'
+                  ? val
+                  : '',
+        // 이제 최종 검증은 문자열로 하며, 길이 제한 적용
+        z
+            .string()
+            .min(115, { message: '조금 더 작성해 주세요' })
+            .max(20000, { message: '죄송합니다. 본문 길이가 너무 깁니다.' }),
+    ),
     // S3 업로드 후 검증할 생각이라 스트링, url 형식으로 처리 했습니다 + nullish
     thumbnailUrl: z
         .string()
