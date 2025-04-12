@@ -306,8 +306,7 @@ export default function ChatRoom({
                     <div className="flex flex-col gap-4">
                         {messages.map((msg) => {
                             // 메시지 발신자 구분 로직
-                            const isMyMessage =
-                                kakaoId && msg.messageFrom === 'writer';
+                            const isMyMessage = msg.messageFrom === 'user';
 
                             return (
                                 <div
