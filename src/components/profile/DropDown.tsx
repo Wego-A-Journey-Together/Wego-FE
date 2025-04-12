@@ -11,7 +11,8 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
-import useFetchMyJoin from '@/hooks/useFetchMyJoin';
+import useFetchMyJoin from '@/hooks/fetch/useFetchMyJoin';
+import useFetchReviewables from '@/hooks/fetch/useFetchReviewables';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -49,6 +50,8 @@ export default function DropDown() {
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     // 커스텀 훅으로 동행데이터 불러오기
     const { upcoming, closed, isLoading } = useFetchMyJoin();
+    // 작성 가능한 소감 불러오는 훅
+    const { reviewables } = useFetchReviewables();
 
     // 현재 선택된 카테고리
     const currentCategory = CATEGORIES[categoryId];
@@ -106,7 +109,7 @@ export default function DropDown() {
         },
         sogam: {
             received: <ReceivedReview />,
-            writable: <MyGroupPost posts={trendingPost} />,
+            writable: <MyGroupPost posts={reviewables} />,
             written: <MyReview user={trendingPost[0]} />,
         },
     };

@@ -1,7 +1,9 @@
+'use client';
+
 import ReviewRating from '@/components/detail/ReviewRating';
+import useFetchReivedReview from '@/hooks/fetch/useFetchReivedReview';
 import Image from 'next/image';
 
-import { postReviews } from '../../../public/data/review';
 import NoContentGuide from './NoContentGuide';
 
 function formatDate(date: Date) {
@@ -12,15 +14,17 @@ function formatDate(date: Date) {
 }
 
 export default function ReceivedReview() {
-    if (postReviews.length === 0) {
+    const { receivedReview, totalRecieved } = useFetchReivedReview();
+
+    if (totalRecieved === 0) {
         return <NoContentGuide />;
     }
 
     return (
         <div className="grid w-full max-w-[1200px] grid-cols-1 gap-5 md:grid-cols-2">
-            {postReviews.map((review) => (
+            {receivedReview.map((review, idx) => (
                 <div
-                    key={review.reviewId}
+                    key={`received-${idx}`}
                     className="flex flex-col rounded-lg border-none bg-[#f5f6f7]"
                 >
                     <div className="flex flex-col items-start gap-5 p-[30px]">
@@ -28,11 +32,11 @@ export default function ReceivedReview() {
 
                         {/* 게시글 썸네일이 있는 경우 표시, 아닌 경우 텍스트로 채움 */}
                         <div className="flex min-h-[98px] w-full items-start gap-5">
-                            {review.postImage ? (
+                            {review.thumbnailUrl ? (
                                 <>
                                     <div className="relative h-[98px] w-[98px] overflow-hidden rounded-lg">
                                         <Image
-                                            src={review.postImage}
+                                            src={'/image/jejuGirl.png'}
                                             alt="Travel photo"
                                             fill
                                             className="object-cover"
@@ -54,7 +58,7 @@ export default function ReceivedReview() {
                             <div className="inline-flex items-center gap-1.5">
                                 <div className="h-6 w-6 overflow-hidden rounded-full">
                                     <Image
-                                        src={review.userIcon}
+                                        src={review.writer.thumbnailUrl}
                                         alt="user profile"
                                         width={24}
                                         height={24}
@@ -64,14 +68,14 @@ export default function ReceivedReview() {
 
                                 <div className="inline-flex items-center gap-2.5">
                                     <div className="text-sm font-medium text-[#333333]">
-                                        {review.userName}
+                                        {review.writer.nickname}
                                     </div>
 
                                     <div className="h-2.5 w-px bg-gray-300"></div>
 
                                     <div className="max-w-full truncate text-xs font-normal text-[#666666]">
                                         {/* new Date() 형식 변환 */}{' '}
-                                        {formatDate(review.updatedAt)}
+                                        {review.createdAt}
                                     </div>
                                 </div>
                             </div>

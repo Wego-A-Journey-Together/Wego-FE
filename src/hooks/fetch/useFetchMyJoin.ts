@@ -28,6 +28,9 @@ export default function useFetchMyJoin() {
             try {
                 const res = await fetch(
                     `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/me/gathering/joined`,
+                    {
+                        credentials: 'include',
+                    },
                 );
 
                 const data: MyJoin[] = await res.json();
