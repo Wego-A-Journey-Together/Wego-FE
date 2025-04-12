@@ -304,35 +304,43 @@ export default function ChatRoom({
                     <ChatNotice />
                 ) : (
                     <div className="flex flex-col gap-4">
-                        {messages.map((msg) => (
-                            <div
-                                key={msg.messageId}
-                                className={`flex ${
-                                    msg.messageFrom === 'writer'
-                                        ? 'justify-end'
-                                        : 'justify-start'
-                                }`}
-                            >
+                        {messages.map((msg) => {
+                            // 메시지 발신자 구분 로직
+                            const isMyMessage =
+                                kakaoId && msg.messageFrom === 'writer';
+
+                            return (
                                 <div
-                                    className={`max-w-[70%] rounded-2xl px-4 py-2 ${
-                                        msg.messageFrom === 'writer'
-                                            ? 'bg-sky-blue text-white'
-                                            : 'bg-[#F0F0F0] text-black'
+                                    key={msg.messageId}
+                                    className={`flex ${
+                                        isMyMessage
+                                            ? 'justify-end'
+                                            : 'justify-start'
                                     }`}
                                 >
-                                    <p className="break-words">{msg.text}</p>
-                                    <p
-                                        className={`mt-1 text-right text-xs ${
-                                            msg.messageFrom === 'writer'
-                                                ? 'text-gray-200'
-                                                : 'text-gray-500'
+                                    <div
+                                        className={`max-w-[70%] rounded-2xl px-4 py-2 ${
+                                            isMyMessage
+                                                ? 'bg-sky-blue text-white'
+                                                : 'bg-[#F0F0F0] text-black'
                                         }`}
                                     >
-                                        {msg.timestamp}
-                                    </p>
+                                        <p className="break-words">
+                                            {msg.text}
+                                        </p>
+                                        <p
+                                            className={`mt-1 text-right text-xs ${
+                                                isMyMessage
+                                                    ? 'text-gray-200'
+                                                    : 'text-gray-500'
+                                            }`}
+                                        >
+                                            {msg.timestamp}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                         <div ref={messagesEndRef} />
                     </div>
                 )}
@@ -340,23 +348,32 @@ export default function ChatRoom({
 
             {/* 메시지 입력 영역 - onSendMessage가 제공된 경우 렌더링하지 않음 */}
             {!onSendMessage && (
-                <div className="mt-4 flex items-center gap-2 border-t pt-4">
-                    <Input
-                        ref={inputRef}
-                        className="flex-1"
-                        placeholder="메시지를 입력하세요..."
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        onKeyDown={handleKeyPress}
-                        disabled={!stompClient?.active}
-                    />
-                    <Button
-                        className="h-10 w-10 rounded-full p-0"
-                        onClick={sendMessage}
-                        disabled={!newMessage.trim() || !stompClient?.active}
-                    >
-                        <span>전송</span>
-                    </Button>
+                <div className="w-full rounded-xl border-solid bg-[#f9f9f9]">
+                    <div className="p-5">
+                        <div className="flex flex-col gap-10">
+                            <Input
+                                ref={inputRef}
+                                placeholder="메세지를 입력하세요"
+                                className="border-none bg-transparent text-base leading-[20.8px] font-normal text-black shadow-none placeholder:text-[#999999] focus-visible:ring-0"
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                onKeyDown={handleKeyPress}
+                                disabled={!stompClient?.active}
+                            />
+                            <div className="flex w-full items-center justify-end gap-2">
+                                <Button
+                                    className="px-5 py-2"
+                                    onClick={sendMessage}
+                                    disabled={
+                                        !newMessage.trim() ||
+                                        !stompClient?.active
+                                    }
+                                >
+                                    전송
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

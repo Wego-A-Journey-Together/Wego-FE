@@ -147,7 +147,6 @@ export default function UserChat({
             connectHeaders: {
                 Authorization: `Bearer ${wsToken}`,
             },
-
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
@@ -167,14 +166,30 @@ export default function UserChat({
                         const receivedMsg = JSON.parse(message.body);
                         console.log('Received message:', receivedMsg);
 
-                        // 메시지 추가
-                        setMessages((prev) =>
-                            [...prev, receivedMsg].sort(
-                                (a, b) =>
-                                    new Date(a.sentAt).getTime() -
-                                    new Date(b.sentAt).getTime(),
-                            ),
+                        // 중복 메시지 방지: 내가 보낸 메시지는 이미 UI에 추가되었으므로 다시 추가하지 않음
+                        // senderId가 내 kakaoId와 같고, 최근 1초 이내에 추가된 메시지와 내용이 같으면 무시
+                        const isDuplicate = messages.some(
+                            (msg) =>
+                                msg.message === receivedMsg.message &&
+                                String(msg.senderId) ===
+                                    String(receivedMsg.senderId) &&
+                                String(receivedMsg.senderId) ===
+                                    String(kakaoId) &&
+                                new Date().getTime() -
+                                    new Date(msg.sentAt || '').getTime() <
+                                    1000,
                         );
+
+                        if (!isDuplicate) {
+                            // 메시지 추가
+                            setMessages((prev) =>
+                                [...prev, receivedMsg].sort(
+                                    (a, b) =>
+                                        new Date(a.sentAt).getTime() -
+                                        new Date(b.sentAt).getTime(),
+                                ),
+                            );
+                        }
 
                         // 읽음 처리
                         fetch(
@@ -230,7 +245,7 @@ export default function UserChat({
             }
             stompClient.current = null;
         };
-    }, [wsToken, roomId, NEXT_PUBLIC_NEST_BFF_URL]);
+    }, [wsToken, roomId, NEXT_PUBLIC_NEST_BFF_URL, messages, kakaoId]);
 
     // 4. 메시지 전송
     const sendMessage = useCallback(() => {
@@ -238,6 +253,27 @@ export default function UserChat({
             return;
 
         try {
+            // 현재 시간 생성
+            const now = new Date().toISOString();
+
+            // 내가 보낸 메시지를 UI에 먼저 추가 (senderId를 명시적으로 kakaoId로 설정)
+            const myMessage: ChatMessage = {
+                roomId: roomId,
+                message: message.trim(),
+                sentAt: now,
+                senderId: Number(kakaoId), // 명시적으로 내 kakaoId 설정
+            };
+
+            // UI에 메시지 추가
+            setMessages((prev) =>
+                [...prev, myMessage].sort(
+                    (a, b) =>
+                        new Date(a.sentAt || '').getTime() -
+                        new Date(b.sentAt || '').getTime(),
+                ),
+            );
+
+            // 서버로 메시지 전송
             stompClient.current.publish({
                 destination: '/app/chat.sendMessage',
                 headers: {
@@ -256,7 +292,7 @@ export default function UserChat({
                 `메시지 전송 실패: ${err instanceof Error ? err.message : '알 수 없는 오류'}`,
             );
         }
-    }, [message, roomId, stompClient, wsToken]);
+    }, [message, roomId, stompClient, wsToken, kakaoId]);
 
     // 5. 채팅방 생성 또는 가져오기
     const createOrGetChatRoom = useCallback(async () => {
@@ -290,7 +326,7 @@ export default function UserChat({
             setRoomId(data.roomId);
             setError(null);
         } catch (err) {
-            console.error('채팅방 생성 오류:', err);
+            console.error('챌팅방 생성 오류:', err);
             setError(err instanceof Error ? err.message : '알 수 없는 오류');
         } finally {
             setIsLoading(false);
@@ -383,21 +419,30 @@ export default function UserChat({
 
             {/* 메시지 입력 영역 */}
             <SheetFooter className="border-t p-4">
-                <div className="flex w-full items-center gap-2">
-                    <Input
-                        className="flex-1"
-                        placeholder="메시지를 입력하세요..."
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        disabled={!roomId || isLoading}
-                    />
-                    <Button
-                        onClick={sendMessage}
-                        disabled={!message.trim() || !roomId || isLoading}
-                    >
-                        전송
-                    </Button>
+                <div className="w-full rounded-xl border-solid bg-[#f9f9f9]">
+                    <div className="p-5">
+                        <div className="flex flex-col gap-10">
+                            <Input
+                                placeholder="메세지를 입력하세요"
+                                className="border-none bg-transparent text-base leading-[20.8px] font-normal text-black shadow-none placeholder:text-[#999999] focus-visible:ring-0"
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                disabled={!roomId || isLoading}
+                            />
+                            <div className="flex w-full items-center justify-end gap-2">
+                                <Button
+                                    className="px-5 py-2"
+                                    onClick={sendMessage}
+                                    disabled={
+                                        !message.trim() || !roomId || isLoading
+                                    }
+                                >
+                                    전송
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </SheetFooter>
         </div>
