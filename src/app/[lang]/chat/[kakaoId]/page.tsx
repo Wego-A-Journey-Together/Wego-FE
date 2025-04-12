@@ -7,14 +7,20 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+// 내가 참여 중인 채팅방 목록 조회
 interface ChatRoom {
     roomId: number;
+    opponentKakaoId: number;
     opponentNickname: string;
     lastMessage: string;
     unreadCount: number;
-    time?: string;
-    location?: string;
-    userIcon?: string;
+    thumbnailUrl?: string;
+}
+
+// 채팅 상대 프로필 표시를 위한 호출
+interface OpponentUserProfile {
+    thumbnailUrl: string;
+    statusMessage: string; // 유저 프로필에는 지역 정보가 없어 상태 메세지로 대체합니다.
 }
 
 export default function Chat() {
@@ -24,10 +30,13 @@ export default function Chat() {
     const router = useRouter();
     const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
 
-    const [chatData, setChatData] = useState<ChatRoom[]>([]);
+    const [chatPreview, setChatPreview] = useState<ChatRoom[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [sessionVerified, setSessionVerified] = useState(false);
+    const [userProfiles, setUserProfiles] = useState<
+        Record<number, OpponentUserProfile>
+    >({});
 
     useEffect(() => {
         if (!session) return;
@@ -40,7 +49,9 @@ export default function Chat() {
             !currentUserKakaoId ||
             currentUserKakaoId !== requestedKakaoId
         ) {
-            router.push('/404');
+            // 로그인 페이지로 리다이렉트하고 경고 메시지 표시
+            alert('로그인이 필요한 서비스입니다.');
+            router.push('/');
         } else {
             setSessionVerified(true);
         }
@@ -49,13 +60,14 @@ export default function Chat() {
     useEffect(() => {
         if (!sessionVerified) return;
 
-        const fetchChatRooms = async () => {
+        const fetchData = async () => {
             try {
                 if (!NEXT_PUBLIC_NEST_BFF_URL) {
                     throw new Error('API URL이 설정되지 않았습니다.');
                 }
 
-                const res = await fetch(
+                // 채팅방 목록 조회
+                const chatRes = await fetch(
                     `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
                     {
                         credentials: 'include',
@@ -67,26 +79,21 @@ export default function Chat() {
                     },
                 );
 
-                if (!res.ok) {
-                    setErrorMessage('데이터를 불러오는데 실패했습니다.');
-                } else {
-                    const responseData = await res.json();
-                    const rooms = Array.isArray(responseData)
-                        ? responseData
-                        : [];
+                // 프로필 정보 조회
+                const profileRes = await fetch(
+                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/profile/${kakaoId}`,
+                    {
+                        credentials: 'include',
+                    },
+                );
 
-                    const formattedRooms = rooms.map((room) => ({
-                        ...room,
-                        name: room.opponentNickname,
-                        message: room.lastMessage,
-                        unreadChat: room.unreadCount,
-                        time: room.time || '',
-                        location: room.location || '',
-                        userIcon: room.userIcon || '',
-                    }));
+                const [chatRooms, profile] = await Promise.all([
+                    chatRes.json(),
+                    profileRes.json(),
+                ]);
 
-                    setChatData(formattedRooms);
-                }
+                setChatPreview(Array.isArray(chatRooms) ? chatRooms : []);
+                setUserProfiles({ [profile.kakaoId]: profile });
             } catch (error) {
                 setErrorMessage(`데이터를 불러오는데 실패했습니다. ${error}`);
             } finally {
@@ -94,8 +101,8 @@ export default function Chat() {
             }
         };
 
-        fetchChatRooms();
-    }, [sessionVerified, NEXT_PUBLIC_NEST_BFF_URL]);
+        fetchData();
+    }, [sessionVerified, NEXT_PUBLIC_NEST_BFF_URL, kakaoId]);
 
     const HEADER_HEIGHT = 72;
 
@@ -123,26 +130,37 @@ export default function Chat() {
                         <div className="py-10 text-center text-gray-500">
                             데이터를 불러오는데 실패했습니다.
                         </div>
-                    ) : chatData.length === 0 ? (
+                    ) : chatPreview.length === 0 ? (
                         <div className="py-10 text-center text-gray-500">
                             아직 대화 목록이 없습니다.
                         </div>
                     ) : (
                         <ul className="list-none space-y-[30px] p-0">
-                            {chatData.map((chat) => (
-                                <li key={chat.roomId}>
+                            {chatPreview.map((chatData) => (
+                                <li key={chatData.roomId}>
                                     <Link
-                                        href={`/chat/${kakaoId}/rooms/${chat.roomId}`}
+                                        href={`/chat/${kakaoId}/rooms/${chatData.roomId}`}
                                     >
                                         <ChatPreview
-                                            chat={{
-                                                roomId: chat.roomId,
-                                                name: chat.opponentNickname,
-                                                location: chat.location || '',
-                                                time: chat.time || '',
-                                                message: chat.lastMessage,
-                                                unreadChat: chat.unreadCount,
-                                                userIcon: chat.userIcon || '',
+                                            chatData={{
+                                                roomId: chatData.roomId,
+                                                name: chatData.opponentNickname,
+                                                lastMessage:
+                                                    chatData.lastMessage,
+                                                unreadChat:
+                                                    chatData.unreadCount,
+
+                                                // 원래는 Location이나, 현재 프로필에 지역정보가 없어서 일단 상태메세지로 대체합니다.
+                                                statusMessage:
+                                                    userProfiles[
+                                                        chatData.opponentKakaoId
+                                                    ]?.statusMessage ||
+                                                    '상태 메시지가 없습니다',
+                                                thumbnailUrl:
+                                                    userProfiles[
+                                                        chatData.opponentKakaoId
+                                                    ]?.thumbnailUrl ||
+                                                    '/icon/profile/defaultProfile.svg',
                                             }}
                                         />
                                     </Link>
