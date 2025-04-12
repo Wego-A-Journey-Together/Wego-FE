@@ -102,7 +102,7 @@ export default function ChatRoom({
                     text: msg.message || '',
                     // 메시지 발신자 구분 (kakaoId가 있는 경우)
                     messageFrom:
-                        kakaoId && msg.senderId === kakaoId ? 'writer' : 'user',
+                        kakaoId && msg.senderId === kakaoId ? 'user' : 'writer',
                     timestamp: formatTime(
                         msg.sentAt || new Date().toISOString(),
                     ),
@@ -110,6 +110,11 @@ export default function ChatRoom({
             );
 
             setMessages(formattedMessages);
+
+            // DOM이 업데이트된 후에 스크롤 강제 이동이 동작하도록 셋타임아웃
+            setTimeout(() => {
+                messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+            }, 0);
         } catch (err) {
             console.error('메시지 로딩 오류:', err);
             setError('메시지를 불러오는데 문제가 발생했습니다.');
@@ -283,7 +288,7 @@ export default function ChatRoom({
 
     // 메시지 목록이 변경될 때마다 스크롤을 맨 아래로 이동
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
     }, [messages]);
 
     // 로딩 중일 때 표시
@@ -322,11 +327,7 @@ export default function ChatRoom({
                             return (
                                 <div
                                     key={msg.messageId}
-                                    className={`flex ${
-                                        isMyMessage
-                                            ? 'justify-end'
-                                            : 'justify-start'
-                                    }`}
+                                    className={`flex ${isMyMessage ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div
                                         className={`max-w-[70%] rounded-2xl px-4 py-2 ${
@@ -335,18 +336,7 @@ export default function ChatRoom({
                                                 : 'bg-[#F0F0F0] text-black'
                                         }`}
                                     >
-                                        <p className="break-words">
-                                            {msg.text}
-                                        </p>
-                                        <p
-                                            className={`mt-1 text-right text-xs ${
-                                                isMyMessage
-                                                    ? 'text-gray-200'
-                                                    : 'text-gray-500'
-                                            }`}
-                                        >
-                                            {msg.timestamp}
-                                        </p>
+                                        {/* Message content */}
                                     </div>
                                 </div>
                             );
