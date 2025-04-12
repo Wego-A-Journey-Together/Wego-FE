@@ -23,6 +23,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+//배포트리거용 주석
 interface PostFormProps {
     isEdit: boolean;
     gatheringId?: string;
