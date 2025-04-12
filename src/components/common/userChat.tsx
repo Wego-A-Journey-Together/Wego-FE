@@ -88,14 +88,6 @@ export default function UserChat({
             try {
                 setIsLoading(true);
 
-                // 채팅방 정보 조회
-                const roomResponse = await fetch(
-                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}`,
-                    {
-                        credentials: 'include',
-                    },
-                );
-
                 // 채팅 메시지 목록 조회
                 const messagesResponse = await fetch(
                     `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/messages`,
@@ -113,19 +105,12 @@ export default function UserChat({
                     },
                 );
 
-                if (!roomResponse.ok) {
-                    throw new Error(
-                        `채팅방 정보를 가져오는데 실패했습니다: ${roomResponse.status}`,
-                    );
-                }
-
                 if (!messagesResponse.ok) {
                     throw new Error(
                         `메시지 목록을 가져오는데 실패했습니다: ${messagesResponse.status}`,
                     );
                 }
 
-                await roomResponse.json(); // 린트 에러 해결용 처리
                 const messagesData = await messagesResponse.json();
 
                 // 메시지 시간순으로 정렬 (최신 메시지가 아래에 오도록)
