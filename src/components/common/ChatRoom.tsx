@@ -215,8 +215,8 @@ export default function ChatRoom({
                                         // 메시지 발신자 구분 수정
                                         messageFrom:
                                             receivedMessage.senderId === kakaoId
-                                                ? 'user' // 내 메시지
-                                                : 'writer', // 글 작성자(상대방) 메시지
+                                                ? 'user'
+                                                : 'writer',
                                         timestamp: formatTime(
                                             receivedMessage.sentAt ||
                                                 new Date().toISOString(),
@@ -336,7 +336,18 @@ export default function ChatRoom({
                                                 : 'bg-[#F0F0F0] text-black'
                                         }`}
                                     >
-                                        {/* Message content */}
+                                        <p className="break-words">
+                                            {msg.text}
+                                        </p>
+                                        <p
+                                            className={`mt-1 text-right text-xs ${
+                                                isMyMessage
+                                                    ? 'text-gray-200'
+                                                    : 'text-gray-500'
+                                            }`}
+                                        >
+                                            {msg.timestamp}
+                                        </p>
                                     </div>
                                 </div>
                             );

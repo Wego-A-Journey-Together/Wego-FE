@@ -37,10 +37,6 @@ export default function RecruitFooter({ post }: { post: DetailPost }) {
 
                 if (data.creator && data.creator.kakaoId) {
                     setCreatorKakaoId(String(data.creator.kakaoId));
-                    console.log(
-                        'Set creator kakaoId:',
-                        String(data.creator.kakaoId),
-                    );
                 }
             } catch (error) {
                 console.error('Error fetching creator info:', error);
