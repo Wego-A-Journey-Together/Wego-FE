@@ -45,7 +45,7 @@ interface ChatRoomProps {
         senderId?: string;
         nickname?: string;
     }[];
-    onSendMessage?: () => void;
+    onSendMessage?: (message: string) => void;
 }
 
 export default function ChatRoom({
@@ -125,43 +125,54 @@ export default function ChatRoom({
 
     // 메시지 전송
     const sendMessage = useCallback(() => {
-        if (!newMessage.trim() || !roomId || !stompClient?.active) return;
+        if (!newMessage.trim()) return;
 
-        try {
-            const payload = {
-                roomId,
-                message: newMessage.trim(),
-            };
+        if (onSendMessage) {
+            // 부모 컴포넌트에서 제공한 onSendMessage 함수 사용
+            onSendMessage(newMessage);
+            setNewMessage(''); // 입력 필드 초기화
+        } else if (stompClient?.active) {
+            // 기존 로직 (직접 소켓으로 전송)
+            try {
+                const payload = {
+                    roomId,
+                    message: newMessage.trim(),
+                };
 
-            stompClient.publish({
-                destination: '/app/chat.sendMessage',
-                body: JSON.stringify(payload),
-                headers: { 'content-type': 'application/json' },
-            });
+                stompClient.publish({
+                    destination: '/app/chat.sendMessage',
+                    body: JSON.stringify(payload),
+                    headers: { 'content-type': 'application/json' },
+                });
 
-            // 메시지 전송 후 입력창 초기화
-            setNewMessage('');
+                // 메시지 전송 후 입력창 초기화
+                setNewMessage('');
 
-            // UI에 내 메시지 추가 (WebSocket으로 다시 받기 전에)
-            const now = new Date().toISOString();
-            const newMsg: Message = {
-                messageId: Date.now(),
-                text: newMessage.trim(),
-                messageFrom: 'user', // 내가 보낸 메시지는 'user'로 변경
-                timestamp: formatTime(now),
-            };
-            setMessages((prev) => [...prev, newMsg]);
-        } catch (err) {
-            console.error('메시지 전송 오류:', err);
-            setError('메시지 전송에 실패했습니다.');
+                // UI에 내 메시지 추가 (WebSocket으로 다시 받기 전에)
+                const now = new Date().toISOString();
+                const newMsg: Message = {
+                    messageId: Date.now(),
+                    text: newMessage.trim(),
+                    messageFrom: 'user', // 내가 보낸 메시지는 'user'로 변경
+                    timestamp: formatTime(now),
+                };
+                setMessages((prev) => [...prev, newMsg]);
+            } catch (err) {
+                console.error('메시지 전송 오류:', err);
+                setError('메시지 전송에 실패했습니다.');
+            }
         }
-    }, [newMessage, roomId, stompClient]);
+    }, [newMessage, onSendMessage, stompClient]);
 
     // 엔터키로 메시지 전송
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            sendMessage();
+
+            // 마지막 글자가 한 번 더 보내지는 현상 수정
+            setTimeout(() => {
+                sendMessage();
+            }, 10);
         }
     };
 

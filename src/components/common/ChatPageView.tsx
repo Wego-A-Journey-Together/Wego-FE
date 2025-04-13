@@ -23,7 +23,7 @@ interface ChatPageViewProps {
         roomId: number;
         message: string;
         sentAt: string;
-        senderId?: number;
+        senderId?: string;
         nickname?: string;
     }>;
     onSendMessage?: (message: string) => void;

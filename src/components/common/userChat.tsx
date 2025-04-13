@@ -331,7 +331,10 @@ export default function UserChat({
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            sendMessage();
+            // 마지막 글자가 한 번 더 보내지는 현상 수정
+            setTimeout(() => {
+                sendMessage();
+            }, 10);
         }
     };
 

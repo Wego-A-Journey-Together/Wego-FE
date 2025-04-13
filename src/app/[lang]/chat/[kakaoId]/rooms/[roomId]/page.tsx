@@ -18,7 +18,7 @@ interface ChatMessage {
     roomId: number;
     message: string;
     sentAt: string;
-    senderId?: number;
+    senderId?: string;
     nickname?: string;
 }
 
@@ -142,11 +142,16 @@ export default function ChatPage() {
                 });
 
                 const sortedMessages = Array.isArray(messagesData)
-                    ? messagesData.sort(
-                          (a, b) =>
-                              new Date(a.sentAt).getTime() -
-                              new Date(b.sentAt).getTime(),
-                      )
+                    ? messagesData
+                          .map((msg) => ({
+                              ...msg,
+                              senderId: msg.senderId?.toString(),
+                          }))
+                          .sort(
+                              (a, b) =>
+                                  new Date(a.sentAt).getTime() -
+                                  new Date(b.sentAt).getTime(),
+                          )
                     : [];
 
                 setMessages(sortedMessages);
@@ -187,9 +192,14 @@ export default function ChatPage() {
                     const receivedMsg = JSON.parse(message.body);
                     console.log('Received message:', receivedMsg);
 
+                    const processedMsg = {
+                        ...receivedMsg,
+                        senderId: receivedMsg.senderId?.toString(),
+                    };
+
                     // 메시지 추가
                     setMessages((prev) =>
-                        [...prev, receivedMsg].sort(
+                        [...prev, processedMsg].sort(
                             (a, b) =>
                                 new Date(a.sentAt).getTime() -
                                 new Date(b.sentAt).getTime(),
