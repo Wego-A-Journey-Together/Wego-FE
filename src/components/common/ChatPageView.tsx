@@ -56,6 +56,7 @@ export default function ChatPageView({
     // onParticipate,
     roomId,
     kakaoId,
+    messages = [],
     skipRoomDataFetch = false,
     onSendMessage,
 }: ChatPageViewProps) {
@@ -314,6 +315,7 @@ export default function ChatPageView({
                     <ChatRoom
                         roomId={roomIdValue}
                         kakaoId={userKakaoId}
+                        messages={messages}
                         onSendMessage={sendMessage}
                     />
                 ) : (

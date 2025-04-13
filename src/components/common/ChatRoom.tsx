@@ -56,7 +56,7 @@ export default function ChatRoom({
 
     // 메시지 목록이 변경될 때마다 스크롤을 맨 아래로 이동
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
     }, [initialMessages]);
 
     // 로딩 중일 때 표시
