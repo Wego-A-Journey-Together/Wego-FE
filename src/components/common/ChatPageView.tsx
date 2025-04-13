@@ -27,6 +27,7 @@ interface ChatPageViewProps {
         nickname?: string;
     }>;
     onSendMessage?: (message: string) => void;
+    skipRoomDataFetch?: boolean;
 }
 
 interface RoomData {
@@ -53,6 +54,7 @@ export default function ChatPageView({
     onParticipate,
     roomId,
     kakaoId,
+    skipRoomDataFetch = false,
 }: ChatPageViewProps) {
     const params = useParams();
     const [loading, setLoading] = useState(false);
@@ -63,7 +65,7 @@ export default function ChatPageView({
     const roomIdValue = roomId || parseInt(params.roomId as string, 10);
 
     useEffect(() => {
-        if (!roomIdValue) return;
+        if (!roomIdValue || skipRoomDataFetch) return;
 
         const fetchRoomData = async () => {
             try {
@@ -99,7 +101,7 @@ export default function ChatPageView({
         };
 
         fetchRoomData();
-    }, [roomIdValue]);
+    }, [roomIdValue, skipRoomDataFetch]);
 
     return (
         <div className="bg-background-light flex h-full w-full flex-col border-x-1 border-[#E9E9E9]">

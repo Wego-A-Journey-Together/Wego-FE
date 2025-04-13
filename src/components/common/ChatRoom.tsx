@@ -102,7 +102,7 @@ export default function ChatRoom({
                     text: msg.message || '',
                     // 메시지 발신자 구분 (kakaoId가 있는 경우)
                     messageFrom:
-                        kakaoId && msg.senderId === kakaoId ? 'user' : 'writer',
+                        kakaoId && msg.senderId === kakaoId ? 'writer' : 'user',
                     timestamp: formatTime(
                         msg.sentAt || new Date().toISOString(),
                     ),
@@ -215,8 +215,8 @@ export default function ChatRoom({
                                         // 메시지 발신자 구분 수정
                                         messageFrom:
                                             receivedMessage.senderId === kakaoId
-                                                ? 'user'
-                                                : 'writer',
+                                                ? 'writer'
+                                                : 'user',
                                         timestamp: formatTime(
                                             receivedMessage.sentAt ||
                                                 new Date().toISOString(),
