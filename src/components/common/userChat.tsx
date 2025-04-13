@@ -32,6 +32,7 @@ interface ChatMessage {
     senderId?: number;
     nickname?: string;
     messageFrom?: 'user' | 'writer';
+    tempId?: string; // 임시 ID 추가
 }
 
 export default function UserChat({
@@ -148,7 +149,6 @@ export default function UserChat({
             connectHeaders: {
                 Authorization: `Bearer ${wsToken}`,
             },
-
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
@@ -168,14 +168,30 @@ export default function UserChat({
                         const receivedMsg = JSON.parse(message.body);
                         console.log('Received message:', receivedMsg);
 
-                        // 메시지 추가
-                        setMessages((prev) =>
-                            [...prev, receivedMsg].sort(
+                        // 메시지 추가 (중복 체크 추가)
+                        setMessages((prev) => {
+                            const isDuplicate = prev.some(
+                                (msg) =>
+                                    msg.message === receivedMsg.message &&
+                                    msg.senderId === receivedMsg.senderId &&
+                                    Math.abs(
+                                        new Date(msg.sentAt || '').getTime() -
+                                            new Date(
+                                                receivedMsg.sentAt || '',
+                                            ).getTime(),
+                                    ) < 1000,
+                            );
+
+                            if (isDuplicate) {
+                                return prev;
+                            }
+
+                            return [...prev, receivedMsg].sort(
                                 (a, b) =>
                                     new Date(a.sentAt).getTime() -
                                     new Date(b.sentAt).getTime(),
-                            ),
-                        );
+                            );
+                        });
 
                         // 읽음 처리
                         fetch(
@@ -239,28 +255,6 @@ export default function UserChat({
             return;
 
         try {
-            // 현재 시간 생성
-            const now = new Date().toISOString();
-
-            // 내가 보낸 메시지를 UI에 먼저 추가
-            const myMessage: ChatMessage = {
-                roomId: roomId,
-                message: message.trim(),
-                sentAt: now,
-                senderId: Number(kakaoId),
-                messageFrom: 'user', // 내 메시지임을 명시
-            };
-
-            // UI에 메시지 추가
-            setMessages((prev) =>
-                [...prev, myMessage].sort(
-                    (a, b) =>
-                        new Date(a.sentAt || '').getTime() -
-                        new Date(b.sentAt || '').getTime(),
-                ),
-            );
-
-            // 서버로 메시지 전송
             stompClient.current.publish({
                 destination: '/app/chat.sendMessage',
                 headers: {
@@ -279,7 +273,7 @@ export default function UserChat({
                 `메시지 전송 실패: ${err instanceof Error ? err.message : '알 수 없는 오류'}`,
             );
         }
-    }, [message, roomId, stompClient, wsToken, kakaoId]);
+    }, [message, roomId, stompClient, wsToken]);
 
     // 5. 채팅방 생성 또는 가져오기
     const createOrGetChatRoom = useCallback(async () => {
