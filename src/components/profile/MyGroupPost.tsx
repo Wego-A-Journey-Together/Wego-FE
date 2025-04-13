@@ -58,9 +58,9 @@ export default function MyGroupPost({
                 >
                     {/* 게시글 */}
                     <div className="flex w-full items-center gap-5">
-                        <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-full">
+                        <div className="relative h-20 w-20 flex-shrink-0">
                             <Image
-                                className="object-cover"
+                                className="rounded-lg object-cover"
                                 alt={post.title}
                                 src={post.thumbnailUrl}
                                 fill
@@ -113,11 +113,12 @@ export default function MyGroupPost({
                                 </span>
                             </div>
                             <div className="flex items-center gap-1 text-sm">
-                                <div className="relative h-5 w-5">
+                                <div className="relative h-5 w-5 overflow-hidden rounded-full">
                                     <Image
                                         src={post.host.thumbnailUrl}
-                                        width={20}
-                                        height={20}
+                                        fill
+                                        sizes="20px"
+                                        className="object-cover"
                                         alt="유저 아이콘 이미지"
                                     />
                                 </div>
