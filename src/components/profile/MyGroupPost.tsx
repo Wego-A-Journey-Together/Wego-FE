@@ -1,9 +1,15 @@
+'use client';
+
 import Divider from '@/components/common/Divider';
 import UserChat from '@/components/common/userChat';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import useCancelApply from '@/hooks/fetch/useCancelApply';
 import { MyJoin } from '@/hooks/fetch/useFetchMyJoin';
+import { calculateDays } from '@/lib/calculateDays';
+import { ageLabelMap, genderLabelMap } from '@/lib/utils/enumMapper';
+import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -18,6 +24,9 @@ interface MyGroupPostProps {
 // 게시글 삭제 여부 임시
 const isDeleted = false;
 
+// 날짜 계산 관련
+const now = new Date();
+
 export default function MyGroupPost({
     posts,
     cancelRecruit,
@@ -30,8 +39,15 @@ export default function MyGroupPost({
         setActiveChatId((current) => (current === postId ? null : postId));
     };
 
+    // --------------동행 참여 취소 관련--------------
+    const { cancelApply, isLoading } = useCancelApply();
+
+    const handleCancelJoin = (gatheringId: number) => {
+        cancelApply(gatheringId);
+    };
+    // -------------------------------------------
+
     if (posts.length === 0) return <NoContentGuide />;
-    const now = new Date();
 
     return (
         <div className="flex w-full flex-col gap-5">
@@ -42,9 +58,9 @@ export default function MyGroupPost({
                 >
                     {/* 게시글 */}
                     <div className="flex w-full items-center gap-5">
-                        <div className="relative h-20 w-20 flex-shrink-0">
+                        <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-full">
                             <Image
-                                className="rounded-lg object-cover"
+                                className="object-cover"
                                 alt={post.title}
                                 src={post.thumbnailUrl}
                                 fill
@@ -72,12 +88,14 @@ export default function MyGroupPost({
 
                             {/* 모임 세부 정보 */}
                             <div className="flex flex-wrap items-center gap-2 text-sm">
-                                {post.startAt} - {post.endAt} ({'n'}
-                                일)
+                                {post.startAt} - {post.endAt} (
+                                {calculateDays(post.startAt, post.endAt)}일)
                                 <Divider />
-                                {post.preferredAge}
+                                {ageLabelMap[post.preferredAge] ||
+                                    post.preferredAge}
                                 <Divider />
-                                {post.preferredGender}
+                                {genderLabelMap[post.preferredGender] ||
+                                    post.preferredGender}
                                 <Divider />
                                 <span>
                                     <span
@@ -150,10 +168,18 @@ export default function MyGroupPost({
                             {/* 참여 중인 동행 탭에서 보일 내용 */}
                             {cancelRecruit && (
                                 <Button
+                                    type="button"
                                     variant={'outline'}
+                                    onClick={() =>
+                                        handleCancelJoin(post.gatheringId)
+                                    }
                                     className="flex w-[130px] text-[#666666]"
                                 >
-                                    취소하기
+                                    {isLoading ? (
+                                        <Loader2 className="animate-spin text-neutral-400" />
+                                    ) : (
+                                        '취소하기'
+                                    )}
                                 </Button>
                             )}
 
