@@ -406,21 +406,30 @@ export default function UserChat({
 
             {/* 메시지 입력 영역 */}
             <SheetFooter className="border-t p-4">
-                <div className="flex w-full items-center gap-2">
-                    <Input
-                        className="flex-1"
-                        placeholder="메시지를 입력하세요..."
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        disabled={!roomId || isLoading}
-                    />
-                    <Button
-                        onClick={sendMessage}
-                        disabled={!message.trim() || !roomId || isLoading}
-                    >
-                        전송
-                    </Button>
+                <div className="w-full rounded-xl border-solid bg-[#f9f9f9]">
+                    <div className="p-5">
+                        <div className="flex flex-col gap-10">
+                            <Input
+                                placeholder="메세지를 입력하세요"
+                                className="border-none bg-transparent text-base leading-[20.8px] font-normal text-black shadow-none placeholder:text-[#999999] focus-visible:ring-0"
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                disabled={!roomId || isLoading}
+                            />
+                            <div className="flex w-full items-center justify-end gap-2">
+                                <Button
+                                    className="px-5 py-2"
+                                    onClick={sendMessage}
+                                    disabled={
+                                        !message.trim() || !roomId || isLoading
+                                    }
+                                >
+                                    전송
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </SheetFooter>
         </div>

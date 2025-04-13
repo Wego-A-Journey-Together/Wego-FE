@@ -155,38 +155,58 @@
         font-family: var(--font-orienta, Orienta), sans-serif;
     }
 
-    .font-pretendard {
-        font-family: var(--font-pretendard), sans-serif;
+    /* 커스텀 스크롤바 스타일 */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
     }
 
-    /* 스크롤바 숨김 처리 클래스 추가 */
-    .scrollbar-hide {
-        -ms-overflow-style: none; /* IE와 Edge 브라우저용 */
-        scrollbar-width: none; /* Firefox 브라우저용 */
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
     }
 
-    .scrollbar-hide::-webkit-scrollbar {
-        display: none;
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: var(--color-sky-blue);
+        opacity: 0.5;
+        border-radius: 20px;
     }
 
-    /* 넘버 인풋 숨김 처리 클래스 추가 */
-    .number-arrow-hide {
-        -moz-appearance: textfield;
-        appearance: textfield;
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background-color: var(--color-sky-blue);
+        opacity: 0.8;
     }
+}
 
-    .number-arrow-hide::-webkit-inner-spin-button,
-    .number-arrow-hide::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        appearance: none;
-        margin: 0;
-    }
+.font-pretendard {
+    font-family: var(--font-pretendard), sans-serif;
+}
 
-    /* layout shift 버그 수정용 */
-    html body[data-scroll-locked] {
-        overflow: visible !important;
-        margin-right: 0 !important;
-    }
+/* 스크롤바 숨김 처리 클래스 추가 */
+.scrollbar-hide {
+    -ms-overflow-style: none; /* IE와 Edge 브라우저용 */
+    scrollbar-width: none; /* Firefox 브라우저용 */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* 넘버 인풋 숨김 처리 클래스 추가 */
+.number-arrow-hide {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.number-arrow-hide::-webkit-inner-spin-button,
+.number-arrow-hide::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+/* layout shift 버그 수정용 */
+html body[data-scroll-locked] {
+    overflow: visible !important;
+    margin-right: 0 !important;
 }
 
 @layer utilities {

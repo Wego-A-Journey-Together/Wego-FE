@@ -52,7 +52,6 @@ export default function ChatPage() {
                     throw new Error('Failed to get WebSocket token');
                 }
                 const data = await response.json();
-                console.log('wsToken:', data.wsToken);
                 setWsToken(data.wsToken);
             } catch (err) {
                 console.error('WebSocket token error:', err);
@@ -67,35 +66,48 @@ export default function ChatPage() {
 
     // 2. 채팅방 정보 및 메시지 초기 로딩
     useEffect(() => {
-        if (!roomId) {
-            console.warn('roomId가 0입니다. URL 확인 필요');
-            return;
-        }
+        if (!roomId) return;
 
         const fetchData = async () => {
             try {
                 setIsLoading(true);
 
-                console.log('roomId:', roomId);
-                console.log('kakaoId:', kakaoId);
-                console.log(
-                    'API URL:',
-                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/messages`,
-                );
-
-                const roomsResponse = await fetch(
+                const createRoomResponse = await fetch(
                     `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`,
                     {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ opponentKakaoId: kakaoId }),
                         credentials: 'include',
                     },
                 );
 
-                const messagesResponse = await fetch(
-                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/messages`,
-                    {
+                if (!createRoomResponse.ok) {
+                    throw new Error('채팅방 생성 또는 조회에 실패했습니다.');
+                }
+
+                const roomData = await createRoomResponse.json();
+
+                // roomId가 URL과 다르면 리다이렉트
+                if (roomData.roomId !== roomId) {
+                    router.replace(`/chat/${kakaoId}/rooms/${roomData.roomId}`);
+                    return;
+                }
+
+                // 메시지, 읽음 처리, 채팅방 리스트 조회
+                const [roomsResponse, messagesResponse] = await Promise.all([
+                    fetch(`${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms`, {
                         credentials: 'include',
-                    },
-                );
+                    }),
+                    fetch(
+                        `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/messages`,
+                        {
+                            credentials: 'include',
+                        },
+                    ),
+                ]);
 
                 await fetch(
                     `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/read`,
@@ -105,7 +117,7 @@ export default function ChatPage() {
                     },
                 );
 
-                let roomData = {
+                let roomDeta = {
                     opponentNickname: '',
                     userRating: 0,
                     title: '',
@@ -113,18 +125,22 @@ export default function ChatPage() {
                     endDate: '',
                 };
 
-                if (!roomsResponse.ok) {
-                    console.warn(`채팅방 목록 실패: ${roomsResponse.status}`);
-                } else {
+                interface ChatRoom {
+                    roomId: number;
+                    opponentNickname: string;
+                    userRating: number;
+                    title: string;
+                    startDate: string;
+                    endDate: string;
+                }
+
+                if (roomsResponse.ok) {
                     const roomsList = await roomsResponse.json();
-                    console.log('roomsList:', roomsList);
-
-                    const currentRoom = Array.isArray(roomsList)
-                        ? roomsList.find((room) => room.roomId === roomId)
-                        : null;
-
+                    const currentRoom = roomsList.find(
+                        (room: ChatRoom) => room.roomId === roomId,
+                    );
                     if (currentRoom) {
-                        roomData = {
+                        roomDeta = {
                             opponentNickname:
                                 currentRoom.opponentNickname || '',
                             userRating: currentRoom.userRating || 0,
@@ -132,43 +148,39 @@ export default function ChatPage() {
                             startDate: currentRoom.startDate || '',
                             endDate: currentRoom.endDate || '',
                         };
-                    } else {
-                        console.warn(
-                            `roomId ${roomId}에 해당하는 채팅방이 없습니다.`,
-                        );
                     }
                 }
 
                 if (!messagesResponse.ok) {
+                    const errorText = await messagesResponse.text();
                     throw new Error(
-                        `메시지 로딩 실패: ${messagesResponse.status}`,
+                        `메시지 불러오기 실패: ${messagesResponse.status} - ${errorText}`,
                     );
                 }
 
                 const messagesData = await messagesResponse.json();
-                console.log('messagesData:', messagesData);
 
                 setChatRoomData({
-                    userName: roomData.opponentNickname || '',
-                    userRating: roomData.userRating || 0,
-                    title: roomData.title || '',
-                    startDate: roomData.startDate || '',
-                    endDate: roomData.endDate || '',
+                    userName: roomDeta.opponentNickname,
+                    userRating: roomDeta.userRating,
+                    title: roomDeta.title,
+                    startDate: roomDeta.startDate,
+                    endDate: roomDeta.endDate,
                 });
 
-                const sortedMessages = Array.isArray(messagesData)
-                    ? messagesData.sort(
-                          (a, b) =>
-                              new Date(a.sentAt).getTime() -
-                              new Date(b.sentAt).getTime(),
-                      )
-                    : [];
+                const sortedMessages = messagesData.sort(
+                    (a: ChatMessage, b: ChatMessage) =>
+                        new Date(a.sentAt).getTime() -
+                        new Date(b.sentAt).getTime(),
+                );
 
                 setMessages(sortedMessages);
             } catch (err) {
-                console.error('채팅방 데이터 로딩 오류:', err);
+                console.error('채팅방 로딩 실패:', err);
                 setError(
-                    err instanceof Error ? err.message : '알 수 없는 오류',
+                    err instanceof Error
+                        ? err.message
+                        : '채팅방 로딩 중 오류 발생',
                 );
             } finally {
                 setIsLoading(false);
@@ -176,13 +188,14 @@ export default function ChatPage() {
         };
 
         fetchData();
-    }, [roomId, NEXT_PUBLIC_NEST_BFF_URL]);
+    }, [roomId, kakaoId, NEXT_PUBLIC_NEST_BFF_URL, router]);
 
-    // 3. WebSocket 연결 및 구독 설정
+    // 3. WebSocket 연결
     useEffect(() => {
         if (!wsToken || !roomId) return;
 
-        // STOMP 클라이언트 생성
+        let mounted = true;
+
         const client = new Client({
             brokerURL: WS_URL,
             connectHeaders: {
@@ -193,62 +206,59 @@ export default function ChatPage() {
             heartbeatOutgoing: 4000,
         });
 
-        // 연결 성공 시 콜백
-        client.onConnect = function () {
-            console.log('Connected to STOMP');
+        client.onConnect = () => {
+            if (!mounted) return;
 
-            client.subscribe(`/topic/chatroom/${roomId}`, function (message) {
-                if (message.body) {
-                    const receivedMsg = JSON.parse(message.body);
-                    console.log('Received message:', receivedMsg);
+            client.subscribe(`/topic/chatroom/${roomId}`, (message) => {
+                if (!mounted || !message.body) return;
 
-                    // 메시지 추가
-                    setMessages((prev) =>
-                        [...prev, receivedMsg].sort(
-                            (a, b) =>
-                                new Date(a.sentAt).getTime() -
-                                new Date(b.sentAt).getTime(),
-                        ),
-                    );
+                const receivedMsg = JSON.parse(message.body);
+                setMessages((prev) =>
+                    [...prev, receivedMsg].sort(
+                        (a, b) =>
+                            new Date(a.sentAt).getTime() -
+                            new Date(b.sentAt).getTime(),
+                    ),
+                );
 
-                    // 읽음 처리
-                    fetch(
-                        `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/read`,
-                        {
-                            method: 'PATCH',
-                            credentials: 'include',
-                        },
-                    ).catch((err) => console.error('읽음 처리 오류:', err));
-                }
+                // 읽음 처리
+                fetch(
+                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/read`,
+                    {
+                        method: 'PATCH',
+                        credentials: 'include',
+                    },
+                ).catch((err) => console.error('읽음 처리 실패:', err));
             });
         };
 
-        // 에러 처리
-        client.onStompError = function (frame) {
+        client.onStompError = (frame) => {
             console.error('STOMP error:', frame.headers['message']);
-            setError('WebSocket 연결 오류가 발생했습니다.');
+            setError('WebSocket STOMP 오류가 발생했습니다.');
         };
 
-        // 연결
+        client.onWebSocketError = (event) => {
+            console.error('WebSocket error:', event);
+            setError('WebSocket 연결 실패');
+        };
+
+        client.onWebSocketClose = (event) => {
+            console.warn('WebSocket closed:', event);
+        };
+
         client.activate();
         stompClient.current = client;
 
-        // 컴포넌트 언마운트 시 연결 해제
         return () => {
-            if (client.connected) {
-                client.deactivate();
-            }
+            mounted = false;
+            if (client.connected) client.deactivate();
+            stompClient.current = null;
         };
     }, [wsToken, roomId, NEXT_PUBLIC_NEST_BFF_URL]);
 
     // 4. 메시지 전송
     const handleSendMessage = async (message: string) => {
-        if (
-            !message.trim() ||
-            !stompClient.current ||
-            !stompClient.current.connected
-        )
-            return;
+        if (!message.trim() || !stompClient.current?.connected) return;
 
         try {
             stompClient.current.publish({
@@ -267,9 +277,7 @@ export default function ChatPage() {
         }
     };
 
-    const handleClose = () => {
-        router.back();
-    };
+    const handleClose = () => router.back();
 
     const handleParticipate = () => {
         alert('참여 신청이 완료되었습니다.');

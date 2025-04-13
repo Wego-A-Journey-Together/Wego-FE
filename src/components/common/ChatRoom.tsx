@@ -315,7 +315,7 @@ export default function ChatRoom({
     return (
         <div className="flex h-full flex-col">
             {/* 메시지 목록 */}
-            <div className="flex-1 overflow-y-auto pb-4">
+            <div className="custom-scrollbar flex-1 overflow-y-auto pb-4">
                 {messages.length === 0 ? (
                     <ChatNotice />
                 ) : (
