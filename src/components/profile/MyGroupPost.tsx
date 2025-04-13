@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import useCancelApply from '@/hooks/fetch/useCancelApply';
 import { MyJoin } from '@/hooks/fetch/useFetchMyJoin';
+import { calculateDays } from '@/lib/calculateDays';
+import { ageLabelMap, genderLabelMap } from '@/lib/utils/enumMapper';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -22,6 +24,9 @@ interface MyGroupPostProps {
 // 게시글 삭제 여부 임시
 const isDeleted = false;
 
+// 날짜 계산 관련
+const now = new Date();
+
 export default function MyGroupPost({
     posts,
     cancelRecruit,
@@ -33,14 +38,16 @@ export default function MyGroupPost({
     const toggleChat = (postId: number) => {
         setActiveChatId((current) => (current === postId ? null : postId));
     };
+
+    // --------------동행 참여 취소 관련--------------
     const { cancelApply, isLoading } = useCancelApply();
 
     const handleCancelJoin = (gatheringId: number) => {
         cancelApply(gatheringId);
     };
+    // -------------------------------------------
 
     if (posts.length === 0) return <NoContentGuide />;
-    const now = new Date();
 
     return (
         <div className="flex w-full flex-col gap-5">
@@ -81,12 +88,14 @@ export default function MyGroupPost({
 
                             {/* 모임 세부 정보 */}
                             <div className="flex flex-wrap items-center gap-2 text-sm">
-                                {post.startAt} - {post.endAt} ({'n'}
-                                일)
+                                {post.startAt} - {post.endAt} (
+                                {calculateDays(post.startAt, post.endAt)}일)
                                 <Divider />
-                                {post.preferredAge}
+                                {ageLabelMap[post.preferredAge] ||
+                                    post.preferredAge}
                                 <Divider />
-                                {post.preferredGender}
+                                {genderLabelMap[post.preferredGender] ||
+                                    post.preferredGender}
                                 <Divider />
                                 <span>
                                     <span
