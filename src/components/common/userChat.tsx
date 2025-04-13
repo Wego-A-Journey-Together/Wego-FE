@@ -383,7 +383,7 @@ export default function UserChat({
             </div>
 
             {/* 채팅 말풍선 섹션 */}
-            <div className="scrollbar-hide flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-4">
                 {isLoading ? (
                     <div className="flex h-full items-center justify-center">
                         <LoadingThreeDots />

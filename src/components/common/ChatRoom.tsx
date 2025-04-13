@@ -168,7 +168,6 @@ export default function ChatRoom({
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-
             // 마지막 글자가 한 번 더 보내지는 현상 수정
             setTimeout(() => {
                 sendMessage();
@@ -223,7 +222,7 @@ export default function ChatRoom({
                                     const newMsg: Message = {
                                         messageId: Date.now(),
                                         text: receivedMessage.message || '',
-                                        // 메시지 발신자 구분 수정
+                                        // 메시지 발신자 구분
                                         messageFrom:
                                             receivedMessage.senderId === kakaoId
                                                 ? 'writer'
@@ -310,15 +309,10 @@ export default function ChatRoom({
             </div>
         );
     }
-
-    // 에러 발생 시 표시
     if (error) {
         return (
-            <div className="flex h-full flex-col items-center justify-center gap-4 text-red-500">
-                <p>{error}</p>
-                <Button onClick={() => window.location.reload()}>
-                    다시 시도하기
-                </Button>
+            <div className="flex h-full items-center justify-center text-red-500">
+                {error}
             </div>
         );
     }
@@ -326,7 +320,7 @@ export default function ChatRoom({
     return (
         <div className="flex h-full flex-col">
             {/* 메시지 목록 */}
-            <div className="custom-scrollbar flex-1 overflow-y-auto pb-4">
+            <div className="custom-scrollbar flex-1 overflow-y-auto pr-4 pb-4">
                 {messages.length === 0 ? (
                     <ChatNotice />
                 ) : (
