@@ -1,10 +1,10 @@
 'use client';
 
 import LoadingThreeDots from '@/components/common/LoadingThreeDots';
-import { Button } from '@/components/ui/button';
-import { Calendar, ChevronLeft, MoreHorizontal, Star } from 'lucide-react';
+import { Client } from '@stomp/stompjs';
+import { ChevronLeft, MoreHorizontal, Star } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import ChatNotice from './ChatNotice';
 import ChatRoom from './ChatRoom';
@@ -47,11 +47,11 @@ interface RoomData {
 export default function ChatPageView({
     userName,
     userRating,
-    title,
-    startDate,
-    endDate,
+    // title,
+    // startDate,
+    // endDate,
     onClose,
-    onParticipate,
+    // onParticipate,
     roomId,
     kakaoId,
     skipRoomDataFetch = false,
@@ -60,13 +60,33 @@ export default function ChatPageView({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [roomData, setRoomData] = useState<RoomData | null>(null);
+    const [wsToken, setWsToken] = useState<string | null>(null);
+    const stompClient = useRef<Client | null>(null);
 
     const userKakaoId = kakaoId || (params.kakaoId as string);
     const roomIdValue = roomId || parseInt(params.roomId as string, 10);
 
     useEffect(() => {
-        if (!roomIdValue || skipRoomDataFetch) return;
+        const fetchWsToken = async () => {
+            try {
+                const response = await fetch('/api/auth/ws-token');
+                if (!response.ok) {
+                    throw new Error('Failed to get WebSocket token');
+                }
+                const data = await response.json();
+                setWsToken(data.wsToken);
+            } catch (err) {
+                console.error('WebSocket token error:', err);
+                setError(
+                    '인증 토큰을 가져오는데 실패했습니다. 다시 로그인해주세요.',
+                );
+            }
+        };
+        fetchWsToken();
+    }, []);
 
+    useEffect(() => {
+        if (!roomIdValue || skipRoomDataFetch) return;
         const fetchRoomData = async () => {
             try {
                 setLoading(true);
@@ -102,6 +122,96 @@ export default function ChatPageView({
 
         fetchRoomData();
     }, [roomIdValue, skipRoomDataFetch]);
+
+    // 메시지 전송을 위한 콜백 추가
+    const sendMessage = useCallback(
+        (message: string) => {
+            if (
+                !message.trim() ||
+                !roomIdValue ||
+                !stompClient.current?.connected ||
+                !wsToken
+            ) {
+                return;
+            }
+
+            try {
+                stompClient.current.publish({
+                    destination: '/app/chat.sendMessage',
+                    headers: {
+                        Authorization: `Bearer ${wsToken}`,
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        roomId: roomIdValue,
+                        message: message.trim(),
+                    }),
+                });
+            } catch (err) {
+                console.error('Message sending error:', err);
+                setError(
+                    `메시지 전송 실패: ${err instanceof Error ? err.message : '알 수 없는 오류'}`,
+                );
+            }
+        },
+        [roomIdValue, wsToken],
+    );
+
+    // WebSocket 연결 효과 추가
+    useEffect(() => {
+        if (!wsToken || !roomIdValue) return;
+
+        let mounted = true;
+        const WS_URL = 'wss://gateway.wego-travel.click/ws/chat/websocket';
+
+        const client = new Client({
+            brokerURL: WS_URL,
+            connectHeaders: {
+                Authorization: `Bearer ${wsToken}`,
+            },
+            reconnectDelay: 5000,
+            heartbeatIncoming: 4000,
+            heartbeatOutgoing: 4000,
+        });
+
+        // 연결 성공 콜백
+        client.onConnect = function () {
+            if (!mounted) return;
+            stompClient.current = client;
+
+            // 채팅방 구독 추가
+            client.subscribe(`/topic/chatroom/${roomIdValue}`, function () {
+                if (!mounted) return;
+                // 메시지 처리 로직은 ChatRoom 컴포넌트에서 처리
+            });
+        };
+
+        // 에러 처리
+        client.onStompError = function (frame) {
+            if (!mounted) return;
+            console.error('STOMP error:', frame);
+            setError(
+                `WebSocket 연결 오류: ${frame.headers.message || '알 수 없는 오류'}`,
+            );
+        };
+
+        client.onWebSocketError = () => {
+            if (!mounted) return;
+            setError('WebSocket 연결 실패: 서버에 연결할 수 없습니다.');
+        };
+
+        // 연결
+        client.activate();
+
+        // 언마운트 시 정리
+        return () => {
+            mounted = false;
+            if (client.connected) {
+                client.deactivate();
+            }
+            stompClient.current = null;
+        };
+    }, [wsToken, roomIdValue]);
 
     return (
         <div className="bg-background-light flex h-full w-full flex-col border-x-1 border-[#E9E9E9]">
@@ -139,8 +249,8 @@ export default function ChatPageView({
                 </button>
             </header>
 
-            {/* 게시글 제목, 상태, 참여하기 버튼 섹션 */}
-            <section className="flex w-full flex-col gap-2.5 border-b px-5 py-4">
+            {/* 게시글 제목, 상태, 참여하기 버튼 섹션: 채팅 페이지에서는 게시글 정보를 불러올 수 없어 미구현 */}
+            {/* <section className="flex w-full flex-col gap-2.5 border-b px-5 py-4">
                 <div className="flex w-full items-center justify-between">
                     <div className="flex flex-1 flex-col gap-[3px] pr-2">
                         <h2 className="text-base font-semibold">
@@ -158,7 +268,7 @@ export default function ChatPageView({
                         참여하기
                     </Button>
                 </div>
-            </section>
+            </section> */}
 
             {/* 채팅 말풍선 섹션 */}
             <section className="w-full flex-1 overflow-y-auto p-4">
@@ -171,7 +281,11 @@ export default function ChatPageView({
                         {error}
                     </div>
                 ) : roomIdValue ? (
-                    <ChatRoom roomId={roomIdValue} kakaoId={userKakaoId} />
+                    <ChatRoom
+                        roomId={roomIdValue}
+                        kakaoId={userKakaoId}
+                        onSendMessage={sendMessage}
+                    />
                 ) : (
                     <ChatNotice />
                 )}
