@@ -23,7 +23,7 @@ export interface DetailPost {
     maxMembers: number;
 
     // 유저 정보
-    userId: string;
+    kakaoId: number;
     userName: string;
     profileImage: string;
     statusMessage: string;

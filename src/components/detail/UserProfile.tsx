@@ -9,7 +9,7 @@ interface UserProfileProps {
         userGender: string;
         userRating: number;
         profileImage: string;
-        userId: string;
+        kakaoId: number;
     };
 }
 
@@ -20,7 +20,7 @@ export default function UserProfile({ post }: UserProfileProps) {
             <div className="mt-7.5 flex w-full flex-col items-start justify-between gap-4 md:flex-row md:items-center md:gap-2">
                 {/* 아이콘 */}
                 <Link
-                    href={`/profile/${post.userId}`}
+                    href={`/profile/${post.kakaoId}`}
                     className="flex items-center gap-3"
                 >
                     <div className="h-[50px] w-[50px] overflow-hidden rounded-full">
