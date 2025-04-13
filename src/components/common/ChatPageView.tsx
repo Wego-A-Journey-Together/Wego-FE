@@ -1,6 +1,8 @@
 'use client';
 
 import LoadingThreeDots from '@/components/common/LoadingThreeDots';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Client } from '@stomp/stompjs';
 import { ChevronLeft, MoreHorizontal, Star } from 'lucide-react';
 import { useParams } from 'next/navigation';
@@ -55,6 +57,7 @@ export default function ChatPageView({
     roomId,
     kakaoId,
     skipRoomDataFetch = false,
+    onSendMessage,
 }: ChatPageViewProps) {
     const params = useParams();
     const [loading, setLoading] = useState(false);
@@ -62,6 +65,7 @@ export default function ChatPageView({
     const [roomData, setRoomData] = useState<RoomData | null>(null);
     const [wsToken, setWsToken] = useState<string | null>(null);
     const stompClient = useRef<Client | null>(null);
+    const [newMessage, setNewMessage] = useState('');
 
     const userKakaoId = kakaoId || (params.kakaoId as string);
     const roomIdValue = roomId || parseInt(params.roomId as string, 10);
@@ -156,6 +160,32 @@ export default function ChatPageView({
         },
         [roomIdValue, wsToken],
     );
+
+    // 메시지 전송 함수
+    const handleSendMessage = () => {
+        if (!newMessage.trim()) return;
+
+        if (onSendMessage) {
+            onSendMessage(newMessage);
+            setNewMessage('');
+        } else if (
+            stompClient.current &&
+            stompClient.current.connected &&
+            wsToken
+        ) {
+            // 직접 메시지 전송 처리
+            sendMessage(newMessage);
+            setNewMessage('');
+        }
+    };
+
+    // 엔터키 처리
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+        }
+    };
 
     // WebSocket 연결 효과 추가
     useEffect(() => {
@@ -290,6 +320,32 @@ export default function ChatPageView({
                     <ChatNotice />
                 )}
             </section>
+
+            {/* 메시지 입력 영역 추가 */}
+            <div className="border-t p-4">
+                <div className="w-full rounded-xl border-solid bg-[#f9f9f9]">
+                    <div className="p-5">
+                        <div className="flex flex-col gap-10">
+                            <Input
+                                placeholder="메세지를 입력하세요"
+                                className="border-none bg-transparent text-base leading-[20.8px] font-normal text-black shadow-none placeholder:text-[#999999] focus-visible:ring-0"
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                            />
+                            <div className="flex w-full items-center justify-end gap-2">
+                                <Button
+                                    className="px-5 py-2"
+                                    onClick={handleSendMessage}
+                                    disabled={!newMessage.trim()}
+                                >
+                                    전송
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

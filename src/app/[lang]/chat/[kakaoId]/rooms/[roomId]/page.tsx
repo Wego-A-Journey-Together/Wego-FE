@@ -236,12 +236,13 @@ export default function ChatPage() {
         };
     }, [wsToken, roomId, NEXT_PUBLIC_NEST_BFF_URL]);
 
-    // 4. 메시지 전송
+    // 4. 메시지 전송 함수 추가
     const handleSendMessage = async (message: string) => {
         if (
             !message.trim() ||
             !stompClient.current ||
-            !stompClient.current.connected
+            !stompClient.current.connected ||
+            !wsToken
         )
             return;
 
@@ -258,7 +259,7 @@ export default function ChatPage() {
             });
         } catch (err) {
             console.error('메시지 전송 오류:', err);
-            alert('메시지 전송에 실패했습니다.');
+            setError('메시지 전송에 실패했습니다.');
         }
     };
 

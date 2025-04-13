@@ -397,10 +397,12 @@ export default function UserChat({
                         roomId={roomId}
                         kakaoId={kakaoId?.toString()}
                         messages={messages.map((msg) => ({
-                            ...msg,
+                            roomId: msg.roomId,
+                            message: msg.message,
+                            sentAt: msg.sentAt || new Date().toISOString(), // sentAt이 없으면 현재 시간 사용
                             senderId: msg.senderId?.toString(),
+                            nickname: msg.nickname,
                         }))}
-                        onSendMessage={sendMessage}
                     />
                 ) : (
                     <ChatNotice />
