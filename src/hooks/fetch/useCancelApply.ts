@@ -57,5 +57,5 @@ export default function useCancelApply() {
         }
     }, []);
 
-    return { cancelApply, isLoading };
+    return { cancelApply, isLoading, error };
 }
