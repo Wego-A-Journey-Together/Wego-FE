@@ -1,9 +1,13 @@
+'use client';
+
 import Divider from '@/components/common/Divider';
 import UserChat from '@/components/common/userChat';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import useCancelApply from '@/hooks/fetch/useCancelApply';
 import { MyJoin } from '@/hooks/fetch/useFetchMyJoin';
+import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -29,6 +33,11 @@ export default function MyGroupPost({
     const toggleChat = (postId: number) => {
         setActiveChatId((current) => (current === postId ? null : postId));
     };
+    const { cancelApply, isLoading } = useCancelApply();
+
+    const handleCancelJoin = (gatheringId: number) => {
+        cancelApply(gatheringId);
+    };
 
     if (posts.length === 0) return <NoContentGuide />;
     const now = new Date();
@@ -42,9 +51,9 @@ export default function MyGroupPost({
                 >
                     {/* 게시글 */}
                     <div className="flex w-full items-center gap-5">
-                        <div className="relative h-20 w-20 flex-shrink-0">
+                        <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-full">
                             <Image
-                                className="rounded-lg object-cover"
+                                className="object-cover"
                                 alt={post.title}
                                 src={post.thumbnailUrl}
                                 fill
@@ -150,10 +159,18 @@ export default function MyGroupPost({
                             {/* 참여 중인 동행 탭에서 보일 내용 */}
                             {cancelRecruit && (
                                 <Button
+                                    type="button"
                                     variant={'outline'}
+                                    onClick={() =>
+                                        handleCancelJoin(post.gatheringId)
+                                    }
                                     className="flex w-[130px] text-[#666666]"
                                 >
-                                    취소하기
+                                    {isLoading ? (
+                                        <Loader2 className="animate-spin text-neutral-400" />
+                                    ) : (
+                                        '취소하기'
+                                    )}
                                 </Button>
                             )}
 
