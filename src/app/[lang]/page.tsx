@@ -6,7 +6,7 @@ export default async function Home() {
     const NEST_BFF_URL = process.env.NEST_BFF_URL;
     const [trendingRes, postsRes] = await Promise.all([
         fetch(`${NEST_BFF_URL}/api/trending`, { cache: 'no-store' }),
-        fetch(`${NEST_BFF_URL}/api/gatherings/list?page=0`, {
+        fetch(`${NEST_BFF_URL}/api/gatherings/list?page=0&size=12`, {
             cache: 'no-store',
         }),
     ]);
