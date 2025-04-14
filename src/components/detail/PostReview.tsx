@@ -42,14 +42,8 @@ export default function PostReview({
                     <div key={`post-review-${idx}`}>
                         <ReviewRating rating={review.rating} />
 
-                        <div
-                            className={`mt-2.5 flex ${
-                                hasImage
-                                    ? 'flex-row items-start gap-4'
-                                    : 'justify-end'
-                            }`}
-                        >
-                            {hasImage && (
+                        {hasImage ? (
+                            <div className="mt-2.5 flex flex-row items-start gap-4">
                                 <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-md">
                                     <Image
                                         src={imageUrls[0]}
@@ -58,16 +52,15 @@ export default function PostReview({
                                         className="object-cover"
                                     />
                                 </div>
-                            )}
-
-                            <p
-                                className={`text-base font-medium whitespace-pre-wrap text-[#333333] ${
-                                    hasImage ? '' : 'text-right'
-                                }`}
-                            >
+                                <p className="text-base font-medium whitespace-pre-wrap text-[#333333]">
+                                    {textContent}
+                                </p>
+                            </div>
+                        ) : (
+                            <p className="mt-2.5 text-base font-medium whitespace-pre-wrap text-[#333333]">
                                 {textContent}
                             </p>
-                        </div>
+                        )}
 
                         <div className="mt-2.5 flex items-center gap-3">
                             <div className="relative aspect-square h-6 w-6">
