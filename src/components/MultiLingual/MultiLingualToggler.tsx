@@ -42,7 +42,7 @@ export default function MultiLingualToggler() {
                 />
 
                 {/* 현재 선택된 언어 */}
-                <span className="hidden min-w-[60px] text-sm font-medium text-gray-600 md:block">
+                <span className="hidden text-sm font-medium text-gray-600 md:ml-1.5 md:block">
                     {selectedLang === 'ko' ? '한국어' : 'English'}
                 </span>
                 <ChevronDown className={`h-3 w-6`} />

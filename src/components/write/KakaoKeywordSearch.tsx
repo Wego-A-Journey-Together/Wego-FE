@@ -190,7 +190,7 @@ export default function KakaoKeywordSearch({
             {/* 지도 컨테이너 - 선택된 경우에만 표시 */}
             {selected && (
                 <div className="mt-4 bg-white dark:bg-neutral-700">
-                    <div className="absolute top-2 left-2 z-10 rounded bg-white/80 px-3 py-2 text-sm text-gray-800 shadow dark:bg-neutral-600/80">
+                    <div className="absolute top-2 left-2 z-10 rounded-[12px] bg-white/80 px-3 py-2 text-sm text-gray-800 dark:bg-neutral-600/80">
                         <div className="text-sky-blue text-lg font-semibold">
                             {selected.place_name}
                         </div>

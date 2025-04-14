@@ -10,7 +10,7 @@ import { useState } from 'react';
 
 export default function FetchMoreReviews({ postId }: { postId: number }) {
     const [fetchedReviews, setFetchedReviews] = useState<ReviewItem[]>([]);
-    const [page, setPage] = useState(1); // SSR은 0페이지 사용했다고 가정
+    const [page, setPage] = useState(1);
     const [isFolded, setIsFolded] = useState(false);
     const [isAllLoaded, setIsAllLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -35,36 +35,69 @@ export default function FetchMoreReviews({ postId }: { postId: number }) {
         <div>
             {fetchedReviews.length > 0 && !isFolded && (
                 <div className="mt-10">
-                    {fetchedReviews.map((review, idx) => (
-                        <div key={`fetched-review-${idx}`} className="mb-5">
-                            <ReviewRating rating={review.rating} />
-                            <div className="mt-2.5">
-                                <p className="text-base font-medium text-[#333333]">
-                                    {review.content}
-                                </p>
-                            </div>
-                            <div className="mt-2.5 flex items-center gap-3">
-                                <div className="relative aspect-square h-6 w-6">
-                                    <Image
-                                        src={review.writer.thumbnailUrl}
-                                        alt="유저 프로필 이미지"
-                                        fill
-                                        className="rounded-full object-cover"
-                                    />
-                                </div>
-                                <div className="flex items-center gap-2.5">
-                                    <div className="text-sm font-semibold text-black">
-                                        {review.writer.nickname}
+                    {fetchedReviews.map((review, idx) => {
+                        const lines = review.content.split('\n');
+                        const textLines: string[] = [];
+                        const imageUrls: string[] = [];
+
+                        lines.forEach((line) => {
+                            if (line.startsWith('IMAGE:')) {
+                                imageUrls.push(
+                                    line.replace('IMAGE:', '').trim(),
+                                );
+                            } else {
+                                textLines.push(line);
+                            }
+                        });
+
+                        const hasImage = imageUrls.length > 0;
+                        const textContent = textLines.join('\n');
+
+                        return (
+                            <div key={`fetched-review-${idx}`} className="mb-5">
+                                <ReviewRating rating={review.rating} />
+                                {hasImage ? (
+                                    <div className="mt-2.5 flex flex-row items-start gap-4">
+                                        <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-md">
+                                            <Image
+                                                src={imageUrls[0]}
+                                                alt="소감 이미지"
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                        <p className="text-base font-medium whitespace-pre-wrap text-[#333333]">
+                                            {textContent}
+                                        </p>
                                     </div>
-                                    <div className="h-2.5 w-px bg-[#a0a0a0]" />
-                                    <p className="text-xs font-normal text-[#666666]">
-                                        {dateFormat(review.createdAt)}
+                                ) : (
+                                    <p className="mt-2.5 text-base font-medium whitespace-pre-wrap text-[#333333]">
+                                        {textContent}
                                     </p>
+                                )}
+                                <div className="mt-2.5 flex items-center gap-3">
+                                    <div className="relative aspect-square h-6 w-6">
+                                        <Image
+                                            src={review.writer.thumbnailUrl}
+                                            alt="유저 프로필 이미지"
+                                            fill
+                                            className="rounded-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="text-sm font-semibold text-black">
+                                            {review.writer.nickname}
+                                        </div>
+                                        <div className="h-2.5 w-px bg-[#a0a0a0]" />
+                                        <p className="text-xs font-normal text-[#666666]">
+                                            {dateFormat(review.createdAt)}
+                                        </p>
+                                    </div>
                                 </div>
+                                <div className="my-5 h-px w-[1200px] bg-[#e9e9e9]" />
                             </div>
-                            <div className="my-5 h-px w-12 bg-[#e9e9e9]" />
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
 

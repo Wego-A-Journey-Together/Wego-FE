@@ -106,7 +106,9 @@ export default function Comments() {
                                     message?.isGroupOpen ? 'default' : 'disable'
                                 }
                             >
-                                {message?.isGroupOpen ? '모집 중' : '모집 마감'}
+                                {message?.isGroupOpen
+                                    ? '동행 구함'
+                                    : '동행 마감'}
                             </Badge>
 
                             <div className="ml-2 text-sm font-semibold text-[#666666]">

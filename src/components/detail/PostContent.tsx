@@ -54,7 +54,6 @@ export default function PostContent({ post }: { post: DetailPost }) {
                                     {dateFormat(post.filter.endDate, false)} (
                                     {calculateDays(
                                         post.filter.startDate,
-
                                         post.filter.endDate,
                                     )}
                                     일)
@@ -99,7 +98,7 @@ export default function PostContent({ post }: { post: DetailPost }) {
                                         {post.currentMembers}{' '}
                                     </span>
                                     <span className="text-[#333333]">
-                                        / {post.maxMembers}
+                                        / {post.maxMembers} 명
                                     </span>
                                 </div>
                             </div>

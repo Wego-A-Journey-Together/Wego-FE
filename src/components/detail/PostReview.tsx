@@ -82,7 +82,7 @@ export default function PostReview({
                             </div>
                         </div>
 
-                        <div className="my-5 h-px w-12 bg-[#e9e9e9]" />
+                        <div className="my-5 h-px w-[1200px] bg-[#e9e9e9]" />
                     </div>
                 );
             })}

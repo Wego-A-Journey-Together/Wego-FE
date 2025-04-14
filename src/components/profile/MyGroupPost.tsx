@@ -77,8 +77,8 @@ export default function MyGroupPost({
                                     }
                                 >
                                     {new Date(post.endAt) > now
-                                        ? '모집 중'
-                                        : '모집 마감'}
+                                        ? '동행 구함'
+                                        : '동행 마감'}
                                 </Badge>
 
                                 <h3 className="text-lg font-semibold text-black">
