@@ -48,8 +48,7 @@ export default function MyReview() {
                                         className="h-full w-full object-cover"
                                         alt="Profile"
                                         src={
-                                            review.gathering.host
-                                                .thumbnailUrl ||
+                                            review.hostProfile.thumbnailUrl ||
                                             '/image/userIcon.png'
                                         }
                                         width={60}
@@ -63,7 +62,7 @@ export default function MyReview() {
                                     </h2>
 
                                     <h3 className="text-base font-bold text-[#333333]">
-                                        {review.gathering.host.nickname}
+                                        {review.hostProfile.nickname}
                                     </h3>
 
                                     <div className="flex items-center gap-1">
