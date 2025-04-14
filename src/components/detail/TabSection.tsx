@@ -59,7 +59,6 @@ export default function TabSection({
                     <p> 멤버 소개 섹션 준비중 입니다.</p>
                 </div>
             </section>
-            {/*todo: 댓글과 리뷰도 ajax요청으로 변경 해야 할 것 같습니다.*/}
             {/*댓글 섹션*/}
             <section ref={commentAreaRef} className={`mt-15 scroll-mt-40`}>
                 <PostComment

@@ -10,7 +10,7 @@ export default function PostReview() {
         <div className="mt-15">
             {/*리뷰 헤더*/}
             <h2 className={`mb-7.5 text-xl font-bold text-neutral-950`}>
-                리뷰 {totalReviews}
+                소감 {totalReviews}
             </h2>
 
             {/*리뷰 섹션*/}
