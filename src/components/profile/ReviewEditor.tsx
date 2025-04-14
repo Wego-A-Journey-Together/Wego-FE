@@ -73,7 +73,7 @@ export default function ReviewEditor({
                     body: JSON.stringify({
                         rating,
                         content: image
-                            ? `${feedback}<<IMAGE>>${image}`
+                            ? `${feedback}\nIMAGE:${image}`
                             : feedback,
                     }),
                 },

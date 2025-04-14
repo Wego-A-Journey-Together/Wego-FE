@@ -8,12 +8,6 @@ interface ReviewImageUploaderProps {
     initialImage?: string;
 }
 
-/**
- *  콘텐츠에 url 업로드를 해두고 랜더링시에 분리하면 s3사용해서 api없이 이미지 업로드 구현 될 것 같습니다.
- * @param onImageSelect
- * @param initialImage
- * @constructor
- */
 export default function ReviewImageUploader({
     onImageSelect,
     initialImage,
@@ -41,8 +35,6 @@ export default function ReviewImageUploader({
         try {
             // blob preview
             const tempBlobUrl = URL.createObjectURL(file);
-            console.log('📷 blob preview url:', tempBlobUrl);
-
             setPreviewUrl(tempBlobUrl);
             blobRef.current = tempBlobUrl;
 
@@ -59,25 +51,20 @@ export default function ReviewImageUploader({
             });
 
             const { url, key } = await res.json();
-            console.log('🔗 presigned url:', url);
 
-            //  S3 업로드
-            const uploadRes = await fetch(url, {
+            // S3 업로드
+            await fetch(url, {
                 method: 'PUT',
                 body: file,
                 headers: {
                     'Content-Type': file.type,
                 },
             });
-            console.log('✅ S3 upload status:', uploadRes.status, uploadRes.ok);
 
-            const publicUrl = `https://${process.env.NEXT_PUBLIC_S3_PUBLIC_URL}/${key}`;
-            console.log('🌐 public image url:', publicUrl);
-
+            const publicUrl = `https://${process.env.NEXT_PUBLIC_S3_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
             setPreviewUrl(publicUrl);
             onImageSelect(publicUrl);
 
-            // 블롭 해제
             if (blobRef.current?.startsWith('blob:')) {
                 URL.revokeObjectURL(blobRef.current);
                 blobRef.current = null;
@@ -87,42 +74,52 @@ export default function ReviewImageUploader({
         }
     };
 
-    return (
-        <>
-            <label
-                htmlFor="image-upload"
-                className="mx-auto mt-[30px] flex h-[52px] w-[440px] cursor-pointer items-center justify-center gap-1 rounded border border-dashed border-[#999999]"
-            >
-                <Image
-                    src="/icon/profile/uploadPhoto.svg"
-                    width={16}
-                    height={13}
-                    alt="upload"
-                />
-                <span className="text-base font-bold text-black">
-                    사진 첨부하기
-                </span>
-                <input
-                    id="image-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    ref={fileInputRef}
-                    onChange={handleChange}
-                />
-            </label>
+    const handleImageClick = () => {
+        fileInputRef.current?.click();
+    };
 
-            {previewUrl && (
-                <div className="mt-4 flex justify-center">
+    return (
+        <div className="mx-auto mt-[30px] w-[440px]">
+            <input
+                id="image-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                ref={fileInputRef}
+                onChange={handleChange}
+            />
+
+            {previewUrl ? (
+                // 이미지가 있으면 클릭 시 재선택 가능하게
+                <div
+                    className="flex h-[52px] w-full cursor-pointer items-center justify-center overflow-hidden rounded border border-dashed border-[#999999] bg-white"
+                    onClick={handleImageClick}
+                >
                     <Image
                         src={previewUrl}
                         alt="preview"
                         width={200}
                         height={200}
-                        className="rounded object-cover"
+                        className="object-contain"
                     />
                 </div>
+            ) : (
+                // 이미지 없으면 기본 버튼
+                <label
+                    htmlFor="image-upload"
+                    className="flex h-[52px] w-full cursor-pointer items-center justify-center gap-1 rounded border border-dashed border-[#999999]"
+                >
+                    <Image
+                        src="/icon/profile/uploadPhoto.svg"
+                        width={16}
+                        height={13}
+                        alt="upload"
+                    />
+                    <span className="text-base font-bold text-black">
+                        사진 첨부하기
+                    </span>
+                </label>
             )}
-        </>
+        </div>
     );
 }
