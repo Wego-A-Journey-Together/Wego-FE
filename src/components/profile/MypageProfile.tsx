@@ -163,7 +163,6 @@ export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
                     <div className="flex w-full items-center justify-end gap-1">
                         <StarIcon className="h-8 w-8 fill-current text-[#FFD700]" />
                         <span className="text-right text-[28px] font-semibold text-[#333333]">
-                            {/*todo: 평점과 리뷰 관련 정보는 아직 api에서 조회 불가한 것 같습니다.*/}
                             {profileData.averageRating
                                 ? profileData.averageRating.toFixed(1)
                                 : 0}
