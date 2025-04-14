@@ -27,7 +27,14 @@ export default function LikedPage() {
                     credentials: 'include',
                 });
                 const data = await response.json();
-                setFormattedPosts(Array.isArray(data) ? data : []);
+                // 중복으로 생성되는 버그 수정
+                const uniquePosts = Array.isArray(data)
+                    ? data.filter(
+                          (post, index, self) =>
+                              index === self.findIndex((p) => p.id === post.id),
+                      )
+                    : [];
+                setFormattedPosts(uniquePosts);
             } catch (error) {
                 console.error('Failed to fetch liked posts:', error);
                 setFormattedPosts([]);
