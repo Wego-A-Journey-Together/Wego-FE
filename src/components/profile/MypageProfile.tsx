@@ -14,6 +14,8 @@ interface User {
     thumbnailUrl?: string;
     ageGroup?: string;
     gender?: string;
+    averageRating?: number;
+    totalReviews: number;
 }
 
 interface MypageProfileProps {
@@ -50,6 +52,8 @@ export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
             data.gender &&
             genderDisplay[data.gender as keyof typeof genderDisplay],
         profileImage: data.thumbnailUrl,
+        averageRating: data.averageRating,
+        totalReviews: data.totalReviews,
     };
     const isProfileFilled: boolean = checkProfileComplete(profileData);
 
@@ -160,9 +164,10 @@ export default function MypageProfile({ data, isVisitor }: MypageProfileProps) {
                         <StarIcon className="h-8 w-8 fill-current text-[#FFD700]" />
                         <span className="text-right text-[28px] font-semibold text-[#333333]">
                             {/*todo: 평점과 리뷰 관련 정보는 아직 api에서 조회 불가한 것 같습니다.*/}
-                            {/*{profileData.rating.toFixed(1)}(*/}
-                            {/*{profileData.reviews})*/}
-                            4.5(1)
+                            {profileData.averageRating
+                                ? profileData.averageRating.toFixed(1)
+                                : 0}
+                            ({profileData.totalReviews})
                         </span>
                     </div>
                 </div>

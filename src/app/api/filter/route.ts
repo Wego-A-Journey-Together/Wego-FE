@@ -11,9 +11,7 @@ export async function GET(request: Request) {
     console.log(filters);
 
     const response = await fetch(
-
-        `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/filter?filters=${filters}`,
-
+        `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/filter?filters=${filters}`,
     );
     const data = await response.json();
 
