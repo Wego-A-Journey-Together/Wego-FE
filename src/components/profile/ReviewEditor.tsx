@@ -9,17 +9,20 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import useGetMyProfile from '@/hooks/fetch/useGetMyProfile';
+import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
 interface User {
-    id: string;
-    name: string;
-    image: string;
-    travelStatus: string;
+    kakaoId: string;
+    nickname: string;
+    thumbnailUrl: string;
+    statusMessage: string;
     ageGroup: string;
     gender: string;
 }
+
 interface ReviewEditorProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -29,18 +32,19 @@ interface ReviewEditorProps {
 export default function ReviewEditor({
     open,
     onOpenChange,
-    user = {
-        id: 'user123',
-        name: '귀여운 동행자',
-        image: '/image/dogProfile.png',
-        travelStatus: '제주도 여행중',
-        ageGroup: '20대',
-        gender: '여자',
-    },
 }: ReviewEditorProps) {
     const [rating, setRating] = useState(3);
     const [feedback, setFeedback] = useState('');
     const [image, setImage] = useState<string | null>(null);
+
+    const { myProfile: user, loading } = useGetMyProfile();
+    if (loading)
+        return (
+            <div className="h-full w-full">
+                <Loader2 className="text-sky-blue animate-spin" />.
+            </div>
+        );
+    if (!user) return null;
 
     const handleSubmit = () => {
         alert(JSON.stringify({ rating, feedback, image }));
@@ -68,7 +72,7 @@ export default function ReviewEditor({
                     <div className="flex items-center gap-3 px-[30px]">
                         <div className="h-[42px] w-[42px] overflow-hidden rounded-full">
                             <Image
-                                src={user.image}
+                                src={user.thumbnailUrl}
                                 alt="user profile"
                                 width={42}
                                 height={42}
@@ -77,12 +81,14 @@ export default function ReviewEditor({
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <div className="text-xl font-bold">{user.name}</div>
+                            <div className="text-xl font-bold">
+                                {user.nickname}
+                            </div>
 
                             <div className="flex items-center gap-2 rounded-full bg-[#e5e8ea] px-3 py-1.5 font-normal text-[#666666]">
                                 {/* 유저 주요 정보 */}
                                 <div className="flex items-center text-xs">
-                                    {user.travelStatus}
+                                    {user.statusMessage}
                                 </div>
                                 <hr className="mx-1 h-1.5 w-px bg-[#666666]"></hr>
                                 <div className="flex items-center text-xs">
