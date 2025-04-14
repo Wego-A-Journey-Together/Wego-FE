@@ -194,6 +194,7 @@ export default function MyGroupPost({
                                         소감 남기기
                                     </Button>
                                     <ReviewEditor
+                                        gatheringId={post.gatheringId}
                                         open={isEditorOpen}
                                         onOpenChange={setIsEditorOpen}
                                     />

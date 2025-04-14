@@ -1,6 +1,7 @@
 'use client';
 
 import ReviewRating from '@/components/detail/ReviewRating';
+import ReviewImageUploader from '@/components/profile/ReviewImageUploader';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -13,6 +14,7 @@ import useGetMyProfile from '@/hooks/fetch/useGetMyProfile';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface User {
     kakaoId: string;
@@ -27,28 +29,65 @@ interface ReviewEditorProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     user?: User;
+    gatheringId: number;
 }
 
 export default function ReviewEditor({
     open,
     onOpenChange,
+    gatheringId,
 }: ReviewEditorProps) {
     const [rating, setRating] = useState(3);
     const [feedback, setFeedback] = useState('');
     const [image, setImage] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { myProfile: user, loading } = useGetMyProfile();
     if (loading)
         return (
-            <div className="h-full w-full">
-                <Loader2 className="text-sky-blue animate-spin" />.
+            <div className="flex h-full w-full items-center justify-center">
+                <Loader2 className="h-6 w-6 animate-spin text-sky-500" />
             </div>
         );
     if (!user) return null;
 
-    const handleSubmit = () => {
-        alert(JSON.stringify({ rating, feedback, image }));
-        onOpenChange(false);
+    const resetForm = () => {
+        setRating(3);
+        setFeedback('');
+        setImage(null);
+    };
+
+    const handleSubmit = async () => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
+        try {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/reviews/${gatheringId}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        rating,
+                        content: `${feedback}<<IMAGE>>${image}`,
+                    }),
+                },
+            );
+
+            if (!res.ok) throw new Error('리뷰 등록 실패');
+
+            toast.success('리뷰가 등록되었습니다.');
+            onOpenChange(false);
+            resetForm();
+        } catch (error) {
+            toast.error('리뷰 등록 중 오류가 발생했습니다.');
+            console.error(error);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleCancel = () => {
@@ -152,20 +191,10 @@ export default function ReviewEditor({
                     </div>
 
                     {/* 사진 첨부 버튼 */}
-                    <Button
-                        variant="outline"
-                        className="mx-auto mt-[30px] flex h-[52px] w-[440px] items-center justify-center gap-1 border-dashed border-[#999999]"
-                    >
-                        <Image
-                            src={'/icon/profile/uploadPhoto.svg'}
-                            width={16}
-                            height={13}
-                            alt="camera image"
-                        />
-                        <span className="text-base font-bold text-black">
-                            사진 첨부하기
-                        </span>
-                    </Button>
+                    <ReviewImageUploader
+                        onImageSelect={setImage}
+                        initialImage={image ?? undefined}
+                    />
 
                     <hr className="mt-[30px] h-1.5 w-full bg-[#f5f6f7]"></hr>
 
@@ -180,7 +209,7 @@ export default function ReviewEditor({
                         </Button>
 
                         <Button
-                            disabled={feedback.length < 10}
+                            disabled={feedback.length < 10 || isSubmitting}
                             variant={
                                 feedback.length < 10 ? 'darkGray' : 'default'
                             }
