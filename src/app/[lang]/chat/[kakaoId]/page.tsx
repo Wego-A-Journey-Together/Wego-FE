@@ -15,6 +15,7 @@ interface ChatRoom {
     lastMessage: string;
     unreadCount: number;
     thumbnailUrl?: string;
+    sentAt: string; // Add this field
 }
 
 // 채팅 상대 프로필 표시를 위한 호출
@@ -149,8 +150,8 @@ export default function Chat() {
                                                     chatData.lastMessage,
                                                 unreadChat:
                                                     chatData.unreadCount,
-
-                                                // 원래는 Location이나, 현재 프로필에 지역정보가 없어서 일단 상태메세지로 대체합니다.
+                                                sentAt: chatData.sentAt, // Add this field
+                                                // 원래는 Location이나, 현재 프로필에 지역정보가 없습니다.
                                                 statusMessage:
                                                     userProfiles[
                                                         chatData.opponentKakaoId
