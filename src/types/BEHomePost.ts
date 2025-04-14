@@ -13,6 +13,7 @@ export type BEHomePost = {
     category: string;
     hashtags: string[];
     creator: {
+        kakaoId: number;
         nickname: string;
         thumbnailUrl: string;
         statusMessage: string;
