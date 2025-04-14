@@ -42,7 +42,7 @@ export default async function DetailPage({ params }: DetailPageProps) {
         <div className="relative min-h-screen w-full">
             {/*배너*/}
             <section>
-                <div className="relative rounded-xl md:h-75 md:w-full">
+                <div className="relative overflow-hidden rounded-[12px] md:h-75 md:w-full">
                     <Image
                         src={post.thumbnailUrl}
                         fill

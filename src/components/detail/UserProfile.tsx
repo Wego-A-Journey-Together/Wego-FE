@@ -39,19 +39,19 @@ export default function UserProfile({ post }: UserProfileProps) {
                     </div>
                     {/* 유저 정보 */}
                     <div className="flex max-w-[300px] min-w-[187px] flex-col items-start gap-1.5">
-                        <h1 className="w-full truncate text-[15px] font-semibold text-black">
+                        <h1 className="w-full truncate text-base font-semibold text-black">
                             {post.userName}
                         </h1>
-                        <div className="flex items-center gap-2 rounded-[24.53px] bg-[#e5e8ea] px-3 py-1.5">
+                        <div className="flex items-center gap-2 rounded-[24.53px] bg-[#E6E9EB] px-3 py-1.5">
                             <p className="max-w-[140px] truncate text-xs text-[#666666]">
                                 {post.statusMessage}
                             </p>
-                            <div className="h-1.5 w-px bg-gray-300" />
+                            <div className="h-1.5 w-px bg-[a0a0a0]/60" />
                             <p className="text-xs text-[#666666]">
                                 {/*{convertAgeRange(post.userAge)}*/}
-                                {post.userAge}{' '}
+                                {post.userAge}
                             </p>
-                            <div className="h-1.5 w-px bg-gray-300" />
+                            <div className="h-1.5 w-px bg-[A0A0A0]/60" />
                             <p className="text-xs text-[#666666]">
                                 {post.userGender}
                             </p>

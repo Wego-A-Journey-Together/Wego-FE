@@ -218,9 +218,9 @@ export default function PostForm({
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder="동행 제목을 입력해 보세요"
+                                            placeholder="제목을 입력해 주세요"
                                             {...field}
-                                            className={`mt-2.5 h-15 w-full rounded-lg p-4 text-xl font-bold`}
+                                            className={`h-15 w-full rounded-lg p-4 text-xl font-bold placeholder:text-xl placeholder:font-normal placeholder:text-[#999]`}
                                             id={'title'}
                                         />
                                     </FormControl>

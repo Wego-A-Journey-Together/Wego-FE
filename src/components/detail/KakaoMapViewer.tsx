@@ -92,7 +92,7 @@ export default function KakaoMapViewer({ lat, lng }: Props) {
     }, [showBicycle, showTerrain]);
 
     return (
-        <div className="relative h-[400px] w-full rounded border shadow">
+        <div className="relative h-[400px] w-full rounded-[12px] border">
             <div ref={mapRef} className="h-full w-full" />
 
             {/* 토글 버튼 */}
