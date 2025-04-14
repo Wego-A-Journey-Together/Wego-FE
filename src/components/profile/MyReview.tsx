@@ -28,6 +28,13 @@ export default function MyReview() {
                     (endDate.getTime() - startDate.getTime()) /
                         (1000 * 60 * 60 * 24),
                 );
+                const imageMatch = review.content.match(
+                    /IMAGE:(https?:\/\/[^\s]+)/,
+                );
+                const imageUrl = imageMatch?.[1] || null;
+                const cleanContent = review.content
+                    .replace(/IMAGE:(https?:\/\/[^\s]+)/, '')
+                    .trim();
 
                 return (
                     <article
@@ -153,21 +160,20 @@ export default function MyReview() {
                             </div>
 
                             <figure className="flex w-full items-start gap-5">
-                                <div className="relative h-[98px] w-[98px] flex-shrink-0">
-                                    <Image
-                                        className="rounded-lg object-cover"
-                                        alt="Review image"
-                                        src={
-                                            review.gathering.thumbnailUrl ||
-                                            '/image/userIcon.png'
-                                        }
-                                        fill
-                                        sizes="98px"
-                                    />
-                                </div>
+                                {imageUrl && (
+                                    <div className="relative h-[98px] w-[98px] flex-shrink-0">
+                                        <Image
+                                            className="rounded-lg object-cover"
+                                            alt="Review image"
+                                            src={imageUrl}
+                                            fill
+                                            sizes="98px"
+                                        />
+                                    </div>
+                                )}
 
                                 <p className="text-base leading-6 font-medium text-[#333333]">
-                                    {review.content}
+                                    {cleanContent}
                                 </p>
                             </figure>
                         </section>
