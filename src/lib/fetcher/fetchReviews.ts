@@ -1,11 +1,15 @@
-import { Comment } from '@/components/comment/CommentBundle';
+export interface ReviewItem {
+    writer: {
+        nickname: string;
+        thumbnailUrl: string;
+    };
+    createdAt: string;
+    rating: number;
+    content: string;
+}
 
-
-
-
-
-export type SpringCommentResponse = {
-    content: Comment[];
+export type SpringReviewResponse = {
+    content: ReviewItem[];
     totalElements: number;
     last: boolean;
 };
@@ -15,12 +19,9 @@ export type SpringCommentResponse = {
  * @param postId
  * @param page
  */
-export async function fetchComments(
-    postId: number,
-    page: number = 0,
-): Promise<SpringCommentResponse> {
+export async function fetchReviews(postId: number, page: number = 0) {
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/${postId}/comments?page=${page}&size=5`,
+        `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/reviews/gathering/${postId}?page=${page}&size=5`,
         {
             method: 'GET',
             credentials: 'include',
@@ -28,7 +29,7 @@ export async function fetchComments(
         },
     );
 
-    if (!res.ok) throw new Error('댓글 초기 로딩 실패');
+    if (!res.ok) throw new Error('소감 초기 로딩 실패');
 
     return await res.json();
 }

@@ -7,6 +7,7 @@ import {
     fetchComments,
 } from '@/lib/fetcher/fetchComments';
 import { fetchPostDetail } from '@/lib/fetcher/fetchPostDetail';
+import { SpringReviewResponse, fetchReviews } from '@/lib/fetcher/fetchReviews';
 import { DetailPost } from '@/types/DetailPost';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
@@ -21,11 +22,13 @@ export default async function DetailPage({ params }: DetailPageProps) {
     const { id } = await params;
     let post: DetailPost;
     let firstCommentBundle: SpringCommentResponse;
+    let firstReviewBundle: SpringReviewResponse;
 
     try {
-        [post, firstCommentBundle] = await Promise.all([
+        [post, firstCommentBundle, firstReviewBundle] = await Promise.all([
             fetchPostDetail(id),
             fetchComments(Number(id)),
+            fetchReviews(Number(id)),
         ]);
     } catch (error) {
         if ((error as Error).message === '404') {
@@ -67,7 +70,11 @@ export default async function DetailPage({ params }: DetailPageProps) {
                 <UserProfile post={post} />
             </section>
             {/*scrollspy 네비게이션 탭 섹션*/}
-            <TabSection post={post} firstCommentBundle={firstCommentBundle} />
+            <TabSection
+                post={post}
+                firstCommentBundle={firstCommentBundle}
+                firstReviewBundle={firstReviewBundle}
+            />
             {/*상세 정보 섹션*/}
 
             {/*푸터 섹션 (참여하기,문의채팅)*/}
