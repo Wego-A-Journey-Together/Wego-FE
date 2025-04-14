@@ -72,7 +72,9 @@ export default function ReviewEditor({
                     credentials: 'include',
                     body: JSON.stringify({
                         rating,
-                        content: `${feedback}<<IMAGE>>${image}`,
+                        content: image
+                            ? `${feedback}<<IMAGE>>${image}`
+                            : feedback,
                     }),
                 },
             );

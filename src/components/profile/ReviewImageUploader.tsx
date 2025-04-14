@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface ReviewImageUploaderProps {
     onImageSelect: (url: string) => void;
@@ -41,6 +41,8 @@ export default function ReviewImageUploader({
         try {
             // blob preview
             const tempBlobUrl = URL.createObjectURL(file);
+            console.log('📷 blob preview url:', tempBlobUrl);
+
             setPreviewUrl(tempBlobUrl);
             blobRef.current = tempBlobUrl;
 
@@ -57,17 +59,21 @@ export default function ReviewImageUploader({
             });
 
             const { url, key } = await res.json();
+            console.log('🔗 presigned url:', url);
 
             //  S3 업로드
-            await fetch(url, {
+            const uploadRes = await fetch(url, {
                 method: 'PUT',
                 body: file,
                 headers: {
                     'Content-Type': file.type,
                 },
             });
+            console.log('✅ S3 upload status:', uploadRes.status, uploadRes.ok);
 
             const publicUrl = `https://${process.env.NEXT_PUBLIC_S3_PUBLIC_URL}/${key}`;
+            console.log('🌐 public image url:', publicUrl);
+
             setPreviewUrl(publicUrl);
             onImageSelect(publicUrl);
 
