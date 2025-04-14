@@ -45,7 +45,10 @@ export default async function SearchPage({
                 </div>
             ) : (
                 <section className="mt-5">
-                    <InfiniteScroll initialPosts={initialPosts} />
+                    <InfiniteScroll
+                        initialPosts={initialPosts}
+                        keyword={keyword}
+                    />
                 </section>
             )}
         </>

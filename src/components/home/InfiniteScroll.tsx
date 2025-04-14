@@ -13,18 +13,25 @@ import CreatePostWindow from './CreatePostWindow';
 
 interface InfiniteScrollProps {
     initialPosts: BEHomePost[];
+    keyword?: string;
 }
 
 /**
  * 0 페이지 데이터는 SSR 로 넘겨받아서 랜더링
  * 이후 페이지에 대해 무한스크롤 (page=1, default size = 10 입니다.)
  * @param initialPosts
+ * @param queryKey
+ * @param fetchFn
  * @constructor
  */
-export default function InfiniteScroll({ initialPosts }: InfiniteScrollProps) {
+export default function InfiniteScroll({
+    initialPosts,
+    keyword,
+}: InfiniteScrollProps) {
     const ref = useRef(null);
     const isInView = useInView(ref);
     const NEXT_PUBLIC_NEST_BFF_URL = process.env.NEXT_PUBLIC_NEST_BFF_URL;
+
     const {
         data,
         fetchNextPage,
@@ -33,13 +40,17 @@ export default function InfiniteScroll({ initialPosts }: InfiniteScrollProps) {
         isLoading,
         isError,
     } = useInfiniteQuery({
-        queryKey: ['posts'],
+        queryKey: keyword ? ['search', keyword] : ['posts'],
         queryFn: async ({ pageParam = 1 }) => {
-            const response = await fetch(
-                // 임시 링크입니다.
-                `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/list?page=${pageParam}&size=12`,
-            );
-            return response.json();
+            const baseURL = `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/list`;
+            const query = `page=${pageParam}&size=12`;
+            const keywordQuery = keyword
+                ? `&keyword=${encodeURIComponent(keyword)}`
+                : '';
+            const res = await fetch(`${baseURL}?${query}${keywordQuery}`, {
+                cache: 'no-store',
+            });
+            return res.json();
         },
         getNextPageParam: (lastPage) => {
             return lastPage.last ? undefined : lastPage.number + 1;
