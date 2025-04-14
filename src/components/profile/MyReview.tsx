@@ -48,7 +48,7 @@ export default function MyReview() {
                                         className="h-full w-full object-cover"
                                         alt="Profile"
                                         src={
-                                            review.hostProfile.thumbnailUrl ||
+                                            review.hostProfile?.thumbnailUrl ||
                                             '/image/userIcon.png'
                                         }
                                         width={60}
