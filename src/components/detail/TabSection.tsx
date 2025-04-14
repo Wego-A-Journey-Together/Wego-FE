@@ -1,6 +1,7 @@
 'use client';
 
 import PostComment from '@/components/comment/PostComment';
+import MemberSection from '@/components/detail/MemberSection';
 import PostContent from '@/components/detail/PostContent';
 import PostLocation from '@/components/detail/PostLocation';
 import PostReview from '@/components/detail/PostReview';
@@ -54,13 +55,9 @@ export default function TabSection({
                     lng={post.location.longitude}
                 />
             </section>
-            {/*todo: 멤버 소개 섹션*/}
+            {/*멤버 소개 섹션*/}
             <section ref={memberAreaRef} className="scroll-mt-40">
-                <div
-                    className={`bg-sky-blue mt-12.5 flex h-40 items-center justify-center text-2xl font-black text-white`}
-                >
-                    <p> 멤버 소개 섹션 준비중 입니다.</p>
-                </div>
+                <MemberSection gatheringId={post.id} />
             </section>
             {/*댓글 섹션*/}
             <section ref={commentAreaRef} className={`mt-15 scroll-mt-40`}>

@@ -5,7 +5,7 @@ interface UserProfileProps {
     post: {
         userName: string;
         statusMessage: string;
-        userAge: number;
+        userAge: number | string;
         userGender: string;
         userRating: number;
         profileImage: string;
@@ -37,12 +37,12 @@ export default function UserProfile({ post }: UserProfileProps) {
                         />
                     </div>
                     {/* 유저 정보 */}
-                    <div className="flex w-[187px] flex-col items-start gap-1.5">
-                        <h1 className="w-full text-[15px] font-semibold text-black">
+                    <div className="flex max-w-[300px] min-w-[187px] flex-col items-start gap-1.5">
+                        <h1 className="w-full truncate text-[15px] font-semibold text-black">
                             {post.userName}
                         </h1>
                         <div className="flex items-center gap-2 rounded-[24.53px] bg-[#e5e8ea] px-3 py-1.5">
-                            <p className="text-xs text-[#666666]">
+                            <p className="max-w-[140px] truncate text-xs text-[#666666]">
                                 {post.statusMessage}
                             </p>
                             <div className="h-1.5 w-px bg-gray-300" />
@@ -67,9 +67,12 @@ export default function UserProfile({ post }: UserProfileProps) {
                             width={16}
                             height={16}
                         />
+
                         <p className="text-base font-semibold">
-                            {/*todo:레이팅총개수 */}
-                            {`${post.userRating.toFixed(1)}(10)`}
+                            {/* 0점이면 0.0으로 표기하지 않음 */}
+                            {post.userRating === 0
+                                ? `0(10)`
+                                : `${post.userRating.toFixed(1)}(10)`}
                         </p>
                     </div>
 
