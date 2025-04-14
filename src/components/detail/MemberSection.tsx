@@ -26,6 +26,8 @@ interface UserProfileDto {
         | 'FIFTIES'
         | 'SIXTIES'
         | 'SEVENTIES';
+    averageRating: number;
+    totalReviews: number;
 }
 interface MemberSectionProps {
     gatheringId: number;
@@ -140,7 +142,9 @@ export default function MemberSection({ gatheringId }: MemberSectionProps) {
                                 userGender: convertGenderToKorean(
                                     participant.user.gender,
                                 ),
-                                userRating: 0, // API에서 제공하지 않아 임시 값 지정
+                                userRating: participant.user.averageRating || 0,
+                                totalReviews:
+                                    participant.user.totalReviews || 0,
                                 profileImage: participant.user.thumbnailUrl,
                                 kakaoId: participant.user.kakaoId,
                             }}

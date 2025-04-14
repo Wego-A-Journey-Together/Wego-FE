@@ -8,6 +8,7 @@ interface UserProfileProps {
         userAge: number | string;
         userGender: string;
         userRating: number;
+        totalReviews?: number;
         profileImage: string;
         kakaoId: number;
     };
@@ -67,13 +68,13 @@ export default function UserProfile({ post }: UserProfileProps) {
                             width={16}
                             height={16}
                         />
-
                         <p className="text-base font-semibold">
                             {/* 0점이면 0.0으로 표기하지 않음 */}
                             {post.userRating === 0
-                                ? `0(10)`
-                                : `${post.userRating.toFixed(1)}(10)`}
+                                ? `0(${post.totalReviews})`
+                                : `${post.userRating.toFixed(1)}(${post.totalReviews})`}
                         </p>
+                        ;
                     </div>
 
                     <p className="text-xs">동행 소감</p>
