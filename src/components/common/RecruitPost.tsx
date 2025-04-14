@@ -139,7 +139,7 @@ export default function RecruitPost({ post }: PostContentProps) {
             {/* 유저 프로필 */}
             <div className="flex w-full flex-row items-start justify-between md:items-center">
                 {/*todo: 포스트 조회에 주최자 아이디가 없어서 일단 닉네임으로 대체해 두겠습니다.*/}
-                <Link href={`/profile/${post.creator.nickname}`}>
+                <Link href={`/profile/${post.creator.kakaoId}`}>
                     {/* 아이콘 */}
                     <div className="flex items-center gap-3">
                         <div className="h-[42px] w-[42px] overflow-hidden rounded-full">
