@@ -1,12 +1,15 @@
 'use client';
 
 import { useAppSelector } from '@/redux/hooks';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { DesktopFilterOptions } from './filter/DesktopFilterOptions';
 import { MobileFilterButton } from './filter/MobileFilterButton';
 import { MobileFilterModal } from './filter/MobileFilterModal';
 
 export default function FilterSelector() {
+    const router = useRouter();
+    const pathname = usePathname();
     const location = useAppSelector((state) => state.filter.location);
     const startDate = useAppSelector((state) => state.filter.startDate);
     const endDate = useAppSelector((state) => state.filter.endDate);
@@ -16,32 +19,79 @@ export default function FilterSelector() {
     const age = useAppSelector((state) => state.filter.age);
     const isGroupOpen = useAppSelector((state) => state.filter.isGroupOpen);
 
-    const handleSearch = async () => {
-        const filterParams = {
-            location,
-            startDate,
-            endDate,
-            groupTheme,
-            groupSize,
-            gender,
-            age,
-            isGroupOpen,
-        };
+    const handleSearch = () => {
+        const filterParams = new URLSearchParams();
 
-        // 객체를 JSON 문자열로 변환 후 URL 인코딩
-        const queryString = encodeURIComponent(JSON.stringify(filterParams));
-        // API 엔드포인트 URL
-        const apiUrl = `/api/filter?filters=${queryString}`;
+        // 카테고리를 선택한 경우에만 파라미터 추가
+        if (groupTheme && groupTheme.trim() !== '') {
+            const categoryMap: { [key: string]: string } = {
+                '전시/공연 동행': 'SHOW',
+                '맛집 동행': 'RESTAURANT',
+                '투어 동행': 'TOUR',
+                '숙박 공유': 'SHARE',
+                '부분 동행': 'PART',
+                '가족 동행': 'FAMILY',
+            };
 
-        try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) throw new Error('서버 응답에 문제가 있습니다');
-            const data = await response.json();
-            console.log('서버 응답 데이터:', data);
-        } catch (error) {
-            console.error('검색 요청 오류:', error);
-            alert('검색 중 오류가 발생했습니다. 다시 시도해주세요.');
+            // 매핑된 값이 있는 경우에만 파라미터 추가
+            const mappedCategory = categoryMap[groupTheme];
+            if (mappedCategory) {
+                filterParams.set('category', mappedCategory);
+            }
         }
+
+        // 성별 매핑
+        if (gender) {
+            const genderMap: { [key: string]: string } = {
+                여성: 'FEMALE',
+                남성: 'MALE',
+                무관: 'ANY',
+            };
+            filterParams.set('preferredGender', genderMap[gender] || 'ANY');
+        }
+
+        // 나이 매핑
+        if (age) {
+            const ageMap: { [key: string]: string } = {
+                '10대': 'TEENS',
+                '20대': 'TWENTIES',
+                '30대': 'THIRTIES',
+                '40대': 'FORTIES',
+                '50대': 'FIFTIES',
+                '60대': 'SIXTIES',
+                '70대': 'SEVENTIES',
+            };
+            filterParams.set('preferredAge', ageMap[age] || 'TWENTIES');
+        }
+
+        // 모집 중인 그룹만 보기 옵션이 활성화된 경우
+        if (isGroupOpen) {
+            // 백엔드에서 제공하는 정확한 파라미터 사용
+            const now = new Date().toISOString();
+            filterParams.set('closedAtAfter', now);
+        }
+
+        // 기본 필터 파라미터 설정
+        if (location) filterParams.set('address', location);
+        if (startDate) filterParams.set('startDate', startDate);
+        if (endDate) filterParams.set('endDate', endDate);
+        if (groupSize) {
+            const sizeNumber = parseInt(groupSize.replace(/[^0-9]/g, ''));
+            filterParams.set('maxParticipants', String(sizeNumber || 20));
+        }
+
+        // 페이지네이션 파라미터 추가
+        filterParams.set('page', '0');
+        filterParams.set('size', '10');
+
+        // URL 업데이트 (현재 경로 유지하고 쿼리 파라미터만 변경)
+        const segments = pathname.split('/').filter(Boolean);
+        const locale = segments[0] ?? 'ko';
+        const queryString = filterParams.toString();
+
+        // 현재 경로를 유지하고 쿼리 파라미터만 변경
+        const url = `/${locale}?${queryString}`;
+        router.push(url);
     };
 
     return (
