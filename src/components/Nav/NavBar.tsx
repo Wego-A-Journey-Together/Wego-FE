@@ -16,8 +16,11 @@ interface NavProps {
 }
 
 export default function NavBar({ className, isDarkMode }: NavProps) {
+    /** #T101 타입 안정성: useSession 반환값의 타입 명시적 정의 필요 */
     const { isAuthenticated, kakaoId, nickname } = useSession();
 
+    /** #A102 접근성: 스킵 네비게이션 링크 추가 필요 */
+    /** #P103 성능: 컴포넌트 분할 및 메모이제이션 검토 필요 */
     return (
         <header
             className={cn(
@@ -26,6 +29,7 @@ export default function NavBar({ className, isDarkMode }: NavProps) {
             )}
         >
             {/* 데스크탑 레이아웃 */}
+            {/** #U104 사용자 경험: 반응형 레이아웃 전환 시 부드러운 애니메이션 추가 필요 */}
             <div className="m-auto hidden w-full max-w-[1240px] px-[20px] md:flex md:items-center md:justify-between">
                 <section className="flex items-center gap-3">
                     <Logo />
@@ -47,6 +51,7 @@ export default function NavBar({ className, isDarkMode }: NavProps) {
             </div>
 
             {/* 모바일 레이아웃 */}
+            {/** #A105 접근성: 모바일 메뉴의 키보드 접근성 개선 필요 */}
             <div className="flex w-full items-center justify-between px-[20px] md:hidden">
                 <Hamburger
                     isDarkMode={isDarkMode}

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 
+/** #T101 타입 안정성: ChatData 타입을 별도로 분리하여 재사용성 향상 필요 */
 interface ChatProps {
     chatData: {
         roomId: number;
@@ -11,9 +12,12 @@ interface ChatProps {
     };
 }
 
+/** #P102 성능: 불필요한 리렌더링 방지를 위해 React.memo 적용 검토 필요 */
 export default function ChatPreview({ chatData }: ChatProps) {
+    /** #A103 접근성: 채팅방 목록 네비게이션을 위한 ARIA 레이블과 역할 추가 필요 */
     return (
         <article className="flex h-[60px] w-full cursor-pointer items-center px-2">
+            {/** #P104 성능: 이미지 최적화를 위한 next/image 속성 조정 필요 */}
             <div className="mr-3.5 h-[60px] w-[60px] flex-shrink-0 overflow-hidden rounded-full bg-gray-200">
                 <Image
                     src="/icon/profile/defaultProfile.svg"
@@ -24,6 +28,7 @@ export default function ChatPreview({ chatData }: ChatProps) {
                 />
             </div>
 
+            {/** #U105 사용자 경험: 긴 메시지 truncate 시 툴팁으로 전체 내용 표시 필요 */}
             <div className="flex min-w-0 flex-1 flex-col justify-center gap-[7px]">
                 <div className="flex items-center">
                     {/* 유저이름 */}
@@ -40,11 +45,13 @@ export default function ChatPreview({ chatData }: ChatProps) {
                         {chatData.statusMessage || '상태 메시지가 없습니다'}
                     </div>
                 </div>
+                {/** #U106 사용자 경험: 메시지 내용이 비어있을 때의 대체 텍스트 표시 필요 */}
                 <p className="max-w-[360px] truncate text-sm text-gray-600">
                     {chatData.lastMessage}
                 </p>
             </div>
 
+            {/** #A107 접근성: 읽지 않은 메시지 수에 대한 스크린 리더 지원 필요 */}
             <div className="ml-2 flex flex-col items-end">
                 {chatData.unreadChat > 0 && (
                     <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#FF4D4D] px-1.5 text-xs font-medium text-white">

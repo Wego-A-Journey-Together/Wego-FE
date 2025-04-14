@@ -7,10 +7,12 @@ import { cn } from '@/lib/utils';
 import { Search } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+/** #P101 성능: 불필요한 리렌더링 방지를 위해 메모이제이션된 컴포넌트로 분리 필요 */
 const SearchBar = ({
     className,
     ...props
 }: React.InputHTMLAttributes<HTMLInputElement>) => {
+    /** #T102 타입 안정성: 상태 관리 타입 명시적 정의 필요 */
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [desktopValue, setDesktopValue] = useState('');
     const [mobileValue, setMobileValue] = useState('');
@@ -47,6 +49,8 @@ const SearchBar = ({
     }, [isSearchOpen]);
 
     // 의존성 이므로 재랜더링 방지 위한 useCallback
+    /** #U103 사용자 경험: 검색 중 로딩 상태 표시 필요 */
+    /** #P104 성능: 디바운스를 통한 검색 최적화 필요 */
     const handleSearch = useCallback(() => {
         // 모바일에서는 mobileValue, 데스크탑에서는 desktopValue 사용
         const value = isSearchOpen ? mobileValue : desktopValue;
@@ -70,6 +74,7 @@ const SearchBar = ({
     }, [isSearchOpen, mobileValue, desktopValue]);
 
     // 키보드 입력 감지 (전역)
+    /** #A105 접근성: 키보드 트랩 관리 및 포커스 순환 필요 */
     useEffect(() => {
         const handleGlobalKeyDown = (event: KeyboardEvent) => {
             // ESC 키를 누르면 모바일 검색창 닫기
@@ -94,6 +99,7 @@ const SearchBar = ({
         };
     }, [isSearchOpen, desktopValue, mobileValue, handleSearch]);
 
+    /** #E106 에러처리: 검색 실패 시 사용자 피드백 필요 */
     const handleDesktopInputChange = (
         e: React.ChangeEvent<HTMLInputElement>,
     ) => {
@@ -113,6 +119,7 @@ const SearchBar = ({
         }
     };
 
+    /** #U107 사용자 경험: 검색 히스토리 기능 추가 검토 필요 */
     return (
         <div className="relative">
             {/* 데스크탑용 검색바 (md 이상) */}

@@ -1,4 +1,8 @@
+'use client';
+
+/** #P101 성능: 정적 컴포넌트이므로 React.memo 적용 검토 필요 */
 export default function ChatNotice() {
+    /** #A102 접근성: 공지사항에 대한 ARIA 레이블과 역할 추가 필요 */
     return (
         <div className="flex h-full items-center justify-center">
             <div className="max-w-[368px] rounded-xl bg-[#f9f9f9] p-5">

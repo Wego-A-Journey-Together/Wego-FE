@@ -2,6 +2,7 @@
 
 import { motion } from 'motion/react';
 
+/** #P101 성능: 정적 애니메이션 설정은 컴포넌트 외부로 이동 필요 */
 export default function LoadingThreeDots() {
     const dotVariants = {
         pulse: {
@@ -14,6 +15,7 @@ export default function LoadingThreeDots() {
         },
     };
 
+    /** #A102 접근성: 로딩 상태를 스크린 리더에 알리기 위한 ARIA 속성 추가 필요 */
     return (
         <motion.div
             animate="pulse"
@@ -31,6 +33,7 @@ export default function LoadingThreeDots() {
 /**
  * ==============   Styles   ================
  */
+/** #P103 성능: 스타일시트를 외부 CSS 파일로 분리하여 캐싱 활용 필요 */
 function StyleSheet() {
     return (
         <style>
