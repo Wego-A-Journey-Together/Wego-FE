@@ -57,7 +57,7 @@ export default function RecruitPost({ post }: PostContentProps) {
                             </Badge>
 
                             {/* 글제목  */}
-                            <h1 className="flex-1 truncate overflow-hidden text-xl font-bold text-black">
+                            <h1 className="max-w-[320px] flex-1 truncate overflow-hidden text-xl font-bold text-black">
                                 {post.title}
                             </h1>
                         </div>
