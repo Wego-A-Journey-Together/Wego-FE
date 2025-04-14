@@ -38,7 +38,7 @@ export const useFetchPostedReview = () => {
             try {
                 setIsLoading(true);
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/me/reviews/received`,
+                    `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/me/reviews`,
                     {
                         credentials: 'include',
                     },
