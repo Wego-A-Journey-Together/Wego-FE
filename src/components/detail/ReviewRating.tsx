@@ -24,7 +24,7 @@ export default function ReviewRating({ rating }: { rating: number }) {
                         {/* 채워진 별 (clip-path로 덮기) */}
                         {(isFull || isHalf) && (
                             <Star
-                                fill="currentColor" // ⭐ 핵심!
+                                fill="currentColor"
                                 strokeWidth={1}
                                 className={cn(
                                     'absolute top-0 left-0 h-9 w-9 fill-[#FFD900] p-0.5 text-[#FFD900]',

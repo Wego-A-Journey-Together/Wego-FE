@@ -80,13 +80,13 @@ export default function ReviewEditor({
                 },
             );
 
-            if (!res.ok) throw new Error('리뷰 등록 실패');
+            if (!res.ok) throw new Error('소감 등록 실패');
 
-            toast.success('리뷰가 등록되었습니다.');
+            toast.success('소감이 등록되었습니다.');
             onOpenChange(false);
             resetForm();
         } catch (error) {
-            toast.error('리뷰 등록 중 오류가 발생했습니다.');
+            toast.error('소감 등록 중 오류가 발생했습니다.');
             console.error(error);
         } finally {
             setIsSubmitting(false);

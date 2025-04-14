@@ -73,7 +73,7 @@ export default function UserProfile({ post }: UserProfileProps) {
                         </p>
                     </div>
 
-                    <p className="text-xs">동행 리뷰</p>
+                    <p className="text-xs">동행 소감</p>
                 </div>
             </div>
         </>

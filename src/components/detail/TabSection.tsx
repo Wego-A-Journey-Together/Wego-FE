@@ -6,15 +6,18 @@ import PostLocation from '@/components/detail/PostLocation';
 import PostReview from '@/components/detail/PostReview';
 import ScrollSpy from '@/components/detail/ScrollSpy';
 import { SpringCommentResponse } from '@/lib/fetcher/fetchComments';
+import { SpringReviewResponse } from '@/lib/fetcher/fetchReviews';
 import { DetailPost } from '@/types/DetailPost';
 import { useRef } from 'react';
 
 export default function TabSection({
     post,
     firstCommentBundle,
+    firstReviewBundle,
 }: {
     post: DetailPost;
     firstCommentBundle: SpringCommentResponse;
+    firstReviewBundle: SpringReviewResponse;
 }) {
     // 스크롤 할 ref 위치 기록
     const contentAreaRef = useRef<HTMLDivElement>(null);
@@ -59,7 +62,6 @@ export default function TabSection({
                     <p> 멤버 소개 섹션 준비중 입니다.</p>
                 </div>
             </section>
-            {/*todo: 댓글과 리뷰도 ajax요청으로 변경 해야 할 것 같습니다.*/}
             {/*댓글 섹션*/}
             <section ref={commentAreaRef} className={`mt-15 scroll-mt-40`}>
                 <PostComment
@@ -69,7 +71,10 @@ export default function TabSection({
             </section>
             {/*리뷰 섹션*/}
             <section ref={reviewAreaRef} className="scroll-mt-40">
-                <PostReview />
+                <PostReview
+                    firstReviewBundle={firstReviewBundle}
+                    postId={post.id}
+                />
             </section>
         </>
     );

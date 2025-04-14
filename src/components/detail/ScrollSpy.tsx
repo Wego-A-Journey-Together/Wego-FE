@@ -8,7 +8,7 @@ const tabItems = [
     '동행지 위치',
     '멤버 소개',
     '댓글',
-    '리뷰',
+    '소감',
 ] as const;
 
 type TabItem = (typeof tabItems)[number];
