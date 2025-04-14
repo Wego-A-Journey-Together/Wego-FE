@@ -5,12 +5,16 @@ import { Input } from '@/components/ui/input';
 import { useLocale } from '@/hooks/useLocale';
 import { cn } from '@/lib/utils';
 import { Search } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 const SearchBar = ({
     className,
     ...props
 }: React.InputHTMLAttributes<HTMLInputElement>) => {
+    const router = useRouter();
+    const pathname = usePathname();
+
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [desktopValue, setDesktopValue] = useState('');
     const [mobileValue, setMobileValue] = useState('');
@@ -52,8 +56,11 @@ const SearchBar = ({
         const value = isSearchOpen ? mobileValue : desktopValue;
 
         if (value && value.trim() !== '') {
-            // TODO: 실제 검색 로직으로 변경해야함
+            const segments = pathname.split('/').filter(Boolean);
+            const locale = segments[0] ?? 'ko';
+            const targetPath = `/${locale}/search?keyword=${encodeURIComponent(value)}`;
             console.log('검색 실행:', value);
+            router.push(targetPath);
 
             // 검색 후 입력창 초기화
             if (isSearchOpen) {
@@ -67,7 +74,7 @@ const SearchBar = ({
         if (isSearchOpen) {
             setIsSearchOpen(false);
         }
-    }, [isSearchOpen, mobileValue, desktopValue]);
+    }, [isSearchOpen, mobileValue, desktopValue, router]);
 
     // 키보드 입력 감지 (전역)
     useEffect(() => {
