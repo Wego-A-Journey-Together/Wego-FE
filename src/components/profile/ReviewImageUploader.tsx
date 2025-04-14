@@ -95,12 +95,10 @@ export default function ReviewImageUploader({
                     className="flex h-[52px] w-full cursor-pointer items-center justify-center overflow-hidden rounded border border-dashed border-[#999999] bg-white"
                     onClick={handleImageClick}
                 >
-                    <Image
+                    <img
                         src={previewUrl}
                         alt="preview"
-                        width={200}
-                        height={200}
-                        className="object-contain"
+                        className="h-full max-h-[200px] w-auto object-contain"
                     />
                 </div>
             ) : (

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
@@ -107,6 +108,9 @@ export default function ReviewEditor({
                         동행 소감 남기기
                     </DialogTitle>
                 </DialogHeader>
+                <DialogDescription className="sr-only">
+                    별점과 후기를 작성하고 제출할 수 있습니다.
+                </DialogDescription>
 
                 <div className="flex flex-col">
                     {/* 유저 프로필 */}
