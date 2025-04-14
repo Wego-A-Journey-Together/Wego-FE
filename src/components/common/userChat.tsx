@@ -98,15 +98,6 @@ export default function UserChat({
                     },
                 );
 
-                // 읽음 처리 요청
-                await fetch(
-                    `${NEXT_PUBLIC_NEST_BFF_URL}/api/chat/rooms/${roomId}/read`,
-                    {
-                        method: 'PATCH',
-                        credentials: 'include',
-                    },
-                );
-
                 if (!messagesResponse.ok) {
                     throw new Error(
                         `메시지 목록을 가져오는데 실패했습니다: ${messagesResponse.status}`,
@@ -323,12 +314,9 @@ export default function UserChat({
 
     // 엔터키로 메시지 전송
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
             e.preventDefault();
-            // 마지막 글자가 한 번 더 보내지는 현상 수정
-            setTimeout(() => {
-                sendMessage();
-            }, 10);
+            sendMessage();
         }
     };
 
