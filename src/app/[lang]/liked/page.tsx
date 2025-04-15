@@ -26,6 +26,11 @@ export default function LikedPage() {
                     },
                     credentials: 'include',
                 });
+
+                if (!response.ok) {
+                    throw new Error(`API response error: ${response.status}`);
+                }
+
                 const data = await response.json();
                 // 중복으로 생성되는 버그 수정
                 const uniquePosts = Array.isArray(data)
@@ -93,7 +98,10 @@ export default function LikedPage() {
                     </div>
                 </div>
                 <section className="mt-4">
-                    <InfiniteScroll initialPosts={formattedPosts} />
+                    <InfiniteScroll
+                        initialPosts={formattedPosts}
+                        isLikedPage={true}
+                    />
                 </section>
             </div>
         </div>

@@ -15,19 +15,13 @@ import CreatePostWindow from './CreatePostWindow';
 interface InfiniteScrollProps {
     initialPosts: BEHomePost[];
     keyword?: string;
+    isLikedPage?: boolean; // 찜한 페이지인지 여부를 확인하는 prop 추가
 }
 
-/**
- * 0 페이지 데이터는 SSR 로 넘겨받아서 랜더링
- * 이후 페이지에 대해 무한스크롤 (page=1, default size = 10 입니다.)
- * @param initialPosts
- * @param queryKey
- * @param fetchFn
- * @constructor
- */
 export default function InfiniteScroll({
     initialPosts,
     keyword,
+    isLikedPage = false, // 기본값은 false
 }: InfiniteScrollProps) {
     const ref = useRef(null);
     const isInView = useInView(ref);
@@ -45,9 +39,21 @@ export default function InfiniteScroll({
     } = useInfiniteQuery({
         queryKey: keyword
             ? ['search', keyword]
-            : ['posts', searchParams.toString()],
+            : isLikedPage
+              ? ['liked-posts']
+              : ['posts', searchParams.toString()],
         queryFn: async ({ pageParam = 1 }) => {
             try {
+                // 찜한 페이지인 경우 추가 데이터를 불러오지 않고 초기 데이터만 사용
+                if (isLikedPage) {
+                    // 페이지네이션 형식에 맞게 초기 데이터 반환
+                    return {
+                        content: initialPosts,
+                        last: true, // 더 이상 페이지가 없음을 표시
+                        number: 0,
+                    };
+                }
+
                 if (keyword) {
                     const baseURL = `${NEXT_PUBLIC_NEST_BFF_URL}/api/gatherings/list`;
                     const query = `page=${pageParam - 1}&size=10`;
@@ -82,6 +88,8 @@ export default function InfiniteScroll({
             return lastPage.number + 2; // 0-based에서 1-based로 변환 후 다음 페이지
         },
         initialPageParam: 1,
+        // 찜한 페이지인 경우 초기 데이터만 사용하므로 enabled 옵션 추가
+        enabled: !isLikedPage,
     });
 
     useEffect(() => {
@@ -115,52 +123,70 @@ export default function InfiniteScroll({
 
     return (
         <div className="mt-6 grid max-w-[1200px] grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* SSR로 받은 초기 데이터는 필터링이 없을 때만 렌더링 */}
-            {!activeFilters &&
-                !data?.pages?.length &&
+            {/* 찜한 페이지인 경우 initialPosts만 표시 */}
+            {isLikedPage ? (
                 initialPosts?.map((post) => (
                     <motion.div
-                        key={`initial-${post.id}`}
+                        key={`liked-${post.id}`}
                         initial={{ y: 30, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.3 }}
                     >
                         <RecruitPost post={post} />
                     </motion.div>
-                ))}
+                ))
+            ) : (
+                <>
+                    {/* 기존 SSR 데이터 표시 로직 */}
+                    {!activeFilters &&
+                        !data?.pages?.length &&
+                        initialPosts?.map((post) => (
+                            <motion.div
+                                key={`initial-${post.id}`}
+                                initial={{ y: 30, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                <RecruitPost post={post} />
+                            </motion.div>
+                        ))}
 
-            {/* 클라이언트에서 가져온 데이터 */}
-            {data?.pages?.map((page, pageIndex) =>
-                (page?.content || []).map(
-                    (post: BEHomePost, postIndex: number) => (
-                        <motion.div
-                            key={`page-${pageIndex}-post-${post.id}`}
-                            initial={{ y: 30, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{
-                                duration: 0.3,
-                                delay: postIndex * 0.05,
-                            }}
-                        >
-                            <RecruitPost post={post} />
-                        </motion.div>
-                    ),
-                ),
+                    {/* 클라이언트에서 가져온 데이터 */}
+                    {data?.pages?.map((page, pageIndex) =>
+                        (page?.content || []).map(
+                            (post: BEHomePost, postIndex: number) => (
+                                <motion.div
+                                    key={`page-${pageIndex}-post-${post.id}`}
+                                    initial={{ y: 30, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{
+                                        duration: 0.3,
+                                        delay: postIndex * 0.05,
+                                    }}
+                                >
+                                    <RecruitPost post={post} />
+                                </motion.div>
+                            ),
+                        ),
+                    )}
+                </>
             )}
 
             {/* 글이 없는 경우 띄울 Ui */}
-            {hasNoData && <CreatePost />}
+            {!isLikedPage && hasNoData && <CreatePost />}
 
             {/* 첫 로딩을 끝낸 이후 데이터가 있으면 게시글 작성 버튼을 fixed로 띄웁니다. */}
-            {!isLoading && !hasNoData && <CreatePostWindow />}
+            {!isLoading && !hasNoData && !isLikedPage && <CreatePostWindow />}
 
-            {isFetchingNextPage && (
+            {!isLikedPage && isFetchingNextPage && (
                 <div className="col-span-full py-8">
                     <LoadingThreeDots />
                 </div>
             )}
 
-            <div className="col-span-full h-1 w-full" ref={ref}></div>
+            {!isLikedPage && (
+                <div className="col-span-full h-1 w-full" ref={ref}></div>
+            )}
         </div>
     );
 }
