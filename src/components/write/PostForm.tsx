@@ -93,6 +93,12 @@ export default function PostForm({
             ? `${NEXT_PUBLIC_NEST_BFF_URL}/api/posts/${gatheringId}`
             : `${NEXT_PUBLIC_NEST_BFF_URL}/api/posts`;
 
+        console.log('[🔥SUBMIT] content type:', typeof submissionData.content);
+        console.log(
+            '[🔥SUBMIT] content preview:',
+            submissionData.content.slice?.(0, 200),
+        );
+
         const res = await fetch(targetRoute, {
             method,
             headers: { 'Content-Type': 'application/json' },
