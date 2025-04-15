@@ -138,7 +138,6 @@ export default function RecruitPost({ post }: PostContentProps) {
 
             {/* 유저 프로필 */}
             <div className="flex w-full flex-row items-start justify-between md:items-center">
-                {/*todo: 포스트 조회에 주최자 아이디가 없어서 일단 닉네임으로 대체해 두겠습니다.*/}
                 <Link href={`/profile/${post.creator.kakaoId}`}>
                     {/* 아이콘 */}
                     <div className="flex items-center gap-3">
@@ -161,14 +160,14 @@ export default function RecruitPost({ post }: PostContentProps) {
                                 <span className="text-xs text-[#666666]">
                                     {post.creator.statusMessage}
                                 </span>
-                                <div className="h-1.5 w-px bg-[#a0a0a0]/60" />
+                                <div className="h-1.5 w-px bg-gray-400" />
                                 <span className="text-xs text-[#666666]">
                                     {/*todo: 작성자 나이를 그룹으로 가져오고 있는데 이후에 숫자 업로드 구현후 보고 정하면 좋을 것 같습니다.*/}
                                     {/* 생년월일을 n0대 나이대로 변환해서 서버로 보내는건 성공했는데, 사용자가 입력한 구체적인 생년월일 값은 스키마에 없다보니 다시 프로필 편집 창을 킬 때 서버에서 불러올 수가 없어서 일단 로컬스토리지에 구체적인 생년월일 짜게 해두었습니다. */}
                                     {/*{convertAgeRange(post.creator.age)}*/}
                                     {displayedAgeGroup}
                                 </span>
-                                <div className="h-1.5 w-px bg-[#a0a0a0]/60" />
+                                <div className="h-1.5 w-px bg-gray-400" />
                                 <span className="text-xs text-[#666666]">
                                     {displayedGender}
                                 </span>

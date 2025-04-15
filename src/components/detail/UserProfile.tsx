@@ -46,12 +46,12 @@ export default function UserProfile({ post }: UserProfileProps) {
                             <p className="max-w-[140px] truncate text-xs text-[#666666]">
                                 {post.statusMessage}
                             </p>
-                            <div className="h-1.5 w-px bg-[a0a0a0]/60" />
+                            <div className="h-1.5 w-px bg-gray-400" />
                             <p className="text-xs text-[#666666]">
                                 {/*{convertAgeRange(post.userAge)}*/}
                                 {post.userAge}
                             </p>
-                            <div className="h-1.5 w-px bg-[A0A0A0]/60" />
+                            <div className="h-1.5 w-px bg-gray-400" />
                             <p className="text-xs text-[#666666]">
                                 {post.userGender}
                             </p>
