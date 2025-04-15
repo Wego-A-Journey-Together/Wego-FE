@@ -40,7 +40,7 @@ export const LocationFilter = () => {
     }
 
     return (
-        <div className="inline-flex max-w-[239px] gap-6 rounded-lg border border-solid border-[#e9e9e9] px-7 py-4">
+        <div className="inline-flex max-w-[239px] gap-6 rounded-lg border border-solid border-[#e9e9e9] px-7 py-3 dark:border-0 dark:bg-[#070707]">
             <Image
                 src="/icon/home/pinIcon.svg"
                 alt="위치 아이콘"
@@ -48,7 +48,7 @@ export const LocationFilter = () => {
                 height={17}
             />
             <Input
-                className="h-auto w-auto border-0 p-0 text-base font-medium tracking-[-0.02px] text-black shadow-none placeholder:text-[#999999] focus-visible:ring-0"
+                className="h-auto w-auto border-0 p-0 text-base font-medium tracking-[-0.02px] text-black shadow-none placeholder:text-[#999999] focus-visible:ring-0 dark:border-0"
                 placeholder={t.filter.where}
                 value={location}
                 onChange={(e) => dispatch(setLocation(e.target.value))}
