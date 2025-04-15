@@ -15,12 +15,12 @@ import { setGroupTheme } from '@/redux/slices/filterSlice';
 import Image from 'next/image';
 
 const groupThemeOptions = [
-    { value: 'friends', label: '친구 동행' },
-    { value: 'couple', label: '부부 동행' },
-    { value: 'tour', label: '투어 동행' },
-    { value: 'booking', label: '숙박 공유' },
-    { value: 'event', label: '전시/공연 동행' },
-    { value: 'food', label: '맛집 동행' },
+    { value: '전시/공연 동행', label: '전시/공연 동행' },
+    { value: '맛집 동행', label: '맛집 동행' },
+    { value: '투어 동행', label: '투어 동행' },
+    { value: '숙박 공유', label: '숙박 공유' },
+    { value: '부분 동행', label: '부분 동행' },
+    { value: '가족 동행', label: '가족 동행' },
 ];
 
 export const GroupThemeFilter = () => {
@@ -41,16 +41,16 @@ export const GroupThemeFilter = () => {
                                 value={option.value}
                                 className="w-fit min-w-[76px]"
                                 variant={
-                                    groupTheme === option.label
+                                    groupTheme === option.value
                                         ? 'selected'
                                         : 'outline'
                                 }
                                 onClick={() =>
                                     dispatch(
                                         setGroupTheme(
-                                            groupTheme === option.label
+                                            groupTheme === option.value
                                                 ? ''
-                                                : option.label,
+                                                : option.value,
                                         ),
                                     )
                                 }

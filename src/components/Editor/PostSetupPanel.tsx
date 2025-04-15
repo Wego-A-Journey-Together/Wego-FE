@@ -266,9 +266,9 @@ export default function PostSetupPanel() {
                             <SelectValue placeholder="동행 테마 선택" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="friends">친구 동반</SelectItem>
-                            <SelectItem value="couple">부부 동반</SelectItem>
-                            <SelectItem value="tour">투어 동반</SelectItem>
+                            <SelectItem value="friends">친구 동행</SelectItem>
+                            <SelectItem value="part">부분 동행</SelectItem>
+                            <SelectItem value="tour">투어 동행</SelectItem>
                             <SelectItem value="booking">숙박 공유</SelectItem>
                             <SelectItem value="event">
                                 전시/공연 동행
