@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 const SOGAM_TABS = [{ id: 'received', label: '받은 소감' }];
 
-export default function ProfileVisitor() {
+export default function ProfileVisitor({ kakaoId }: { kakaoId: number }) {
     const [tabIndex, setTabIndex] = useState(0);
 
     const handleTabChange = (index: number) => {
@@ -27,7 +27,7 @@ export default function ProfileVisitor() {
             />
 
             <section>
-                <ReceivedReview />
+                <ReceivedReview kakaoId={kakaoId} />
             </section>
         </>
     );

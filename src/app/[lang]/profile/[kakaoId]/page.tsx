@@ -44,7 +44,11 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                     <MypageProfile data={userData} isVisitor={isVisitor} />
                     <section>
                         {/*드롭다운 섹션 ( 동행,동행 소감, 받은 소감 ), 탭 포함*/}
-                        {isVisitor ? <ProfileVisitor /> : <DropDown />}
+                        {isVisitor ? (
+                            <ProfileVisitor kakaoId={Number(kakaoId)} />
+                        ) : (
+                            <DropDown kakaoId={Number(kakaoId)} />
+                        )}
                     </section>
                 </div>
             </main>

@@ -17,17 +17,14 @@ interface ReviewRes {
     content: Review[];
 }
 
-export default function useFetchReivedReview() {
+export default function useFetchReivedReview(kakaoId: number) {
     const [receivedReview, setReceivedReview] = useState<Review[]>([]);
     const [totalRecieved, setTotalRecieved] = useState<number>(0);
     useEffect(() => {
         (async () => {
             try {
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/me/reviews/received`,
-                    {
-                        credentials: 'include',
-                    },
+                    `${process.env.NEXT_PUBLIC_NEST_BFF_URL}/api/reviews/${kakaoId}/received`,
                 );
                 if (!res.ok) {
                     throw new Error(
@@ -41,7 +38,7 @@ export default function useFetchReivedReview() {
                 console.error('내가 참여하는 동행 조회 실패함:', e);
             }
         })();
-    }, []);
+    }, [kakaoId]);
 
     return { totalRecieved, receivedReview };
 }

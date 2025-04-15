@@ -7,8 +7,8 @@ import { toast } from 'sonner';
 
 import NoContentGuide from './NoContentGuide';
 
-export default function ReceivedReview() {
-    const { receivedReview, totalRecieved } = useFetchReivedReview();
+export default function ReceivedReview({ kakaoId }: { kakaoId: number }) {
+    const { receivedReview, totalRecieved } = useFetchReivedReview(kakaoId);
 
     if (totalRecieved === 0) {
         return <NoContentGuide />;

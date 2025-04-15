@@ -42,7 +42,7 @@ const CATEGORIES = {
 
 type CategoryId = keyof typeof CATEGORIES;
 
-export default function DropDown() {
+export default function DropDown({ kakaoId }: { kakaoId: number }) {
     const [categoryId, setCategoryId] = useState<CategoryId>('journey');
     const [tabIndex, setTabIndex] = useState(0);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -106,7 +106,7 @@ export default function DropDown() {
             comments: <Comments />,
         },
         sogam: {
-            received: <ReceivedReview />,
+            received: <ReceivedReview kakaoId={kakaoId} />,
             writable: <MyGroupPost posts={reviewables} />,
             written: <MyReview />,
         },
