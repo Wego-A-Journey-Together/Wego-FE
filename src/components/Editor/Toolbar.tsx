@@ -61,6 +61,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
             <section className="flex w-full flex-wrap justify-between md:w-auto">
                 {/* Heading 버튼 */}
                 <button
+                    type="button"
                     onClick={() => {
                         if (editor.isActive('heading', { level: 1 })) {
                             editor.chain().focus().setParagraph().run();
@@ -82,6 +83,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
                     H1
                 </button>
                 <button
+                    type="button"
                     onClick={() => {
                         if (editor.isActive('heading', { level: 2 })) {
                             editor.chain().focus().setParagraph().run();
@@ -103,6 +105,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
                     H2
                 </button>
                 <button
+                    type="button"
                     onClick={() => {
                         if (editor.isActive('heading', { level: 3 })) {
                             editor.chain().focus().setParagraph().run();
@@ -247,6 +250,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
                         className="h-8 min-w-0 flex-1 text-xs"
                     />
                     <Button
+                        type="button"
                         onClick={addLink}
                         size="sm"
                         className="text-whtie h-8 flex-shrink-0 bg-[#666]"
@@ -266,6 +270,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
                         className="h-8 min-w-0 flex-1 text-xs"
                     />
                     <Button
+                        type="button"
                         onClick={addImage}
                         size="sm"
                         className="text-whtie h-8 flex-shrink-0 bg-[#666]"
