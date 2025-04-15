@@ -59,6 +59,9 @@ export default function PostForm({
         // 직렬화된 JSON 문자열 확인
 
         const submissionData = { ...data };
+        if (typeof submissionData.content === 'object') {
+            submissionData.content = JSON.stringify(submissionData.content);
+        }
 
         // 데이터를 복사해 마감시간을 UTC 형식으로 변환
         if (data.filter.deadlineDate && data.filter.deadlineTime) {
