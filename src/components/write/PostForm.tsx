@@ -97,25 +97,22 @@ export default function PostForm({
             credentials: 'include',
         });
 
-        const newPostId = await res.json();
+        const body = await res.json();
 
         if (!res.ok) {
-            const errorData = await res.json();
-
-            console.warn('DTO 유효성 에러 발생:', errorData);
-            if (Array.isArray(errorData.message)) {
-                console.warn('에러 목록:', errorData.message);
-            }
-
+            console.warn('DTO 유효성 에러 발생:', body);
             toast('글 발행 실패', {
                 description: '잠시 후 다시 시도해 주세요',
                 action: {
                     label: '닫기',
-                    onClick: () => {}, // 라벨 누르면 닫히는건 디폴트 동작 이라고 합니다.
+                    onClick: () => {},
                 },
             });
             return;
         }
+
+        const newPostId = body;
+
         toast(isEdit ? '글 수정 완료!' : '글 발행 완료!', {
             description: isEdit
                 ? '변경사항이 저장되었어요'
@@ -348,6 +345,7 @@ export default function PostForm({
                                 className={
                                     'h-13 w-54 border border-neutral-300 bg-white text-sm font-semibold text-neutral-600'
                                 }
+                                type="button"
                                 onClick={handleCancel}
                             >
                                 취소
