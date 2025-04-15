@@ -308,6 +308,7 @@ export default function PostSetupPanel() {
                     <div className="flex gap-2.5">
                         {genderOptions.map((option) => (
                             <Button
+                                type="button"
                                 key={option.id}
                                 className="h-[44px]"
                                 variant={
@@ -330,6 +331,7 @@ export default function PostSetupPanel() {
                     <div className="flex flex-wrap gap-2.5">
                         {ageGroups.map((age) => (
                             <Button
+                                type="button"
                                 key={age.id}
                                 className="h-[44px]"
                                 variant={
